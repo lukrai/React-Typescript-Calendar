@@ -1,0 +1,24 @@
+{
+  "name": "react-typescript-calendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukrai/React-Typescript-Calendar.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukrai/React-Typescript-Calendar/issues"
+  },
+  "homepage": "https://github.com/lukrai/React-Typescript-Calendar#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
+  }
+}
