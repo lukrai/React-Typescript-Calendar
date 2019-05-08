@@ -1,16 +1,5 @@
-import * as express from "express";
+import App from "./app";
 
-function loggerMiddleware(request: express.Request, response: express.Response, next) {
-    console.log(`${request.method} ${request.path}`);
-    next();
-}
+const app = new App();
 
-const app = express();
-
-app.use(loggerMiddleware);
-
-app.get("/hello", (request, response) => {
-    response.send("Hello world!");
-});
-
-app.listen(5000);
+app.listen();
