@@ -1,8 +1,6 @@
 import * as express from "express";
 
 class CalendarController {
-    public router = express.Router();
-
     private posts: any[] = [
         {
             author: "Marcin",
@@ -13,12 +11,6 @@ class CalendarController {
 
     constructor() {
         console.log("Initialize calendar controller");
-        this.intializeRoutes();
-    }
-
-    public intializeRoutes() {
-        this.router.get("/calendar", this.getAllCallendarData);
-        this.router.post("/calendar", this.createCalendarItem);
     }
 
     public getAllCallendarData = (request: express.Request, response: express.Response) => {

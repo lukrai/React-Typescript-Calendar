@@ -1,6 +1,8 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import CalendarController from "./controllers/calendar.controller";
+import CalendarRouter from "./routes/calendar.routes";
+import UserRouter from "./routes/user.routes";
 
 class App {
     public app: express.Application;
@@ -11,7 +13,7 @@ class App {
         this.port = port;
 
         this.initializeMiddlewares();
-        this.initializeControllers();
+        this.initializeRoutes();
     }
 
     public listen() {
@@ -25,14 +27,25 @@ class App {
         this.app.use(this.loggerMiddleware);
     }
 
+    private initializeRoutes() {
+        const router = express.Router();
+        // placeholder route handler
+        router.get("/", (req, res, next) => {
+            res.json({
+                message: "Hello!",
+            });
+        });
+        router.get("/favicon.ico", (req, res) => res.status(204));
+        this.app.use("/", router);
+        this.app.use("/api/calendar", CalendarRouter);
+        this.app.use("/api/user", UserRouter);
+    }
+
     private loggerMiddleware(request: express.Request, response: express.Response, next) {
         console.log(`${request.method} ${request.path}`);
         next();
     }
 
-    private initializeControllers() {
-        this.app.use("/api", new CalendarController().router);
-    }
 }
 
 export default App;
