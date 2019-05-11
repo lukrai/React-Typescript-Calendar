@@ -11,7 +11,7 @@ class App {
     constructor(port = 5000) {
         this.app = express();
         this.port = port;
-
+        this.initializeDatabaseConnection();
         this.initializeMiddlewares();
         this.initializeRoutes();
     }
@@ -20,6 +20,10 @@ class App {
         this.app.listen(this.port, () => {
             console.log(`App listening on the port ${this.port}`);
         });
+    }
+
+    private initializeDatabaseConnection() {
+
     }
 
     private initializeMiddlewares() {
