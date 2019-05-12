@@ -1,7 +1,7 @@
-import * as Sequelize from "sequelize";
+import {BuildOptions, DataTypes, Model, Sequelize} from "sequelize";
 import {SequelizeAttributes} from "../typings/SequelizeAttributes/index";
 
-export interface IUserAttributes {
+export interface IUser extends Model {
     id?: number;
     firstName: string;
     lastName: string;
@@ -13,16 +13,13 @@ export interface IUserAttributes {
     updatedAt?: Date;
 }
 
-export interface IUserInstance extends Sequelize.Instance<IUserAttributes>, IUserAttributes {
-    // At the moment, there's nothing more to add apart
-    // from the methods and attributes that the types
-    // `Sequelize.Instance<UserAttributes>` and
-    // `UserAttributes` give us. We'll add more here when
-    //  we get on to adding associations.
-}
+// Need to declare the static model so `findOne` etc. use correct types.
+export type UserStatic = typeof Model & {
+    new (values?: object, options?: BuildOptions): IUser,
+};
 
-export const UserFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes): Sequelize.Model<IUserInstance, IUserAttributes> => {
-    const attributes: SequelizeAttributes<IUserAttributes> = {
+export const UserFactory = (sequelize: Sequelize): UserStatic => {
+    const attributes: Partial<SequelizeAttributes<IUser>> = {
         court: {
             type: DataTypes.STRING,
         },
@@ -43,7 +40,5 @@ export const UserFactory = (sequelize: Sequelize.Sequelize, DataTypes: Sequelize
         },
     };
 
-    const User = sequelize.define<IUserInstance, IUserAttributes>("User", attributes);
-
-    return User;
+    return sequelize.define("User", attributes) as UserStatic;
 };

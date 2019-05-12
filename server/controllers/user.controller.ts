@@ -1,30 +1,37 @@
 import * as express from "express";
+import {db} from "../models/index";
+import {IUser, UserStatic} from "../models/User.model";
 
 class UserController {
     constructor() {
         console.log("Initialize user controller");
     }
 
-    public getAllUsers = (request: express.Request, response: express.Response) => {
-        return response.send({users: [{username: "username"}]});
+    public getAllUsers = async (req: express.Request, res: express.Response) => {
+        try {
+            const users: IUser[] = await db.User.findAll();
+            res.status(200).json({ users });
+        } catch (err) {
+            res.status(500).json({ err: ["oops", err] });
+        }
     }
 
-    public getUser = (request: express.Request, response: express.Response) => {
-        return response.send({user: "user"});
+    public getUser = (req: express.Request, res: express.Response) => {
+        return res.send({user: "user"});
     }
 
-    public createUser = (request: express.Request, response: express.Response) => {
-        const user = request.body;
-        return response.send(user);
+    public createUser = (req: express.Request, res: express.Response) => {
+        const user = req.body;
+        return res.send(user);
     }
 
-    public updateUser = (request: express.Request, response: express.Response) => {
-        const user = request.body;
-        return response.send(user);
+    public updateUser = (req: express.Request, res: express.Response) => {
+        const user = req.body;
+        return res.send(user);
     }
 
-    public deleteUser = (request: express.Request, response: express.Response) => {
-        return response.send("ok");
+    public deleteUser = (req: express.Request, res: express.Response) => {
+        return res.send("ok");
     }
 }
 

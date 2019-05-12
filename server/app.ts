@@ -1,6 +1,7 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import CalendarController from "./controllers/calendar.controller";
+import { createModels } from "./models/index";
 import CalendarRouter from "./routes/calendar.routes";
 import UserRouter from "./routes/user.routes";
 
@@ -23,7 +24,11 @@ class App {
     }
 
     private initializeDatabaseConnection() {
-
+        const db = createModels();
+        db.sequelize.authenticate()
+            .then(() => console.log("Database connected..."))
+            .catch(err => console.log("Error: " + err));
+        db.sequelize.sync();
     }
 
     private initializeMiddlewares() {
