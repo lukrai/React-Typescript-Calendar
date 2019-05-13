@@ -1,6 +1,6 @@
 import * as express from "express";
 import {db} from "../models/index";
-import {IUser, UserStatic} from "../models/User.model";
+import {IUser} from "../models/User.model";
 
 class UserController {
     constructor() {

@@ -1,5 +1,7 @@
 import {BuildOptions, DataTypes, Model, Sequelize} from "sequelize";
 import {SequelizeAttributes} from "../typings/SequelizeAttributes/index";
+import {IDatabase} from "../typings/DbInterface";
+import {ICalendar} from "./Calendar.model";
 
 export interface ICourtCase {
     id?: number;
@@ -12,11 +14,12 @@ export interface ICourtCase {
     updatedAt?: Date;
 }
 
-export type CourtCaseStatic = typeof Model & {
-    new (values?: object, options?: BuildOptions): ICourtCase,
+export type CourtCaseModel = typeof Model &
+    (new (values?: object, options?: BuildOptions) => ICourtCase) & {
+    associate: (model: IDatabase) => any;
 };
 
-export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseStatic => {
+export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
     const attributes: Partial<SequelizeAttributes<ICourtCase>> = {
         court: {
             type: DataTypes.STRING,
@@ -34,6 +37,16 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseStatic => {
             type: DataTypes.STRING,
         },
     };
+    // calendar.belongsTo(models.User, { as: "author", foreignKey: "AuthorId" });
 
-    return sequelize.define("CourtCase", attributes) as CourtCaseStatic;
+    const courtCase = sequelize.define("CourtCase", attributes) as CourtCaseModel;
+
+    courtCase.associate = models => {
+        console.log("CourtCase Belong to");
+        courtCase.belongsTo(models.Calendar);
+        courtCase.belongsTo(models.User, { foreignKey: "AuthorId" });
+
+    };
+
+    return courtCase;
 };
