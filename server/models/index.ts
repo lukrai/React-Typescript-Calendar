@@ -1,5 +1,6 @@
 import {Sequelize} from "sequelize";
 import {IDatabase} from "../typings/DbInterface/index";
+import {CalendarFactory} from "./Calendar.model";
 import {CourtCaseFactory} from "./CourtCase.model";
 import {UserFactory} from "./User.model";
 
@@ -16,6 +17,7 @@ export const createModels = (): IDatabase => {
     );
 
     db = {
+        Calendar: CalendarFactory(sequelize),
         CourtCase: CourtCaseFactory(sequelize),
         User: UserFactory(sequelize),
         sequelize,
