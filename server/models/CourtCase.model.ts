@@ -1,6 +1,6 @@
 import {BuildOptions, DataTypes, Model, Sequelize} from "sequelize";
+import {IDatabase} from "../typings/DbInterface/index";
 import {SequelizeAttributes} from "../typings/SequelizeAttributes/index";
-import {IDatabase} from "../typings/DbInterface";
 import {ICalendar} from "./Calendar.model";
 
 export interface ICourtCase {
@@ -42,7 +42,6 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
     const courtCase = sequelize.define("CourtCase", attributes) as CourtCaseModel;
 
     courtCase.associate = models => {
-        console.log("CourtCase Belong to");
         courtCase.belongsTo(models.Calendar);
         courtCase.belongsTo(models.User, { foreignKey: "AuthorId" });
 
