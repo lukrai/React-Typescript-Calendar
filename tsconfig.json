@@ -4,7 +4,8 @@
     "target": "es2017",
     "outDir": "./dist",
     "baseUrl": "./server",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node"
   },
   "include": [
     "server/**/*.ts"

@@ -11,11 +11,11 @@ class CalendarRouter {
     }
 
     private init() {
-        this.router.get("/", this.calendarController.getAllCallendarData);
-        this.router.post("/new", this.calendarController.createCalendarItem);
-        // this.router.get("/:id", this.calendarController.getFeed);
-        // this.router.put("/:id", this.calendarController.updateFeed);
-        // this.router.delete("/:id", this.calendarController.deleteFeed);
+        this.router.get("/", this.calendarController.getAllCalendarData);
+        this.router.post("/new", this.calendarController.createCalendar);
+        this.router.get("/:id", this.calendarController.getCalendar);
+        this.router.put("/:id", this.calendarController.updateCalendar);
+        this.router.delete("/:id", this.calendarController.deleteCalendar);
     }
 }
 

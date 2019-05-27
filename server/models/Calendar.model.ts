@@ -1,19 +1,13 @@
 import {BuildOptions, DataTypes, Model, Sequelize} from "sequelize";
 import {IDatabase} from "../typings/DbInterface";
-import {SequelizeAttributes} from "../typings/SequelizeAttributes/index";
+import {SequelizeAttributes} from "../typings/SequelizeAttributes";
 
 export interface ICalendar extends Model {
     id?: number;
     date: string;
     createdAt?: Date;
     updatedAt?: Date;
-
-    associations(): void;
 }
-
-// export type CalendarStatic = typeof Model & {
-//     new (values?: object, options?: BuildOptions): ICalendar,
-// };
 
 export type CalendarModel = typeof Model &
     (new (values?: object, options?: BuildOptions) => ICalendar) & {

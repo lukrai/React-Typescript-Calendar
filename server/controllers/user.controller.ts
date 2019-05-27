@@ -1,7 +1,6 @@
 import * as express from "express";
 import {db} from "../models/index";
 import {IUser} from "../models/User.model";
-import {DataTypes} from "sequelize";
 
 class UserController {
     constructor() {
@@ -19,7 +18,7 @@ class UserController {
 
     public getUser = async (req: express.Request, res: express.Response) => {
         try {
-            const user = await db.User.findById(req.params.id, {
+            const user = await db.User.findByPk(req.params.id, {
                 include: [{
                     as: "courtCases",
                     model: db.CourtCase,
@@ -55,7 +54,7 @@ class UserController {
     public updateUser = async (req: express.Request, res: express.Response) => {
         // const user = req.body;
         try {
-            const user = await db.User.findById(req.params.id);
+            const user = await db.User.findByPk(req.params.id);
             if (!user) {
                 return res.status(404).send({
                     message: "User Not Found",
@@ -77,7 +76,7 @@ class UserController {
 
     public deleteUser = async (req: express.Request, res: express.Response) => {
         try {
-            const user = await db.User.findById(req.params.id);
+            const user = await db.User.findByPk(req.params.id);
             if (!user) {
                 return res.status(404).send({
                     message: "User Not Found",

@@ -1,5 +1,5 @@
 import {Sequelize} from "sequelize";
-import {IDatabase} from "../typings/DbInterface/index";
+import {IDatabase} from "../typings/DbInterface";
 import {CalendarFactory} from "./Calendar.model";
 import {CourtCaseFactory} from "./CourtCase.model";
 import {UserFactory} from "./User.model";
