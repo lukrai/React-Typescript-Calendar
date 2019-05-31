@@ -24,7 +24,7 @@ export const CalendarFactory = (sequelize: Sequelize): CalendarModel => {
     const calendar = sequelize.define("Calendar", attributes) as CalendarModel;
 
     calendar.associate = models => {
-        calendar.hasMany(models.CourtCase);
+        calendar.hasMany(models.CourtCase, {as: "courtCases"});
     };
 
     return calendar;

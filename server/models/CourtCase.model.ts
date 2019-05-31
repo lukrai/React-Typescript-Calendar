@@ -41,7 +41,7 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
 
     courtCase.associate = models => {
         courtCase.belongsTo(models.Calendar);
-        courtCase.belongsTo(models.User, { foreignKey: "AuthorId" });
+        courtCase.belongsTo(models.User);
 
     };
 

@@ -4,7 +4,7 @@ import {ICourtCase} from "../models/CourtCase.model";
 
 class CourtCaseController {
     constructor() {
-        console.log("Initialize user controller");
+        console.log("Initialize CourtCase controller");
     }
 
     public getAllCourtCases = async (req: express.Request, res: express.Response) => {

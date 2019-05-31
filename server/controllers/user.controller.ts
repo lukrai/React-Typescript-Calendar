@@ -1,5 +1,5 @@
 import * as express from "express";
-import {db} from "../models/index";
+import {db} from "../models";
 import {IUser} from "../models/User.model";
 
 class UserController {
@@ -19,6 +19,9 @@ class UserController {
     public getUser = async (req: express.Request, res: express.Response) => {
         try {
             const user = await db.User.findByPk(req.params.id, {
+                attributes: {
+                    exclude: ["password"],
+                },
                 include: [{
                     as: "courtCases",
                     model: db.CourtCase,
@@ -31,6 +34,7 @@ class UserController {
             }
             return res.status(200).send({user});
         } catch (err) {
+            console.log(err);
             return res.status(400).send(err);
         }
     }

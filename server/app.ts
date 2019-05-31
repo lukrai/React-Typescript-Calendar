@@ -1,8 +1,9 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import CalendarController from "./controllers/calendar.controller";
-import { createModels } from "./models/index";
+import { createModels } from "./models";
 import CalendarRouter from "./routes/calendar.routes";
+import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
 
 class App {
@@ -32,6 +33,7 @@ class App {
     }
 
     private initializeMiddlewares() {
+        this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
         this.app.use(this.loggerMiddleware);
     }
@@ -48,6 +50,7 @@ class App {
         this.app.use("/", router);
         this.app.use("/api/calendar", CalendarRouter);
         this.app.use("/api/user", UserRouter);
+        this.app.use("/api/court-case", CourtCaseRouter);
     }
 
     private loggerMiddleware(request: express.Request, response: express.Response, next) {
