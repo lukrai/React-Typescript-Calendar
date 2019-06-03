@@ -1,6 +1,6 @@
 import {Sequelize} from "sequelize";
 import {IDatabase} from "../typings/DbInterface";
-import {AppSettingsFactory} from "./AppSettings.model";
+import {AppSettingsFactory, AppSettingsModel} from "./AppSettings.model";
 import {CalendarFactory} from "./Calendar.model";
 import {CourtCaseFactory} from "./CourtCase.model";
 import {UserFactory} from "./User.model";

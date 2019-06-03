@@ -3,7 +3,7 @@ import {SequelizeAttributes} from "../typings/SequelizeAttributes";
 
 export interface IAppSettings extends Model {
     id?: number;
-    weekDay: number;
+    weekDay: number; // available day of the week in calendar
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -14,7 +14,7 @@ export type AppSettingsModel = typeof Model &
 export const AppSettingsFactory = (sequelize: Sequelize): AppSettingsModel => {
     const attributes: Partial<SequelizeAttributes<IAppSettings>> = {
         weekDay: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
         },
     };
 

@@ -1,7 +1,7 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
-import CalendarController from "./controllers/calendar.controller";
 import { createModels } from "./models";
+import {AppSettingsModel} from "./models/AppSettings.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
@@ -24,12 +24,13 @@ class App {
         });
     }
 
-    private initializeDatabaseConnection() {
+    private async initializeDatabaseConnection() {
         const db = createModels();
         db.sequelize.authenticate()
             .then(() => console.log("Database connected..."))
             .catch(err => console.log("Error: " + err));
-        db.sequelize.sync();
+        await db.sequelize.sync();
+        await this.setDefaultDayOfTheWeek(db.AppSettings);
     }
 
     private initializeMiddlewares() {
@@ -58,6 +59,13 @@ class App {
         next();
     }
 
+    private async setDefaultDayOfTheWeek(AppSettings: AppSettingsModel) {
+        try {
+            return AppSettings.findOrCreate({where: {id: 1}, defaults: {weekDay: 3}});
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 export default App;
