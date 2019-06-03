@@ -1,6 +1,6 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
-import { createModels } from "./models";
+import {createModels} from "./models";
 import {AppSettingsModel} from "./models/AppSettings.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
@@ -30,11 +30,11 @@ class App {
             .then(() => console.log("Database connected..."))
             .catch(err => console.log("Error: " + err));
         await db.sequelize.sync();
-        await this.setDefaultDayOfTheWeek(db.AppSettings);
+        db.defaultWeekDay = await this.setDefaultDayOfTheWeek(db.AppSettings);
     }
 
     private initializeMiddlewares() {
-        this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(bodyParser.json());
         this.app.use(this.loggerMiddleware);
     }
@@ -61,7 +61,10 @@ class App {
 
     private async setDefaultDayOfTheWeek(AppSettings: AppSettingsModel) {
         try {
-            return AppSettings.findOrCreate({where: {id: 1}, defaults: {weekDay: 3}});
+            return AppSettings.findOrCreate({where: {id: 1}, defaults: {weekDay: 3}})
+                .spread((setting, created) => {
+                    return setting.get({plain: true}).weekDay;
+                });
         } catch (err) {
             console.log(err);
         }
