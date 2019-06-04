@@ -1,6 +1,9 @@
 import * as express from "express";
 import {db} from "../models";
 import {ICourtCase} from "../models/CourtCase.model";
+import {DateTime} from "luxon";
+import {getNextMonthsDate} from "../helpers/date.helper";
+import {ICalendar} from "../models/Calendar.model";
 
 class CourtCaseController {
     constructor() {
@@ -32,7 +35,19 @@ class CourtCaseController {
 
     public createCourtCase = async (req: express.Request, res: express.Response) => {
         try {
+            const nextMonthsDate = getNextMonthsDate(DateTime.local(), db.defaultWeekDay);
+            // const nextMonthsDate = getNextMonthsDate(DateTime.fromISO("2019-06-11"), db.defaultWeekDay);
+            console.log(nextMonthsDate);
+            let calendar: ICalendar = await db.Calendar.findOne({where: {date: nextMonthsDate}});
+            console.log(calendar);
+            if (!calendar) {
+                calendar = await db.Calendar.create({
+                    date: nextMonthsDate,
+                });
+            }
+
             const courtCase: ICourtCase = await db.CourtCase.create({
+                calendarId: calendar.id,
                 court: req.body.court,
                 courtNo: req.body.courtNo,
                 fileNo: req.body.fileNo,

@@ -1,6 +1,7 @@
 import * as express from "express";
 import {db} from "../models";
 import {ICalendar} from "../models/Calendar.model";
+import {DateTime} from "luxon";
 
 class CalendarController {
     constructor() {
@@ -18,12 +19,21 @@ class CalendarController {
 
     public getCalendar = async (req: express.Request, res: express.Response) => {
         try {
-            const calendar = await db.Calendar.findByPk(req.params.id, {
+            const dateFromParam = DateTime.fromISO(req.params.date);
+            if (!dateFromParam.isValid) {
+                return res.status(400).send({
+                    message: "Wrong date param format. Should be YYYY-MM-DD",
+                });
+            }
+
+            const calendar = await db.Calendar.findOne({
+                where: {date: req.params.date},
                 include: [{
                     as: "courtCases",
                     model: db.CourtCase,
                 }],
             });
+
             if (!calendar) {
                 return res.status(404).send({
                     message: "Calendar Not Found",

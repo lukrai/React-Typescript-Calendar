@@ -4,6 +4,7 @@ import {SequelizeAttributes} from "../typings/SequelizeAttributes";
 
 export interface ICourtCase {
     id?: number;
+    calendarId: number;
     fileNo: string;
     court: string;
     courtNo: string;
@@ -40,7 +41,12 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
     const courtCase = sequelize.define("CourtCase", attributes) as CourtCaseModel;
 
     courtCase.associate = models => {
-        courtCase.belongsTo(models.Calendar);
+        courtCase.belongsTo(models.Calendar, {
+            foreignKey: {
+                name: "calendarId",
+                allowNull: false,
+            },
+        });
         courtCase.belongsTo(models.User);
 
     };

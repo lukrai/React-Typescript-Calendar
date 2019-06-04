@@ -18,14 +18,22 @@ export const CalendarFactory = (sequelize: Sequelize): CalendarModel => {
     const attributes: Partial<SequelizeAttributes<ICalendar>> = {
         date: {
             type: DataTypes.STRING,
+            unique: true,
         },
     };
 
     const calendar = sequelize.define("Calendar", attributes) as CalendarModel;
 
     calendar.associate = models => {
-        calendar.hasMany(models.CourtCase, {as: "courtCases"});
+        calendar.hasMany(models.CourtCase, {
+            as: "courtCases",
+            foreignKey: {
+                name: "calendarId",
+                allowNull: false,
+            },
+        });
     };
 
     return calendar;
 };
+

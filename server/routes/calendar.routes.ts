@@ -13,7 +13,7 @@ class CalendarRouter {
     private init() {
         this.router.get("/", this.calendarController.getAllCalendarData);
         this.router.post("/", this.calendarController.createCalendar);
-        this.router.get("/:id", this.calendarController.getCalendar);
+        this.router.get("/:date", this.calendarController.getCalendar);
         this.router.put("/:id", this.calendarController.updateCalendar);
         this.router.delete("/:id", this.calendarController.deleteCalendar);
     }
