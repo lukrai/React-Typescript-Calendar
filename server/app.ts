@@ -1,5 +1,6 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
+import errorMiddleware from "./middlewares/error.middleware";
 import {createModels} from "./models";
 import {AppSettingsModel} from "./models/AppSettings.model";
 import CalendarRouter from "./routes/calendar.routes";
@@ -16,6 +17,7 @@ class App {
         this.initializeDatabaseConnection();
         this.initializeMiddlewares();
         this.initializeRoutes();
+        this.app.use(errorMiddleware);
     }
 
     public listen() {

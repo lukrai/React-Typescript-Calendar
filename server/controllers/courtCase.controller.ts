@@ -4,6 +4,8 @@ import {ICourtCase} from "../models/CourtCase.model";
 import {DateTime} from "luxon";
 import {getNextMonthsDate} from "../helpers/date.helper";
 import {ICalendar} from "../models/Calendar.model";
+import {NextFunction} from "express";
+import HttpException from "../exceptions/HttpException";
 
 const availableCalendarTimes = ["8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
 const numberOfColums = 7;
@@ -13,30 +15,28 @@ class CourtCaseController {
         console.log("Initialize CourtCase controller");
     }
 
-    public getAllCourtCases = async (req: express.Request, res: express.Response) => {
+    public getAllCourtCases = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
             const courtCases: ICourtCase[] = await db.CourtCase.findAll();
             res.status(200).json({courtCases});
         } catch (err) {
-            res.status(500).json({err: ["oops", err]});
+            next(new HttpException(500, "Could not get all court cases."));
         }
     }
 
-    public getCourtCase = async (req: express.Request, res: express.Response) => {
+    public getCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
             const courtCase = await db.CourtCase.findByPk(req.params.id);
             if (!courtCase) {
-                return res.status(404).send({
-                    message: "CourtCase Not Found",
-                });
+                return next(new HttpException(404, "Court case not found."));
             }
             return res.status(200).send({courtCase});
         } catch (err) {
-            return res.status(400).send(err);
+            next(new HttpException(500, "Could not get court case."));
         }
     }
 
-    public createCourtCase = async (req: express.Request, res: express.Response) => {
+    public createCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
             const nextMonthsDate = getNextMonthsDate(DateTime.local(), db.defaultWeekDay);
             let calendar: ICalendar = await db.Calendar.findOne(
@@ -61,7 +61,7 @@ class CourtCaseController {
                 const createdCourtCases: ICourtCase[] = await db.CourtCase.bulkCreate(initialCourtCases, {returning: true});
                 const updatedCourtCase = await db.CourtCase.findOne({where: {id: createdCourtCases[0].id}});
                 if (!updatedCourtCase) {
-                    throw Error(`CourtCase not updated. id: ${createdCourtCases[0].id}`);
+                    return next(new HttpException(400, "Can't create court case."));
                 }
                 updatedCourtCase.court = req.body.court;
                 updatedCourtCase.courtNo = req.body.courtNo;
@@ -84,17 +84,15 @@ class CourtCaseController {
                 return res.status(201).send({courtCase: null, message: "Times are filled for this date."});
             }
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(400, "Can't create court case."));
         }
     }
 
-    public updateCourtCase = async (req: express.Request, res: express.Response) => {
+    public updateCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
             const courtCase = await db.CourtCase.findByPk(req.params.id);
             if (!courtCase) {
-                return res.status(404).send({
-                    message: "CourtCase Not Found",
-                });
+                return next(new HttpException(404, "Can't find court case."));
             }
 
             courtCase.court = req.body.court || courtCase.court;
@@ -105,17 +103,15 @@ class CourtCaseController {
 
             return res.status(200).send({courtCase});
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(400, "Can't update court case."));
         }
     }
 
-    public deleteCourtCase = async (req: express.Request, res: express.Response) => {
+    public deleteCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
             const courtCase = await db.CourtCase.findByPk(req.params.id);
             if (!courtCase) {
-                return res.status(404).send({
-                    message: "CourtCase Not Found",
-                });
+                return next(new HttpException(400, "Can't find court case."));
             }
 
             courtCase.court = null;
@@ -127,7 +123,7 @@ class CourtCaseController {
 
             return res.status(200).send({courtCase});
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(400, "Can't update court case."));
         }
     }
 }
