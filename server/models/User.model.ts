@@ -1,6 +1,7 @@
 import {BuildOptions, DataTypes, Model, Sequelize} from "sequelize";
 import {IDatabase} from "../typings/DbInterface";
 import {SequelizeAttributes} from "../typings/SequelizeAttributes/index";
+import {ICourtCase} from "./CourtCase.model";
 
 export interface IUser extends Model {
     id?: number;
@@ -10,6 +11,7 @@ export interface IUser extends Model {
     password: string;
     phoneNumber: string;
     court: string;
+    courtCases: ICourtCase[];
     createdAt?: Date;
     updatedAt?: Date;
 }

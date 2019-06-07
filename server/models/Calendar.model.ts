@@ -1,9 +1,11 @@
 import {BuildOptions, DataTypes, Model, Sequelize} from "sequelize";
 import {IDatabase} from "../typings/DbInterface";
 import {SequelizeAttributes} from "../typings/SequelizeAttributes";
+import {ICourtCase} from "./CourtCase.model";
 
 export interface ICalendar extends Model {
     id?: number;
+    courtCases: ICourtCase[];
     date: string;
     createdAt?: Date;
     updatedAt?: Date;

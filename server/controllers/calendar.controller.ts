@@ -10,7 +10,12 @@ class CalendarController {
 
     public getAllCalendarData = async (req: express.Request, res: express.Response) => {
         try {
-            const calendars = await db.Calendar.findAll();
+            const calendars = await db.Calendar.findAll({
+                include: [{
+                    as: "courtCases",
+                    model: db.CourtCase,
+                }],
+            });
             res.status(200).json({calendars});
         } catch (err) {
             res.status(500).json({err: ["oops", err]});
