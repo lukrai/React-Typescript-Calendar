@@ -1,9 +1,12 @@
 import { Router} from "express";
+import AuthenticationController from "../controllers/authentication.controller";
 import UserController from "../controllers/user.controller";
+import authMiddleware from "../middlewares/auth.middleware";
 
 class UserRouter {
     public router: Router;
     private userController: UserController = new UserController();
+    private authController: AuthenticationController = new AuthenticationController();
 
     constructor() {
         this.router = Router();
@@ -11,11 +14,15 @@ class UserRouter {
     }
 
     private init() {
-        this.router.get("/", this.userController.getAllUsers);
-        this.router.post("/", this.userController.createUser);
-        this.router.get("/:id", this.userController.getUser);
-        this.router.put("/:id", this.userController.updateUser);
-        this.router.delete("/:id", this.userController.deleteUser);
+        this.router.get("/user", authMiddleware, this.userController.getAllUsers);
+        this.router.post("/user", this.userController.createUser);
+        this.router.get("/user/:id", authMiddleware, this.userController.getUser);
+        this.router.put("/user/:id", this.userController.updateUser);
+        this.router.delete("/user/:id", this.userController.deleteUser);
+
+        this.router.post("/auth/register", this.authController.register);
+        this.router.post("/auth/login", this.authController.logIn);
+        this.router.post("/auth/logout", this.authController.logOut);
     }
 }
 

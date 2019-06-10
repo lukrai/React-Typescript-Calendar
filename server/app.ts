@@ -1,4 +1,5 @@
 import * as bodyParser from "body-parser";
+import * as cookieParser from "cookie-parser";
 import * as express from "express";
 import errorMiddleware from "./middlewares/error.middleware";
 import {createModels} from "./models";
@@ -38,6 +39,7 @@ class App {
     private initializeMiddlewares() {
         this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(bodyParser.json());
+        this.app.use(cookieParser());
         this.app.use(this.loggerMiddleware);
     }
 
@@ -52,7 +54,7 @@ class App {
         router.get("/favicon.ico", (req, res) => res.status(204));
         this.app.use("/", router);
         this.app.use("/api/calendar", CalendarRouter);
-        this.app.use("/api/user", UserRouter);
+        this.app.use("/api", UserRouter);
         this.app.use("/api/court-case", CourtCaseRouter);
     }
 
