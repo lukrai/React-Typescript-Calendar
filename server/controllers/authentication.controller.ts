@@ -32,8 +32,9 @@ class AuthenticationController {
             });
             user.password = undefined;
             const tokenData = this.createToken(user);
-            response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
-            response.send(user);
+            // response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
+            response.cookie("Authorization", tokenData.token, {maxAge: tokenData.expiresIn, httpOnly: true});
+            return response.send(user);
         }
     }
 
@@ -48,8 +49,9 @@ class AuthenticationController {
             if (isPasswordMatching) {
                 user.password = undefined;
                 const tokenData = this.createToken(user);
-                response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
-                response.send(user);
+                // response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
+                response.cookie("Authorization", tokenData.token, {maxAge: tokenData.expiresIn, httpOnly: true});
+                return response.send(user);
             } else {
                 next(new WrongCredentialsException());
             }
@@ -59,12 +61,14 @@ class AuthenticationController {
     }
 
     public logOut = (request: express.Request, response: express.Response) => {
-        response.setHeader("Set-Cookie", ["Authorization=;Max-age=0"]);
+        // response.setHeader("Set-Cookie", ["Authorization=;Max-age=0"]);
+        response.cookie("Authorization", "", {maxAge: 0});
         response.send(200);
     }
 
     private createCookie(tokenData: ITokenData) {
-        return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+        return `uthorization111=${tokenData.token}; Max-Age=${tokenData.expiresIn}`;
+        // return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
     }
 
     private createToken(user: IUser): ITokenData {

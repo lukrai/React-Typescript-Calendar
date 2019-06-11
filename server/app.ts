@@ -1,5 +1,6 @@
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
+import * as cors from "cors";
 import * as express from "express";
 import errorMiddleware from "./middlewares/error.middleware";
 import {createModels} from "./models";
@@ -14,6 +15,7 @@ class App {
 
     constructor(port = 5000) {
         this.app = express();
+        this.app.use(cors({origin: "http://localhost:3000", credentials: true}));
         this.port = port;
         this.initializeDatabaseConnection();
         this.initializeMiddlewares();

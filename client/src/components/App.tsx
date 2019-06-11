@@ -4,7 +4,7 @@ import Header from "./Header";
 import {BrowserRouter, Route} from "react-router-dom";
 import Home from "./Home";
 import Register from "./Register";
-import Login from "./Login";
+import Login from "./login/Login";
 import Dashboard from "./Dashboard";
 
 const App: React.FC = () => {
