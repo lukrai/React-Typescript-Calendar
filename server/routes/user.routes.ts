@@ -23,6 +23,7 @@ class UserRouter {
         this.router.post("/auth/register", this.authController.register);
         this.router.post("/auth/login", this.authController.logIn);
         this.router.post("/auth/logout", this.authController.logOut);
+        this.router.get("/auth/status", authMiddleware, this.authController.status);
     }
 }
 

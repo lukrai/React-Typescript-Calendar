@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import {NextFunction, Response} from "express";
 import * as jwt from "jsonwebtoken";
 import AuthenticationTokenMissingException from "../exceptions/AuthenticationTokenMissingException";
 import WrongAuthenticationTokenException from "../exceptions/WrongAuthenticationTokenException";
@@ -14,7 +14,7 @@ async function authMiddleware(request: IRequestWithUser, response: Response, nex
             const verificationResponse = jwt.verify(cookies.Authorization, secret) as IDataStoredInToken;
             const id = verificationResponse.id;
 
-            const user = await db.User.findByPk(id);
+            const user = await db.User.findByPk(id, {attributes: {exclude: ["password"]}});
             if (user) {
                 request.user = user;
                 next();

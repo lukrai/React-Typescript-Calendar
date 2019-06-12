@@ -15,7 +15,6 @@ class App {
 
     constructor(port = 5000) {
         this.app = express();
-        this.app.use(cors({origin: "http://localhost:3000", credentials: true}));
         this.port = port;
         this.initializeDatabaseConnection();
         this.initializeMiddlewares();
@@ -42,6 +41,7 @@ class App {
         this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(bodyParser.json());
         this.app.use(cookieParser());
+        this.app.use(cors({origin: "http://localhost:3000", credentials: true}));
         this.app.use(this.loggerMiddleware);
     }
 

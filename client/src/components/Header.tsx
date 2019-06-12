@@ -1,8 +1,6 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-// import { connect } from "react-redux";
-
-// import * as actions from '../actions';
+import React, {Component} from "react";
+import {Link} from "react-router-dom";
+import {logout} from "./login/login.actions";
 
 export default class Header extends Component<any> {
     constructor(props: any) {
@@ -12,7 +10,7 @@ export default class Header extends Component<any> {
 
     public render() {
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{ marginBottom: "30px" }}>
+            <nav className="navbar navbar-expand navbar-dark bg-dark" style={{marginBottom: "30px"}}>
                 <Link className="navbar-brand" to="/">Calendar</Link>
 
                 <div className="collapse navbar-collapse">
@@ -23,34 +21,26 @@ export default class Header extends Component<any> {
                     </ul>
 
                     <ul className="nav navbar-nav ml-auto">
-                        { !this.props.isAuth ?
+                        {!this.props.isAuthenticated ?
                             [<li className="nav-item" key="signup">
                                 <Link className="nav-link" to="/register">Sign Up</Link>
                             </li>,
                                 <li className="nav-item" key="signin">
                                     <Link className="nav-link" to="/login">Sign In</Link>
-                                </li>] : null }
+                                </li>] : null}
 
-                        {/*{ this.props.isAuth ?*/}
+                        {this.props.isAuthenticated ?
                             <li className="nav-item">
                                 <Link className="nav-link" to="/signout" onClick={this.signOut}>Sign Out</Link>
-                            </li>
-                        {/*    </li> : null }*/}
+                            </li> : null}
                     </ul>
                 </div>
             </nav>
         );
     }
 
-    private signOut() {
-        this.props.signOut();
+    private async signOut() {
+        await logout();
+        await this.props.updateUserState({isAuthenticated: false, user: null});
     }
 }
-
-function mapStateToProps(state: any) {
-    return {
-        isAuth: state.auth.isAuthenticated,
-    };
-}
-
-// export default connect(mapStateToProps, actions)(Header);
