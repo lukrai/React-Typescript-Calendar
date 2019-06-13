@@ -1,8 +1,9 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import {logout} from "./login/login.actions";
 
-export default class Header extends Component<any> {
+class Header extends Component<any> {
     constructor(props: any) {
         super(props);
         this.signOut = this.signOut.bind(this);
@@ -42,5 +43,8 @@ export default class Header extends Component<any> {
     private async signOut() {
         await logout();
         await this.props.updateUserState({isAuthenticated: false, user: null});
+        this.props.history.push("/login");
     }
 }
+
+export default withRouter(Header);

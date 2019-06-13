@@ -1,8 +1,8 @@
-import {Formik} from "formik";
+import {ErrorMessage, Field, Form, Formik} from "formik";
 import React from "react";
 import {login} from "./login.actions";
 
-const Login = () => (
+const Login = (props: any) => (
     <div>
         <Formik
             initialValues={{email: "", password: ""}}
@@ -17,55 +17,41 @@ const Login = () => (
                 }
                 return errors;
             }}
-            onSubmit={(values, {setSubmitting}) => {
-                login({email: values.email, password: values.password})
-                    .then(() => {
-                    setSubmitting(false);
-                });
+            onSubmit={async (values, {setSubmitting}) => {
+                const result = await login({email: values.email, password: values.password});
+                props.updateUserState(result);
+                setSubmitting(false);
+                props.history.push("/");
             }}
         >
-            {({
-                  values,
-                  errors,
-                  touched,
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                  isSubmitting,
-                  /* and other goodies */
-              }) => (
-                <form onSubmit={handleSubmit} style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
+            {({errors, isSubmitting}) => (
+                <Form style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
                     <div className="form-group">
                         <label htmlFor="exampleInputEmail1">Email address</label>
-                        <input
+                        <Field
                             className="form-control"
                             placeholder="Email"
                             type="email"
                             name="email"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={values.email}
                         />
                     </div>
-                    {errors.email && touched.email && errors.email}
+                    <ErrorMessage name="email" component="div"/>
+                    {/*{touched.password && errors.password && <div>{errors.password}</div>}*/}
 
                     <div className="form-group">
                         <label htmlFor="exampleInputPassword1">Password</label>
-                        <input
+                        <Field
                             className="form-control"
                             placeholder="Password"
                             type="password"
                             name="password"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={values.password}
                         />
                     </div>
-                    <small className="form-text text-muted">{errors.password && touched.password && errors.password}.</small>
+                    <ErrorMessage name="password" component="div"/>
                     <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
                         Submit
                     </button>
-                </form>
+                </Form>
             )}
         </Formik>
     </div>

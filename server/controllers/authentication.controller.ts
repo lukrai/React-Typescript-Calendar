@@ -60,8 +60,8 @@ class AuthenticationController {
     }
 
     public logOut = (request: express.Request, response: express.Response) => {
-        response.cookie("Authorization", "", {maxAge: 0});
-        return response.status(200);
+        response.cookie("Authorization", "", {maxAge: 0, httpOnly: true});
+        return response.send(200);
     }
 
     public status = (request: IRequestWithUser, response: express.Response) => {
