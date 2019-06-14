@@ -1,12 +1,12 @@
 import React, {Component} from "react";
 import {BrowserRouter, Route} from "react-router-dom";
-import Dashboard from "./Dashboard";
-import Header from "./Header";
-import Home from "./Home";
+import Dashboard from "./components/Dashboard";
+import Header from "./components/Header";
+import Home from "./components/Home";
 import Login from "./login/Login";
-import {getCurrentUser} from "./login/login.actions";
-import {PrivateRoute} from "./PrivateRoutes";
-import Register from "./Register";
+import {getCurrentUser} from "./common/auth.actions";
+import {PrivateRoute} from "./components/PrivateRoutes";
+import Register from "./components/Register";
 
 interface IState {
     isAuthenticated: boolean;
@@ -40,7 +40,7 @@ class App extends Component<any, IState> {
                     <PrivateRoute exact path="/" component={Home} isAuthenticated={this.state.isAuthenticated}/>
                     <Route exact path="/register" component={Register}/>
                     <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState}/>}/>
-                    <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated}/>
+                    <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>
                     {/*{props.children}*/}
                 </div>
             </BrowserRouter>

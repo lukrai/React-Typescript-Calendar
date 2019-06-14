@@ -15,10 +15,10 @@ class UserRouter {
 
     private init() {
         this.router.get("/user", authMiddleware, this.userController.getAllUsers);
-        this.router.post("/user", this.userController.createUser);
+        this.router.post("/user", authMiddleware, this.userController.createUser);
         this.router.get("/user/:id", authMiddleware, this.userController.getUser);
-        this.router.put("/user/:id", this.userController.updateUser);
-        this.router.delete("/user/:id", this.userController.deleteUser);
+        this.router.put("/user/:id", authMiddleware, this.userController.updateUser);
+        this.router.delete("/user/:id", authMiddleware, this.userController.deleteUser);
 
         this.router.post("/auth/register", this.authController.register);
         this.router.post("/auth/login", this.authController.logIn);

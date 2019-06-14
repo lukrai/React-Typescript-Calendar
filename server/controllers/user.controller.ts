@@ -1,6 +1,10 @@
 import * as express from "express";
 import {db} from "../models";
 import {IUser} from "../models/User.model";
+import NotAuthorizedException from "../exceptions/NotAuthorizedException";
+import HttpException from "../exceptions/HttpException";
+import {NextFunction} from "express";
+import {IRequestWithUser} from "../typings/Authentication";
 
 class UserController {
     constructor() {
@@ -16,8 +20,11 @@ class UserController {
         }
     }
 
-    public getUser = async (req: express.Request, res: express.Response) => {
+    public getUser = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {
         try {
+            if (req.user.id !== Number(req.params.id)) {
+                return next(new NotAuthorizedException());
+            }
             const user = await db.User.findByPk(req.params.id, {
                 attributes: {
                     exclude: ["password"],
@@ -25,6 +32,12 @@ class UserController {
                 include: [{
                     as: "courtCases",
                     model: db.CourtCase,
+                    limit: 50,
+                    order: [["updatedAt", "DESC"]],
+                    include: [{
+                        model: db.Calendar,
+                        as: "calendar",
+                    }],
                 }],
             });
             if (!user) {
@@ -32,10 +45,10 @@ class UserController {
                     message: "User Not Found",
                 });
             }
-            return res.status(200).send({user});
+            return res.status(200).send(user);
         } catch (err) {
             console.log(err);
-            return res.status(400).send(err);
+            next(new HttpException(500, "Could not get user."));
         }
     }
 

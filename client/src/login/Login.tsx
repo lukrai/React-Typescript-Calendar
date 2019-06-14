@@ -1,6 +1,6 @@
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import React from "react";
-import {login} from "./login.actions";
+import {login} from "../common/auth.actions";
 
 const Login = (props: any) => (
     <div>

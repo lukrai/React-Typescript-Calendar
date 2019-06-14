@@ -1,11 +1,12 @@
 import * as express from "express";
-import {db} from "../models";
-import {ICourtCase} from "../models/CourtCase.model";
-import {DateTime} from "luxon";
-import {getNextMonthsDate} from "../helpers/date.helper";
-import {ICalendar} from "../models/Calendar.model";
 import {NextFunction} from "express";
+import {DateTime} from "luxon";
 import HttpException from "../exceptions/HttpException";
+import {getNextMonthsDate} from "../helpers/date.helper";
+import {db} from "../models";
+import {ICalendar} from "../models/Calendar.model";
+import {ICourtCase} from "../models/CourtCase.model";
+import {IRequestWithUser} from "../typings/Authentication";
 
 const availableCalendarTimes = ["8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
 const numberOfColums = 7;
@@ -36,7 +37,7 @@ class CourtCaseController {
         }
     }
 
-    public createCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
+    public createCourtCase = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {
         try {
             const nextMonthsDate = getNextMonthsDate(DateTime.local(), db.defaultWeekDay);
             let calendar: ICalendar = await db.Calendar.findOne(
@@ -45,6 +46,10 @@ class CourtCaseController {
                     include: [{
                         as: "courtCases",
                         model: db.CourtCase,
+                        include: [{
+                            model: db.Calendar,
+                            as: "calendar",
+                        }],
                     }],
                 });
             if (!calendar) {
@@ -66,9 +71,10 @@ class CourtCaseController {
                 updatedCourtCase.court = req.body.court;
                 updatedCourtCase.courtNo = req.body.courtNo;
                 updatedCourtCase.fileNo = req.body.fileNo;
+                updatedCourtCase.userId = req.user.id;
 
                 await updatedCourtCase.save();
-                return res.status(201).send({courtCase: updatedCourtCase});
+                return res.status(201).send(updatedCourtCase);
             }
 
             if (calendar.courtCases.length > 0) {
@@ -77,9 +83,10 @@ class CourtCaseController {
                     courtCaseToUpdate.court = req.body.court;
                     courtCaseToUpdate.courtNo = req.body.courtNo;
                     courtCaseToUpdate.fileNo = req.body.fileNo;
+                    courtCaseToUpdate.userId = req.user.id;
 
                     await courtCaseToUpdate.save();
-                    return res.status(201).send({courtCaseToUpdate});
+                    return res.status(201).send(courtCaseToUpdate);
                 }
                 return res.status(201).send({courtCase: null, message: "Times are filled for this date."});
             }

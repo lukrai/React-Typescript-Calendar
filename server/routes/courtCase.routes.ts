@@ -1,5 +1,6 @@
 import { Router} from "express";
 import CourtCaseController from "../controllers/courtCase.controller";
+import authMiddleware from "../middlewares/auth.middleware";
 
 class CourtCaseRoutesRouter {
     public router: Router;
@@ -12,7 +13,7 @@ class CourtCaseRoutesRouter {
 
     private init() {
         this.router.get("/", this.courtCaseController.getAllCourtCases);
-        this.router.post("/", this.courtCaseController.createCourtCase);
+        this.router.post("/", authMiddleware, this.courtCaseController.createCourtCase);
         this.router.get("/:id", this.courtCaseController.getCourtCase);
         this.router.put("/:id", this.courtCaseController.updateCourtCase);
         this.router.delete("/:id", this.courtCaseController.deleteCourtCase);

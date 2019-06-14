@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import { withRouter } from "react-router-dom";
-import {logout} from "./login/login.actions";
+import {logout} from "../common/auth.actions";
 
 class Header extends Component<any> {
     constructor(props: any) {
