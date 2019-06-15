@@ -22,6 +22,29 @@ export const PrivateRoute = (props: { isAuthenticated: boolean; user?: any } & R
     );
 };
 
+export const PrivateAdminRoute = (props: { isAuthenticated: boolean; user: any } & RouteProps) => {
+    const {component, isAuthenticated, user, ...rest} = props;
+    console.log(isAuthenticated);
+    console.log(user && user.isAdmin);
+    return (
+        <Route
+            {...rest}
+            render={routeProps => {
+                return isAuthenticated && user && user.isAdmin ? (
+                    renderMergedProps(component, routeProps, rest)
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: "/login",
+                            state: {from: routeProps.location},
+                        }}
+                    />
+                );
+            }}
+        />
+    );
+};
+
 const renderMergedProps = (component: any, ...rest: any) => {
     const finalProps = Object.assign({}, ...rest);
     return (

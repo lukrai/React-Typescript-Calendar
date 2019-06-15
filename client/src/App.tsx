@@ -5,9 +5,10 @@ import EventErrorHandler from "./common/EventErrorHandler";
 import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import {PrivateRoute} from "./components/PrivateRoutes";
+import {PrivateAdminRoute, PrivateRoute} from "./components/PrivateRoutes";
 import Register from "./components/Register";
 import Login from "./login/Login";
+import Calendar from "./components/Calendar";
 
 interface IState {
     isAuthenticated: boolean;
@@ -44,6 +45,7 @@ class App extends Component<any, IState> {
                     <EventErrorHandler ref={eventErrorHandler => this.eventErrorHandler = eventErrorHandler}>
                         <Header isAuthenticated={this.state.isAuthenticated} updateUserState={this.updateUserState}/>
                         <PrivateRoute exact path="/" component={Home} isAuthenticated={this.state.isAuthenticated}/>
+                        <PrivateAdminRoute exact path="/calendar" component={Calendar} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>
                         <Route exact path="/register" component={Register}/>
                         <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
                         <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>

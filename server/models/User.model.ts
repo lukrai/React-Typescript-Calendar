@@ -11,6 +11,7 @@ export interface IUser extends Model {
     password: string;
     phoneNumber: string;
     court: string;
+    isAdmin: boolean;
     courtCases: ICourtCase[];
     createdAt?: Date;
     updatedAt?: Date;
@@ -41,6 +42,9 @@ export const UserFactory = (sequelize: Sequelize): UserModel => {
         },
         phoneNumber: {
             type: DataTypes.STRING,
+        },
+        isAdmin: {
+            type: DataTypes.BOOLEAN,
         },
     };
 

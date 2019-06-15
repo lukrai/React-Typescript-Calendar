@@ -14,6 +14,9 @@ export default class EventErrorHandler extends Component {
             transition: Flip,
         });
     }
+    private static getDerivedStateFromError(error: Error) { // tslint:disable-line:member-ordering
+        console.log(error);
+    }
 
     public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         this.triggerErrorToast(error);
