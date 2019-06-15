@@ -1,12 +1,13 @@
 import React, {Component} from "react";
 import {BrowserRouter, Route} from "react-router-dom";
+import {getCurrentUser} from "./common/auth.actions";
+import EventErrorHandler from "./common/EventErrorHandler";
 import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import Login from "./login/Login";
-import {getCurrentUser} from "./common/auth.actions";
 import {PrivateRoute} from "./components/PrivateRoutes";
 import Register from "./components/Register";
+import Login from "./login/Login";
 
 interface IState {
     isAuthenticated: boolean;
@@ -14,6 +15,7 @@ interface IState {
 }
 
 class App extends Component<any, IState> {
+    private eventErrorHandler: any;
     constructor(props: any) {
         super(props);
         this.state = {
@@ -28,20 +30,25 @@ class App extends Component<any, IState> {
     }
 
     public updateUserState = (userObject: IState) => {
-        console.log(userObject);
         this.setState(userObject);
+    }
+
+    public triggerErrorToast = (error: Error) => {
+        this.eventErrorHandler.triggerErrorToast(error);
     }
 
     public render() {
         return (
             <BrowserRouter>
                 <div>
-                    <Header isAuthenticated={this.state.isAuthenticated} updateUserState={this.updateUserState}/>
-                    <PrivateRoute exact path="/" component={Home} isAuthenticated={this.state.isAuthenticated}/>
-                    <Route exact path="/register" component={Register}/>
-                    <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState}/>}/>
-                    <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>
-                    {/*{props.children}*/}
+                    <EventErrorHandler ref={eventErrorHandler => this.eventErrorHandler = eventErrorHandler}>
+                        <Header isAuthenticated={this.state.isAuthenticated} updateUserState={this.updateUserState}/>
+                        <PrivateRoute exact path="/" component={Home} isAuthenticated={this.state.isAuthenticated}/>
+                        <Route exact path="/register" component={Register}/>
+                        <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
+                        <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>
+                        {/*{props.children}*/}
+                    </EventErrorHandler>
                 </div>
             </BrowserRouter>
         );

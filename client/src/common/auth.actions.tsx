@@ -9,7 +9,7 @@ export async function login(user: any) {
             return {isAuthenticated: false, user: null};
         }
     } catch (err) {
-        console.log(JSON.stringify(err));
+        throw new Error(err.response.data.message || err);
     }
 }
 

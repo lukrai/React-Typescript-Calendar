@@ -18,10 +18,15 @@ const Login = (props: any) => (
                 return errors;
             }}
             onSubmit={async (values, {setSubmitting}) => {
-                const result = await login({email: values.email, password: values.password});
-                props.updateUserState(result);
-                setSubmitting(false);
-                props.history.push("/");
+                try {
+                    const result = await login({email: values.email, password: values.password});
+                    props.updateUserState(result);
+                    setSubmitting(false);
+                    props.history.push("/");
+                } catch (err) {
+                    setSubmitting(false);
+                    props.triggerErrorToast(err);
+                }
             }}
         >
             {({errors, isSubmitting}) => (
