@@ -22,10 +22,8 @@ export const PrivateRoute = (props: { isAuthenticated: boolean; user?: any } & R
     );
 };
 
-export const PrivateAdminRoute = (props: { isAuthenticated: boolean; user: any } & RouteProps) => {
+export const PrivateAdminRoute = (props: { isAuthenticated: boolean; user: any, triggerErrorToast?: any } & RouteProps) => {
     const {component, isAuthenticated, user, ...rest} = props;
-    console.log(isAuthenticated);
-    console.log(user && user.isAdmin);
     return (
         <Route
             {...rest}

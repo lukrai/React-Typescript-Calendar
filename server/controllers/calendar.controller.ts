@@ -1,7 +1,8 @@
 import * as express from "express";
+import {DateTime} from "luxon";
+import HttpException from "../exceptions/HttpException";
 import {db} from "../models";
 import {ICalendar} from "../models/Calendar.model";
-import {DateTime} from "luxon";
 
 class CalendarController {
     constructor() {
@@ -22,13 +23,11 @@ class CalendarController {
         }
     }
 
-    public getCalendar = async (req: express.Request, res: express.Response) => {
+    public getCalendar = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             const dateFromParam = DateTime.fromISO(req.params.date);
             if (!dateFromParam.isValid) {
-                return res.status(400).send({
-                    message: "Wrong date param format. Should be YYYY-MM-DD",
-                });
+                return next(new HttpException(400, "Wrong date param format. Should be YYYY-MM-DD."));
             }
 
             const calendar = await db.Calendar.findOne({
@@ -36,17 +35,17 @@ class CalendarController {
                 include: [{
                     as: "courtCases",
                     model: db.CourtCase,
+                    limit: 100,
+                    order: [["time", "ASC"], ["updatedAt", "DESC"]],
                 }],
             });
 
             if (!calendar) {
-                return res.status(404).send({
-                    message: "Calendar Not Found",
-                });
+                return next(new HttpException(404, "Calendar does not exist."));
             }
-            return res.status(200).send({calendar});
+            return res.status(200).send(calendar);
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(404, "Can't fetch calendar."));
         }
     }
 

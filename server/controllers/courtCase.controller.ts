@@ -8,7 +8,7 @@ import {ICalendar} from "../models/Calendar.model";
 import {ICourtCase} from "../models/CourtCase.model";
 import {IRequestWithUser} from "../typings/Authentication";
 
-const availableCalendarTimes = ["8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
+const availableCalendarTimes = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
 const numberOfColums = 7;
 
 class CourtCaseController {
