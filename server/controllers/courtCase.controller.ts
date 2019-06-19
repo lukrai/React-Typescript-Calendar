@@ -105,10 +105,10 @@ class CourtCaseController {
             courtCase.court = req.body.court || courtCase.court;
             courtCase.courtNo = req.body.courtNo || courtCase.court;
             courtCase.fileNo = req.body.fileNo || courtCase.fileNo;
-            courtCase.isDisabled = req.body.isDisabled || courtCase.isDisabled;
+            courtCase.isDisabled = req.body.isDisabled === false ? false : req.body.isDisabled === true ? true : courtCase.isDisabled;
             await courtCase.save();
 
-            return res.status(200).send({courtCase});
+            return res.status(200).send(courtCase);
         } catch (err) {
             return next(new HttpException(400, "Can't update court case."));
         }

@@ -36,7 +36,7 @@ class CalendarController {
                     as: "courtCases",
                     model: db.CourtCase,
                     limit: 100,
-                    order: [["time", "ASC"], ["updatedAt", "DESC"]],
+                    order: [["id", "ASC"]],
                 }],
             });
 
