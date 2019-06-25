@@ -49,10 +49,10 @@ export class CustomDayPickerInput extends React.Component<any, any> {
 
     public render() {
         return (
-            <div style={{display: "flex"}}>
+            <div style={{display: "flex", marginLeft: "16px"}}>
                 <h5 className="font-weight-bold" style={{alignSelf: "flex-end", marginRight: "1em"}}>Posėdžių data</h5>
                 <DayPickerInput
-                    // component={DatePickerCustomInput}
+                    inputProps={{ className: "form-control"}}
                     value={this.state.selectedDay}
                     format={"LL"}
                     dayPickerProps={{

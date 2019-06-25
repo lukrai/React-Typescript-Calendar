@@ -1,20 +1,50 @@
 import Octicon, {CircleSlash} from "@primer/octicons-react";
-import axios from "axios";
 import React, {useEffect, useState} from "react";
 import Button from "react-bootstrap/es/Button";
 import Card from "react-bootstrap/es/Card";
 import Modal from "react-bootstrap/es/Modal";
+import {disableCourtCase, disableEnableCourtCases, getCalendarData} from "./calendar.actions";
 import {CustomDayPickerInput} from "./CustomDayPickerComponent";
-import {disableCourtCase, getCalendarData} from "./calendar.actions";
 
 const columnCount = 7;
 
-export default function Calendar(props: any) {
-    const [calendarData, setCalendarData]: [any, any] = useState({});
-    const [dateParam, setDateParam] = useState("2019-07-10");
-    const [date, setDate] = useState(
-        "2019-07-10",
-    );
+interface ICalendarProps {
+    triggerErrorToast(err: string | Error): void;
+}
+
+interface ICalendarData {
+    courtCases: ICourtCase[];
+    createdAt: string;
+    date: string;
+    id: number;
+    updatedAt: string;
+}
+
+interface ICourtCase {
+    calendarId: number;
+    court: string;
+    courtNo: string;
+    createdAt: string;
+    fileNo: string;
+    id: number;
+    isDisabled: boolean;
+    time: string;
+    updatedAt: string;
+    userId: number;
+}
+
+const initialCalendarData: ICalendarData = {
+    courtCases: [],
+    createdAt: null,
+    date: null,
+    id: null,
+    updatedAt: null,
+};
+
+export default function Calendar(props: ICalendarProps) {
+    const [calendarData, setCalendarData] = useState<ICalendarData>(initialCalendarData);
+    const [dateParam, setDateParam] = useState<string>("2019-07-10");
+    const [date, setDate] = useState<string>("2019-07-10");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,35 +65,38 @@ export default function Calendar(props: any) {
 
     return (
         <>
-            <CustomDayPickerInput setDateParam={setDateParam}>
-                <button
-                    type="button"
-                    onClick={() =>
-                        setDate(dateParam)
-                    }
-                >
-                    Search
-                </button>
-            </CustomDayPickerInput>
+            <div className="input-group">
+                <CustomDayPickerInput setDateParam={setDateParam}>
+                    <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() =>
+                            setDate(dateParam)
+                        }
+                    >
+                        Search
+                    </button>
+                </CustomDayPickerInput>
+            </div>
             <div className="container-fluid">
                 {calendarData.courtCases
                 && calendarData.courtCases.length > 0
-                && <GridColumnHeadings disableGridColumn={disableGridColumn} columnCount={columnCount}></GridColumnHeadings>}
+                && <GridColumnHeadings disableGridColumn={disableGridColumn} columnCount={columnCount}/>}
 
                 {calendarData.courtCases
                 && calendarData.courtCases.length > 0
                 && Object.keys(groupedCourtCases).map((key: string, index: number) =>
-                    <CalendarRow time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem}></CalendarRow>
+                    <CalendarRow time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem}/>,
                 )}
             </div>
         </>
     );
 
-    async function disableGridItem(courtCase: any) {
+    async function disableGridItem(courtCase: ICourtCase) {
         try {
-            const result: any = await disableCourtCase(courtCase.id, !courtCase.isDisabled);
+            const result: ICourtCase = await disableCourtCase(courtCase.id, !courtCase.isDisabled);
             setCalendarData(() => {
-                const data = calendarData.courtCases.map((o: any, i: number) => {
+                const data = calendarData.courtCases.map(o => {
                     if (o.id === result.id) {
                         return {...o, isDisabled: result.isDisabled};
                     }
@@ -77,34 +110,47 @@ export default function Calendar(props: any) {
 
     }
 
-    function disableGridColumn(columnIndex: number) {
-        setCalendarData(() => {
-            const data = calendarData.courtCases.map((courtCase: any, i: number) => {
-                if (i % columnCount === columnIndex) {
-                    return {...courtCase, isDisabled: !courtCase.isDisabled};
-                }
-                return courtCase;
+    async function disableGridColumn(columnIndex: number) {
+        try {
+            const courtCasesToUpdate = calendarData.courtCases.filter((courtCase, i: number) => i % columnCount === columnIndex);
+            const result: ICourtCase[] = await disableEnableCourtCases(courtCasesToUpdate);
+
+            setCalendarData(() => {
+                const data = calendarData.courtCases.map(courtCase => {
+                    const updatedCourtCase = result.find(o => o.id === courtCase.id);
+                    if (updatedCourtCase) {
+                        return updatedCourtCase;
+                    }
+                    return courtCase;
+                });
+                return {...calendarData, courtCases: data};
             });
-            return {...calendarData, courtCases: data};
-        });
+        } catch (err) {
+            props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+        }
     }
 }
 
-function CalendarRow(props: any): JSX.Element { // tslint:disable-line:function-name
+interface ICalendarRowProps {
+    time: string;
+    courtCases: ICourtCase[];
+    rowIndex: number;
+
+    disableGridItem(courtCase: ICourtCase): void;
+}
+
+function CalendarRow(props: ICalendarRowProps): JSX.Element { // tslint:disable-line:function-name
     const {courtCases, time, rowIndex} = props;
-    const isCasesNotEmpty = courtCases.some((courtCase: any) => courtCase != null);
+    const isCasesNotEmpty = courtCases.some(courtCase => courtCase != null);
     return (
         <div className="row" style={{flexWrap: "nowrap"}}>
             <div>{time}</div>
             {isCasesNotEmpty
-            && courtCases.map((o: any, index: number) => {
-                if (o != null && o.isDisabled !== true) {
-                    return <CalendarItem courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
-                } else if (o != null && o.isDisabled === true) {
+            && courtCases.map((o, index: number) => {
+                if (o != null && o.isDisabled === true) {
                     return <DisabledItem courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
                 }
-                return <DisabledItem courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
-                // return <EmptyItem rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
+                return <CalendarItem courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
             })}
         </div>
     );
@@ -114,28 +160,30 @@ function GridColumnHeadings(props: { columnCount: number, disableGridColumn(colu
     const headings: JSX.Element[] = [];
     for (let i = 0; i < props.columnCount; i += 1) {
         headings.push(
-            <div className="col" key={i}>
+            <div className="col" key={i} style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px", minWidth: "148px", textAlign: "center"}}>
                 <h3>
                     K{i + 1}
-                    <ConfirmDialog
-                        title={"Disable grid elements in this column?"}
-                        message={"This will disable all columns in this grid and existing items will be lost. Continue?"}
-                        callback={props.disableGridColumn.bind(null, i)}
-                    >
-                    </ConfirmDialog>
                 </h3>
+                <ConfirmDialog
+                    title={"Disable grid elements in this column?"}
+                    message={"This will disable all columns in this grid and existing items will be lost. Continue?"}
+                    callback={props.disableGridColumn.bind(null, i)}
+                />
             </div>,
         );
     }
 
     return (
-        <div className="row">
+        <div className="row" style={{flexWrap: "nowrap", marginTop: "12px", marginBottom: "12px"}}>
+            <div style={{minWidth: "38px"}}>
+                Time
+            </div>
             {headings}
         </div>
     );
 }
 
-function ConfirmDialog(props: any) {
+function ConfirmDialog(props: { title: string; message: string; callback(): void }) {
     const [isOpen, setIsOpen] = useState(false);
 
     function handleClose() {
@@ -156,7 +204,7 @@ function ConfirmDialog(props: any) {
     return (
         <>
             <Button variant="primary" onClick={handleOpen}>
-                Disable
+                Disable/Enable
             </Button>
 
             <Modal show={isOpen} onHide={handleClose}>
@@ -189,29 +237,23 @@ const groupByTime = groupBy("time");
 interface IPropsGridItem {
     rowIndex: number;
     columnIndex: number;
-    courtCase: any;
+    courtCase: ICourtCase;
 
-    disableGridItem(courtCase: any): void;
+    disableGridItem(courtCase: ICourtCase): void;
 }
 
-interface IPropsGridCalandarItem extends IPropsGridItem {
-    courtCase: any; // ICourtCase;
-}
-
-export function CalendarItem(props: IPropsGridCalandarItem) {
-    const {fileNo, court, courtNo, firstName, lastName, phoneNumber} = props.courtCase;
+export function CalendarItem(props: IPropsGridItem) {
+    const {fileNo, court, courtNo} = props.courtCase;
     const [isVisible, setIsVisible] = useState(false);
 
     return (
         <div className="col" style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px"}}>
-            <Card>
+            <Card style={{minHeight: "150px"}}>
                 <Card.Body>
                     <Card.Title>{fileNo}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">{fileNo}</Card.Subtitle>
+                    <Card.Subtitle className="mb-2 text-muted">{court}</Card.Subtitle>
                     <Card.Text>
                         <p>{court}</p>
-                        <p>{courtNo}</p>
-                        <p>{firstName} {lastName} {phoneNumber}</p>
                     </Card.Text>
                     <div
                         style={{
@@ -227,6 +269,7 @@ export function CalendarItem(props: IPropsGridCalandarItem) {
                         onMouseOut={() => setIsVisible(false)}
                     >
                         <Button color="secondary" onClick={() => props.disableGridItem(props.courtCase)}>
+                            <Octicon icon={CircleSlash} verticalAlign="middle"/>
                         </Button>
                     </div>
                 </Card.Body>
@@ -237,11 +280,11 @@ export function CalendarItem(props: IPropsGridCalandarItem) {
 }
 
 export function DisabledItem(props: IPropsGridItem) {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState<boolean>(false);
 
     return (
         <div className="col" style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px", minWidth: "148px", textAlign: "center"}}>
-            <Card bg="danger" text="white">
+            <Card bg="danger" text="white" style={{minHeight: "150px"}}>
                 <Card.Body>
                     <Octicon icon={CircleSlash} size="large" verticalAlign="middle"/>
                     <div
@@ -258,6 +301,7 @@ export function DisabledItem(props: IPropsGridItem) {
                         onMouseOut={() => setIsVisible(false)}
                     >
                         <Button color="secondary" onClick={() => props.disableGridItem(props.courtCase)}>
+                            <Octicon icon={CircleSlash} verticalAlign="middle"/>
                         </Button>
                     </div>
                 </Card.Body>
@@ -265,23 +309,3 @@ export function DisabledItem(props: IPropsGridItem) {
         </div>
     );
 }
-
-// export function EmptyItem(props: IPropsGridItem) {
-//     const [isVisible, setIsVisible] = useState(false);
-//     const itemStyle = {height: "100%", top: "0", right: "0", backgroundColor: isVisible ? "#e0e0e0" : "", opacity: isVisible ? 1 : 0, borderRadius: "4px"};
-//
-//     return (
-//         <div className="col">
-//             {/*<Grid item xs></Grid>*/}
-//             {/*<div*/}
-//             {/*    style={itemStyle}*/}
-//             {/*    onMouseOver={() => setIsVisible(true)}*/}
-//             {/*    onMouseOut={() => setIsVisible(false)}*/}
-//             {/*>*/}
-//             {/*    <IconButton color="secondary" onClick={() => props.disableGridItem(props.rowIndex, props.columnIndex)}>*/}
-//             {/*        <Block style={{ fontSize: "0.5em" }}></Block>*/}
-//             {/*    </IconButton>*/}
-//             {/*</div>*/}
-//         </div>
-//     );
-// }

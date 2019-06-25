@@ -114,6 +114,27 @@ class CourtCaseController {
         }
     }
 
+    public disableEnableCourtCases = async (req: express.Request, res: express.Response, next: NextFunction) => {
+        try {
+            if (!req.body.courtCases || req.body.courtCases.length < 1) {
+                return next(new HttpException(400, "CourtCases are missing in request body"));
+            }
+            const ids = req.body.courtCases.map(o => o.id);
+
+            const courtCases = await db.CourtCase.findAll({ where : { id : ids }});
+            const isDisabled = !courtCases.some(o => o.isDisabled === true);
+            const promises = courtCases.map(o => {
+                o.isDisabled = isDisabled;
+                return o.save();
+            });
+
+            const result = await Promise.all(promises);
+            return res.status(200).send(result);
+        } catch (err) {
+            return next(new HttpException(400, "Can't update court cases."));
+        }
+    }
+
     public deleteCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
             const courtCase = await db.CourtCase.findByPk(req.params.id);

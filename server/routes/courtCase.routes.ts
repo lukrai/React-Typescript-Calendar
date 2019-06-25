@@ -16,6 +16,7 @@ class CourtCaseRoutesRouter {
         this.router.post("/", authMiddleware, this.courtCaseController.createCourtCase);
         this.router.get("/:id", this.courtCaseController.getCourtCase);
         this.router.put("/:id", this.courtCaseController.updateCourtCase);
+        this.router.put("/", this.courtCaseController.disableEnableCourtCases);
         this.router.delete("/:id", this.courtCaseController.deleteCourtCase);
     }
 }
