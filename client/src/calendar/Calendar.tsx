@@ -1,4 +1,5 @@
 import Octicon, {CircleSlash} from "@primer/octicons-react";
+import {DateTime} from "luxon";
 import React, {useEffect, useState} from "react";
 import Button from "react-bootstrap/es/Button";
 import Card from "react-bootstrap/es/Card";
@@ -41,10 +42,13 @@ const initialCalendarData: ICalendarData = {
     updatedAt: null,
 };
 
+const defaultWeekDay = 3;
+
 export default function Calendar(props: ICalendarProps) {
+    const weekDate = getAdjustedWeekDate(DateTime.local(), defaultWeekDay);
     const [calendarData, setCalendarData] = useState<ICalendarData>(initialCalendarData);
-    const [dateParam, setDateParam] = useState<string>("2019-07-10");
-    const [date, setDate] = useState<string>("2019-07-10");
+    const [dateParam, setDateParam] = useState<string>(weekDate);
+    const [date, setDate] = useState<string>(weekDate);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -66,7 +70,7 @@ export default function Calendar(props: ICalendarProps) {
     return (
         <>
             <div className="input-group">
-                <CustomDayPickerInput setDateParam={setDateParam}>
+                <CustomDayPickerInput setDateParam={setDateParam} selectedDay={new Date(dateParam)}>
                     <button
                         className="btn btn-outline-secondary"
                         type="button"
@@ -86,7 +90,7 @@ export default function Calendar(props: ICalendarProps) {
                 {calendarData.courtCases
                 && calendarData.courtCases.length > 0
                 && Object.keys(groupedCourtCases).map((key: string, index: number) =>
-                    <CalendarRow time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem}/>,
+                    <CalendarRow key={key} time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem}/>,
                 )}
             </div>
         </>
@@ -148,9 +152,9 @@ function CalendarRow(props: ICalendarRowProps): JSX.Element { // tslint:disable-
             {isCasesNotEmpty
             && courtCases.map((o, index: number) => {
                 if (o != null && o.isDisabled === true) {
-                    return <DisabledItem courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
+                    return <DisabledItem key={o.id} courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
                 }
-                return <CalendarItem courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
+                return <CalendarItem key={o.id} courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
             })}
         </div>
     );
@@ -253,7 +257,7 @@ export function CalendarItem(props: IPropsGridItem) {
                     <Card.Title>{fileNo}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">{court}</Card.Subtitle>
                     <Card.Text>
-                        <p>{court}</p>
+                        {court}
                     </Card.Text>
                     <div
                         style={{
@@ -308,4 +312,16 @@ export function DisabledItem(props: IPropsGridItem) {
             </Card>
         </div>
     );
+}
+
+export function getAdjustedWeekDate(date: DateTime, weekDay: number): string {
+    const nextMonthDate = date;
+    let weekDayAdjustedDate = nextMonthDate;
+    if (nextMonthDate.weekday !== weekDay) {
+        weekDayAdjustedDate = nextMonthDate.set({weekday: weekDay});
+        if (weekDayAdjustedDate < nextMonthDate) {
+            weekDayAdjustedDate = weekDayAdjustedDate.plus({weeks: 1});
+        }
+    }
+    return weekDayAdjustedDate.toISODate();
 }

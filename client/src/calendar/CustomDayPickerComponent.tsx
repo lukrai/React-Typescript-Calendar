@@ -36,12 +36,14 @@ const enabledDaysByMonths: any[] = [
     // {enabledDay: 2, fromDate: new Date(2019, 3, 15)},
 ];
 
-export class CustomDayPickerInput extends React.Component<any, any> {
+interface IProps {
+    selectedDay: Date;
+    setDateParam(date: string): void;
+}
+
+export class CustomDayPickerInput extends React.Component<IProps> {
     constructor(props: any) {
         super(props);
-        this.state = {
-            selectedDay: undefined,
-        };
 
         this.handleDayClick = this.handleDayClick.bind(this);
         this.modifier = this.modifier.bind(this);
@@ -53,16 +55,19 @@ export class CustomDayPickerInput extends React.Component<any, any> {
                 <h5 className="font-weight-bold" style={{alignSelf: "flex-end", marginRight: "1em"}}>Posėdžių data</h5>
                 <DayPickerInput
                     inputProps={{ className: "form-control"}}
-                    value={this.state.selectedDay}
-                    format={"LL"}
+                    value={this.props.selectedDay}
+                    // formatDate={formatDate}
+                    // parseDate={parseDate}
+                    format="L"
                     dayPickerProps={{
                         onDayClick: this.handleDayClick,
                         firstDayOfWeek: 1,
                         disabledDays: {
-                            daysOfWeek: this.modifier(this.state.selectedDay),
+                            daysOfWeek: this.modifier(this.props.selectedDay),
                         },
                         showWeekNumbers: true,
                         locale: "lt",
+                        // localeUtils: MomentLocaleUtils,
                         months: MONTHS,
                         weekdaysLong: WEEKDAYS_LONG,
                         weekdaysShort: WEEKDAYS_SHORT,
@@ -70,15 +75,14 @@ export class CustomDayPickerInput extends React.Component<any, any> {
                 />
                 {this.props.children}
 
-                {this.renderDateWarning(this.state.selectedDay)}
+                {this.renderDateWarning(this.props.selectedDay)}
             </div>
         );
     }
 
-    private handleDayClick(day: any) {
+    private handleDayClick(day: Date) {
         const date = DateTime.fromJSDate(day);
         this.props.setDateParam(date.toISODate());
-        this.setState({selectedDay: day});
     }
 
     private modifier(date: Date) {

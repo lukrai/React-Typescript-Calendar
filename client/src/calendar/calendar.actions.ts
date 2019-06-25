@@ -26,7 +26,7 @@ export async function disableCourtCase(id: number, disable: boolean) {
     }
 }
 
-export async function disableEnableCourtCases(courtCases) {
+export async function disableEnableCourtCases(courtCases: any) {
     try {
         const response = await axios.put(`http://localhost:5000/api/court-case`, {courtCases});
         if (response.data) {

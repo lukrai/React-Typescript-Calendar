@@ -41,7 +41,7 @@ class CalendarController {
             });
 
             if (!calendar) {
-                return next(new HttpException(404, "Calendar does not exist."));
+                return next(new HttpException(404, `Calendar for date ${req.params.date} does not exist.`));
             }
             return res.status(200).send(calendar);
         } catch (err) {
