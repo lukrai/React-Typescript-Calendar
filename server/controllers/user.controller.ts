@@ -11,12 +11,14 @@ class UserController {
         console.log("Initialize user controller");
     }
 
-    public getAllUsers = async (req: express.Request, res: express.Response) => {
+    public getAllUsers = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
-            const users: IUser[] = await db.User.findAll();
-            res.status(200).json({users});
+            const users: IUser[] = await db.User.findAll({attributes: {
+                    exclude: ["password"],
+                }});
+            return res.status(200).send(users);
         } catch (err) {
-            res.status(500).json({err: ["oops", err]});
+            next(new HttpException(500, "Could not get users."));
         }
     }
 

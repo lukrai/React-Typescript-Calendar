@@ -22,6 +22,9 @@ class Header extends Component<any> {
                         <li className="nav-item">
                             <Link className="nav-link" to="/calendar">Calendar</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/users">Users</Link>
+                        </li>
                     </ul>
 
                     <ul className="nav navbar-nav ml-auto">

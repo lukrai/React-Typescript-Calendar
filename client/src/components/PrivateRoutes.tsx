@@ -29,7 +29,7 @@ export const PrivateAdminRoute = (props: { isAuthenticated: boolean; user: any, 
             {...rest}
             render={routeProps => {
                 return isAuthenticated && user && user.isAdmin ? (
-                    renderMergedProps(component, routeProps, rest)
+                    renderMergedProps(component, routeProps, rest, {user})
                 ) : (
                     <Redirect
                         to={{
