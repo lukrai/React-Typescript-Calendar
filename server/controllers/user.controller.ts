@@ -1,9 +1,10 @@
+import * as bcrypt from "bcryptjs";
 import * as express from "express";
+import {NextFunction} from "express";
+import HttpException from "../exceptions/HttpException";
+import NotAuthorizedException from "../exceptions/NotAuthorizedException";
 import {db} from "../models";
 import {IUser} from "../models/User.model";
-import NotAuthorizedException from "../exceptions/NotAuthorizedException";
-import HttpException from "../exceptions/HttpException";
-import {NextFunction} from "express";
 import {IRequestWithUser} from "../typings/Authentication";
 
 class UserController {
@@ -13,9 +14,11 @@ class UserController {
 
     public getAllUsers = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
-            const users: IUser[] = await db.User.findAll({attributes: {
+            const users: IUser[] = await db.User.findAll({
+                attributes: {
                     exclude: ["password"],
-                }});
+                }
+            });
             return res.status(200).send(users);
         } catch (err) {
             next(new HttpException(500, "Could not get users."));
@@ -54,42 +57,54 @@ class UserController {
         }
     }
 
-    public createUser = async (req: express.Request, res: express.Response) => {
+    public createUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
-            const user: IUser = await db.User.create({
-                court: req.body.court,
-                email: req.body.email,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                // password:  req.body.password
-                phoneNumber: req.body.phoneNumber,
+            const userData: IUser = req.body;
+            if (!userData.email || !userData.password || !userData.passwordConfirmation) {
+                return next(new HttpException(400, "Email or password is missing."));
+            }
+            if (userData.password.length < 8 && userData.password !== userData.passwordConfirmation) {
+                return next(new HttpException(400, "Invalid password provided."));
+            }
+            const hashedPassword = await bcrypt.hash(userData.password, 10);
+            const user = await db.User.create({
+                ...userData,
+                password: hashedPassword,
             });
-            return res.status(201).send({user});
+            user.password = undefined;
+            return res.status(201).send(user);
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(500, "Can't create user."));
         }
     }
 
-    public updateUser = async (req: express.Request, res: express.Response) => {
-        // const user = req.body;
+    public updateUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
+            const userData: IUser = req.body;
+            if (!userData.email) {
+                return next(new HttpException(400, "Email or password is missing."));
+            }
+            if (userData.password && userData.password.length < 8 && userData.password !== userData.passwordConfirmation) {
+                return next(new HttpException(400, "Invalid password provided."));
+            }
+
             const user = await db.User.findByPk(req.params.id);
             if (!user) {
-                return res.status(404).send({
-                    message: "User Not Found",
-                });
+                next(new HttpException(404, "User Not Found"));
             }
-            await user.updateAttributes({
-                court: req.body.court || user.court,
-                email: req.body.email || user.email,
-                firstName: req.body.firstName || user.firstName,
-                lastName: req.body.lastName || user.lastName,
-                // password:  req.body.password
-                phoneNumber: req.body.phoneNumber || user.phoneNumber,
-            });
-            return res.status(200).send({user});
+
+            user.firstName = userData.firstName || user.firstName;
+            user.lastName = userData.lastName || user.lastName;
+            user.email = userData.email || user.email;
+            user.phoneNumber = userData.phoneNumber || user.phoneNumber;
+            user.court = userData.court || user.court;
+            user.password = userData.password ? await bcrypt.hash(userData.password, 10) : user.password;
+            await user.save();
+
+            user.password = undefined;
+            return res.status(201).send(user);
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(500, "Can't create user."));
         }
     }
 
