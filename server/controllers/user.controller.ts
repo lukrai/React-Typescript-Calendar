@@ -108,18 +108,16 @@ class UserController {
         }
     }
 
-    public deleteUser = async (req: express.Request, res: express.Response) => {
+    public deleteUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
             const user = await db.User.findByPk(req.params.id);
             if (!user) {
-                return res.status(404).send({
-                    message: "User Not Found",
-                });
+                return next(new HttpException(404, "Can't delete user. User not found."));
             }
-            const r = await user.destroy();
-            return res.status(204).send();
+            await user.destroy();
+            return res.status(200).send(user);
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(500, "Can't delete user."));
         }
     }
 }
