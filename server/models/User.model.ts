@@ -9,6 +9,7 @@ export interface IUser extends Model {
     lastName: string;
     email: string;
     password: string;
+    passwordConfirmation?: string;
     phoneNumber: string;
     court: string;
     isAdmin: boolean;
@@ -30,6 +31,7 @@ export const UserFactory = (sequelize: Sequelize): UserModel => {
         },
         email: {
             type: DataTypes.STRING,
+            unique: true,
         },
         firstName: {
             type: DataTypes.STRING,

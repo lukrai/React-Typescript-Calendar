@@ -3,7 +3,7 @@ import {DateTime} from "luxon";
 import React, {useEffect, useState} from "react";
 import Button from "react-bootstrap/es/Button";
 import Card from "react-bootstrap/es/Card";
-import Modal from "react-bootstrap/es/Modal";
+import ConfirmDialog from "../common/ConfirmDialog";
 import {disableCourtCase, disableEnableCourtCases, getCalendarData} from "./calendar.actions";
 import {CustomDayPickerInput} from "./CustomDayPickerComponent";
 
@@ -171,6 +171,8 @@ function GridColumnHeadings(props: { columnCount: number, disableGridColumn(colu
                 <ConfirmDialog
                     title={"Disable grid elements in this column?"}
                     message={"This will disable all columns in this grid and existing items will be lost. Continue?"}
+                    buttonText={"Disable/Enable"}
+                    buttonVariant={"primary"}
                     callback={props.disableGridColumn.bind(null, i)}
                 />
             </div>,
@@ -184,48 +186,6 @@ function GridColumnHeadings(props: { columnCount: number, disableGridColumn(colu
             </div>
             {headings}
         </div>
-    );
-}
-
-function ConfirmDialog(props: { title: string; message: string; callback(): void }) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    function handleClose() {
-        setIsOpen(false);
-    }
-
-    function handleOpen() {
-        setIsOpen(true);
-    }
-
-    function handlePress(e: any) {
-        if (typeof props.callback === "function") {
-            handleClose();
-            props.callback();
-        }
-    }
-
-    return (
-        <>
-            <Button variant="primary" onClick={handleOpen}>
-                Disable/Enable
-            </Button>
-
-            <Modal show={isOpen} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{props.title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{props.message}</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        No
-                    </Button>
-                    <Button variant="primary" onClick={handlePress}>
-                        Yes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
     );
 }
 

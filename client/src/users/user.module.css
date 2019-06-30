@@ -1,0 +1,30 @@
+.headerContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-areas: 'header button';
+    grid-template-columns: 1fr 1fr;
+}
+
+.headerText {
+    grid-area: header;
+}
+
+.headerButton {
+    justify-self: end;
+    align-self: center;
+    grid-area: button;
+}
+
+.actionsContainer {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.actionsContainer > button {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}

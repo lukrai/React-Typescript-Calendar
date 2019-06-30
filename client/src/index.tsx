@@ -1,9 +1,10 @@
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.css";
 import React from "react";
 import ReactDOM from "react-dom";
+import "react-table/react-table.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import axios from "axios";
 
 axios.defaults.withCredentials = true;
 

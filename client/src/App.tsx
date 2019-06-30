@@ -9,6 +9,7 @@ import Home from "./components/Home";
 import {PrivateAdminRoute, PrivateRoute} from "./components/PrivateRoutes";
 import Register from "./components/Register";
 import Login from "./login/Login";
+import {Users} from "./users";
 
 interface IState {
     isAuthenticated: boolean;
@@ -45,6 +46,9 @@ class App extends Component<any, IState> {
                 <div>
                     <EventErrorHandler ref={eventErrorHandler => this.eventErrorHandler = eventErrorHandler}>
                         <Header isAuthenticated={this.state.isAuthenticated} updateUserState={this.updateUserState}/>
+                        <Route exact path="/register" component={Register}/>
+                        <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
+                        <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>
                         <PrivateRoute exact path="/" component={Home} isAuthenticated={this.state.isAuthenticated}/>
                         <PrivateAdminRoute
                             exact
@@ -54,9 +58,14 @@ class App extends Component<any, IState> {
                             user={this.state.user}
                             triggerErrorToast={this.triggerErrorToast}
                         />
-                        <Route exact path="/register" component={Register}/>
-                        <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
-                        <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>
+                        <PrivateAdminRoute
+                            exact
+                            path="/users"
+                            component={Users}
+                            isAuthenticated={this.state.isAuthenticated}
+                            user={this.state.user}
+                            triggerErrorToast={this.triggerErrorToast}
+                        />
                         {/*{props.children}*/}
                     </EventErrorHandler>
                 </div>
