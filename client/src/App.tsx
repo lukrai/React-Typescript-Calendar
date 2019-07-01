@@ -45,7 +45,7 @@ class App extends Component<any, IState> {
             <BrowserRouter>
                 <div>
                     <EventErrorHandler ref={eventErrorHandler => this.eventErrorHandler = eventErrorHandler}>
-                        <Header isAuthenticated={this.state.isAuthenticated} updateUserState={this.updateUserState}/>
+                        <Header isAuthenticated={this.state.isAuthenticated} user={this.state.user} updateUserState={this.updateUserState}/>
                         <Route exact path="/register" component={Register}/>
                         <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
                         <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>

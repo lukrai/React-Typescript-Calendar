@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
-import { withRouter } from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import {logout} from "../common/auth.actions";
 
 class Header extends Component<any> {
@@ -10,31 +10,40 @@ class Header extends Component<any> {
     }
 
     public render() {
+        const {user} = this.props;
         return (
             <nav className="navbar navbar-expand navbar-dark bg-dark" style={{marginBottom: "30px"}}>
                 <Link className="navbar-brand" to="/">Calendar</Link>
 
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav mr-auto">
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/dashboard">Dashboard</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/calendar">Calendar</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/users">Users</Link>
-                        </li>
+                        {this.props.isAuthenticated && <li className="nav-item">
+                          <Link className="nav-link" to="/dashboard">Dashboard</Link>
+                        </li>}
+                        {
+                            this.props.isAuthenticated && user && user.isAdmin
+                                ? [
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/calendar">Calendar</Link>
+                                    </li>,
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/users">Users</Link>
+                                    </li>,
+                                ]
+                                : null
+                        }
                     </ul>
 
                     <ul className="nav navbar-nav ml-auto">
-                        {!this.props.isAuthenticated ?
-                            [<li className="nav-item" key="signup">
-                                <Link className="nav-link" to="/register">Sign Up</Link>
-                            </li>,
-                                <li className="nav-item" key="signin">
-                                    <Link className="nav-link" to="/login">Sign In</Link>
-                                </li>] : null}
+                        {
+                            !this.props.isAuthenticated
+                                ? [
+                                    <li className="nav-item" key="signin">
+                                        <Link className="nav-link" to="/login">Sign In</Link>
+                                    </li>,
+                                ]
+                                : null
+                        }
 
                         {this.props.isAuthenticated ?
                             <li className="nav-item">
