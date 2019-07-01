@@ -41,12 +41,22 @@ export default class AddEditUserModal extends React.Component<any, any> {
 
                 <Formik
                     validationSchema={this.schema}
-                    onSubmit={async (values, {setSubmitting}) => {
+                    onSubmit={async (values, {setSubmitting, resetForm}) => {
                         try {
-                            console.log(values);
                             const result = await this.props.submitRequest(values);
                             this.props.updateUserData(result);
                             setSubmitting(false);
+                            resetForm({
+                                id: "",
+                                firstName: "",
+                                lastName: "",
+                                email: "",
+                                phoneNumber: "",
+                                court: "",
+                                password: "",
+                                passwordConfirmation: "",
+                                isAdmin: false,
+                            });
                             this.handleClose();
                         } catch (err) {
                             setSubmitting(false);
