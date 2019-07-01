@@ -77,6 +77,7 @@ export default function Users(props) {
                     {
                         Header: "Id",
                         accessor: "id",
+                        width: 50,
                     },
                     {
                         Header: "First Name",
@@ -91,8 +92,18 @@ export default function Users(props) {
                         accessor: "email",
                     },
                     {
+                        Header: "Number",
+                        accessor: "phoneNumber",
+                    },
+                    {
                         Header: "Court",
                         accessor: "court",
+                    },
+                    {
+                        Header: "Is Admin",
+                        id: "isAdmin",
+                        width: 75,
+                        accessor: o => o.isAdmin.toString(),
                     },
                     {
                         Header: "Actions",

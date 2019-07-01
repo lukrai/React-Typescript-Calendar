@@ -1,6 +1,7 @@
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
 import * as cors from "cors";
+import * as bcrypt from "bcryptjs";
 import * as express from "express";
 import errorMiddleware from "./middlewares/error.middleware";
 import {createModels} from "./models";
@@ -8,6 +9,7 @@ import {AppSettingsModel} from "./models/AppSettings.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
+import {UserModel} from "./models/User.model";
 
 class App {
     public app: express.Application;
@@ -35,6 +37,7 @@ class App {
             .catch(err => console.log("Error: " + err));
         await db.sequelize.sync();
         db.defaultWeekDay = await this.setDefaultDayOfTheWeek(db.AppSettings);
+        await this.setDefaultAdminUser(db.User);
     }
 
     private initializeMiddlewares() {
@@ -70,6 +73,22 @@ class App {
             return AppSettings.findOrCreate({where: {id: 1}, defaults: {weekDay: 3}})
                 .spread((setting, created) => {
                     return setting.get({plain: true}).weekDay;
+                });
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    private async setDefaultAdminUser(User: UserModel) {
+        try {
+            await User.findOrCreate(
+                {
+                    where: {email: "admin@admin.local"},
+                    defaults: {
+                        email: "admin@admin.local",
+                        password: await bcrypt.hash("Password12", 10),
+                        isAdmin: true,
+                    },
                 });
         } catch (err) {
             console.log(err);

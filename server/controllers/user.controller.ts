@@ -74,7 +74,7 @@ class UserController {
             user.password = undefined;
             return res.status(201).send(user);
         } catch (err) {
-            return next(new HttpException(500, "Can't create user."));
+            return next(new HttpException(400, "Email already in use."));
         }
     }
 
@@ -99,6 +99,7 @@ class UserController {
             user.phoneNumber = userData.phoneNumber || user.phoneNumber;
             user.court = userData.court || user.court;
             user.password = userData.password ? await bcrypt.hash(userData.password, 10) : user.password;
+            user.isAdmin = req.body.isAdmin === true ? true : req.body.isAdmin === false ? false : user.isAdmin;
             await user.save();
 
             user.password = undefined;

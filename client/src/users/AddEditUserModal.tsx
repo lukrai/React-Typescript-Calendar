@@ -5,19 +5,22 @@ import Form from "react-bootstrap/es/Form";
 import Modal from "react-bootstrap/es/Modal";
 import * as yup from "yup";
 
-const schema = yup.object({
-    firstName: yup.string().required("Required"),
-    lastName: yup.string().required("Required"),
-    email: yup.string().email().required("Required"),
-    phoneNumber: yup.string().required("Required"),
-    court: yup.string().required("Required"),
-    password: yup.string()
-        .min(8, "Password is too short - should be 8 chars minimum."),
-    passwordConfirmation: yup.string()
-        .oneOf([yup.ref("password"), null], "Passwords must match"),
-});
-
 export default class AddEditUserModal extends React.Component<any, any> {
+    private schema = yup.object({
+        firstName: yup.string().required("Required"),
+        lastName: yup.string().required("Required"),
+        email: yup.string().email().required("Required"),
+        phoneNumber: yup.string().required("Required"),
+        court: yup.string().required("Required"),
+        password: this.props.mode === "edit"
+            ? yup.string().min(8, "Password is too short - should be 8 chars minimum.")
+            : yup.string().required("Required").min(8, "Password is too short - should be 8 chars minimum."),
+        passwordConfirmation: yup.string().when(["password"], {
+            is: (password) => password != null,
+            then: yup.string().required("Required").oneOf([yup.ref("password"), null], "Passwords must match"),
+        }),
+    });
+
     constructor(props, context) {
         super(props, context);
 
@@ -37,7 +40,7 @@ export default class AddEditUserModal extends React.Component<any, any> {
                 </Button>
 
                 <Formik
-                    validationSchema={schema}
+                    validationSchema={this.schema}
                     onSubmit={async (values, {setSubmitting}) => {
                         try {
                             console.log(values);
@@ -52,13 +55,14 @@ export default class AddEditUserModal extends React.Component<any, any> {
                     }}
                     initialValues={{
                         id: this.props.user.id,
-                        firstName: this.props.user.firstName,
-                        lastName: this.props.user.lastName,
-                        email: this.props.user.email,
-                        phoneNumber: this.props.user.phoneNumber,
-                        court: this.props.user.court,
+                        firstName: this.props.user.firstName || "",
+                        lastName: this.props.user.lastName || "",
+                        email: this.props.user.email || "",
+                        phoneNumber: this.props.user.phoneNumber || "",
+                        court: this.props.user.court || "",
                         password: "",
                         passwordConfirmation: "",
+                        isAdmin: this.props.user.isAdmin || false,
                     }}
                 >
                     {({
@@ -186,7 +190,16 @@ export default class AddEditUserModal extends React.Component<any, any> {
                                             {errors.passwordConfirmation}
                                         </Form.Control.Feedback>
                                     </Form.Group>
-
+                                    <Form.Group>
+                                        <Form.Label>Is Admin</Form.Label>
+                                        <Form.Check
+                                            name="isAdmin"
+                                            label=""
+                                            onChange={handleChange}
+                                            type={"checkbox"}
+                                            checked={values.isAdmin}
+                                        />
+                                    </Form.Group>
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Button variant="secondary" onClick={this.handleClose} disabled={isSubmitting}>
