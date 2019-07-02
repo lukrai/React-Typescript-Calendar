@@ -7,7 +7,10 @@ export interface ICourtCase {
     calendarId: number;
     fileNo: string;
     court: string;
-    courtNo: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
     isDisabled?: boolean;
     time: string;  // e.g. 9:00
     createdAt?: Date;
@@ -24,7 +27,16 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         court: {
             type: DataTypes.STRING,
         },
-        courtNo: {
+        firstName: {
+            type: DataTypes.STRING,
+        },
+        lastName: {
+            type: DataTypes.STRING,
+        },
+        email: {
+            type: DataTypes.STRING,
+        },
+        phoneNumber: {
             type: DataTypes.STRING,
         },
         fileNo: {

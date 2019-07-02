@@ -3,11 +3,11 @@ import {BrowserRouter, Route} from "react-router-dom";
 import Calendar from "./calendar/Calendar";
 import {getCurrentUser} from "./common/auth.actions";
 import EventErrorHandler from "./common/EventErrorHandler";
-import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import {PrivateAdminRoute, PrivateRoute} from "./components/PrivateRoutes";
 import Register from "./components/Register";
+import {Dashboard} from "./dashboard";
 import Login from "./login/Login";
 import {Users} from "./users";
 
@@ -18,6 +18,7 @@ interface IState {
 
 class App extends Component<any, IState> {
     private eventErrorHandler: any;
+
     constructor(props: any) {
         super(props);
         this.state = {
@@ -48,7 +49,12 @@ class App extends Component<any, IState> {
                         <Header isAuthenticated={this.state.isAuthenticated} user={this.state.user} updateUserState={this.updateUserState}/>
                         <Route exact path="/register" component={Register}/>
                         <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
-                        <PrivateRoute exact path="/dashboard" component={Dashboard} isAuthenticated={this.state.isAuthenticated} user={this.state.user}/>
+                        <PrivateRoute
+                            exact path="/dashboard" component={Dashboard}
+                            isAuthenticated={this.state.isAuthenticated}
+                            user={this.state.user}
+                            triggerErrorToast={this.triggerErrorToast}
+                        />
                         <PrivateRoute exact path="/" component={Home} isAuthenticated={this.state.isAuthenticated}/>
                         <PrivateAdminRoute
                             exact

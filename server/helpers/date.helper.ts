@@ -1,7 +1,7 @@
 import {DateTime} from "luxon";
 
 export function getNextMonthsDate(date: DateTime, defaultWeekDay: number): string {
-    const nextMonthDate = date.plus({ months: 1 });
+    const nextMonthDate = date.plus({ weeks: 5 });
     let weekDayAdjustedDate = nextMonthDate;
     if (nextMonthDate.weekday !== defaultWeekDay) {
         weekDayAdjustedDate = nextMonthDate.set({weekday: defaultWeekDay});

@@ -6,6 +6,7 @@ import Card from "react-bootstrap/es/Card";
 import ConfirmDialog from "../common/ConfirmDialog";
 import {disableCourtCase, disableEnableCourtCases, getCalendarData} from "./calendar.actions";
 import {CustomDayPickerInput} from "./CustomDayPickerComponent";
+import styles from "./calendar.module.css";
 
 const columnCount = 7;
 
@@ -24,11 +25,14 @@ interface ICalendarData {
 interface ICourtCase {
     calendarId: number;
     court: string;
-    courtNo: string;
     createdAt: string;
     fileNo: string;
     id: number;
     isDisabled: boolean;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
     time: string;
     updatedAt: string;
     userId: number;
@@ -111,7 +115,6 @@ export default function Calendar(props: ICalendarProps) {
         } catch (err) {
             props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
         }
-
     }
 
     async function disableGridColumn(columnIndex: number) {
@@ -207,17 +210,25 @@ interface IPropsGridItem {
 }
 
 export function CalendarItem(props: IPropsGridItem) {
-    const {fileNo, court, courtNo} = props.courtCase;
+    const {fileNo, court, firstName, lastName, email, phoneNumber} = props.courtCase;
     const [isVisible, setIsVisible] = useState(false);
 
     return (
         <div className="col" style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px"}}>
-            <Card style={{minHeight: "150px"}}>
-                <Card.Body>
+            <Card style={{minHeight: "192px"}}>
+                <Card.Body className={styles.cardBody} >
                     <Card.Title>{fileNo}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">{court}</Card.Subtitle>
                     <Card.Text>
                         {court}
+                    </Card.Text>
+                    <Card.Text>
+                        {firstName} {lastName}
+                    </Card.Text>
+                    <Card.Text className={styles.cardEmail} title={email}>
+                        {email}
+                    </Card.Text>
+                    <Card.Text>
+                        {phoneNumber}
                     </Card.Text>
                     <div
                         style={{
@@ -248,7 +259,7 @@ export function DisabledItem(props: IPropsGridItem) {
 
     return (
         <div className="col" style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px", minWidth: "148px", textAlign: "center"}}>
-            <Card bg="danger" text="white" style={{minHeight: "150px"}}>
+            <Card bg="danger" text="white" style={{minHeight: "192px"}}>
                 <Card.Body>
                     <Octicon icon={CircleSlash} size="large" verticalAlign="middle"/>
                     <div

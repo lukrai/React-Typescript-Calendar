@@ -17,7 +17,7 @@ class UserController {
             const users: IUser[] = await db.User.findAll({
                 attributes: {
                     exclude: ["password"],
-                }
+                },
             });
             return res.status(200).send(users);
         } catch (err) {
@@ -27,7 +27,7 @@ class UserController {
 
     public getUser = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {
         try {
-            if (req.user.id !== Number(req.params.id)) {
+            if (req.user.id !== Number(req.params.id) && !req.user.isAdmin) {
                 return next(new NotAuthorizedException());
             }
             const user = await db.User.findByPk(req.params.id, {
