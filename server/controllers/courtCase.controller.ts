@@ -105,6 +105,9 @@ class CourtCaseController {
                 return next(new HttpException(400, "Times are filled for this date."));
             }
         } catch (err) {
+            if (err.errors && err.errors[0] && err.errors[0].path === "fileNo") {
+                return next(new HttpException(400, `Court case no.: ${err.errors[0].value} already exist.`));
+            }
             return next(new HttpException(400, "Can't create court case."));
         }
     }

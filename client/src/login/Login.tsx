@@ -1,22 +1,19 @@
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import {Formik} from "formik";
 import React from "react";
+import Form from "react-bootstrap/es/Form";
+import * as yup from "yup";
 import {login} from "../common/auth.actions";
+
+const schema = yup.object({
+    email: yup.string().email().required("Required"),
+    password: yup.string().required("Required"),
+});
 
 const Login = (props: any) => (
     <div>
         <Formik
             initialValues={{email: "", password: ""}}
-            validate={values => {
-                const errors: any = {};
-                if (!values.email) {
-                    errors.email = "Required";
-                } else if (
-                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                ) {
-                    errors.email = "Invalid email address";
-                }
-                return errors;
-            }}
+            validationSchema={schema}
             onSubmit={async (values, {setSubmitting}) => {
                 try {
                     const result = await login({email: values.email, password: values.password});
@@ -29,32 +26,50 @@ const Login = (props: any) => (
                 }
             }}
         >
-            {({errors, isSubmitting}) => (
-                <Form style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputEmail1">Email address</label>
-                        <Field
-                            className="form-control"
+            {({
+                  handleSubmit,
+                  handleChange,
+                  handleBlur,
+                  values,
+                  touched,
+                  isValid,
+                  errors,
+                  isSubmitting,
+              }) => (
+                <Form noValidate onSubmit={handleSubmit} style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
+                    <Form.Group>
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                            type="text"
                             placeholder="Email"
-                            type="email"
+                            aria-describedby="inputGroupPrepend"
                             name="email"
+                            value={values.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!errors.email && !!touched.email}
                         />
-                    </div>
-                    <ErrorMessage name="email" component="div"/>
-                    {/*{touched.password && errors.password && <div>{errors.password}</div>}*/}
-
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Password</label>
-                        <Field
-                            className="form-control"
-                            placeholder="Password"
+                        <Form.Control.Feedback type="invalid">
+                            {errors.email}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control
                             type="password"
+                            placeholder="Password"
                             name="password"
+                            value={values.password}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!errors.password && !!touched.password}
                         />
-                    </div>
-                    <ErrorMessage name="password" component="div"/>
+                        <Form.Control.Feedback type="invalid">
+                            {errors.password}
+                        </Form.Control.Feedback>
+                    </Form.Group>
                     <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
-                        Submit
+                        Login
                     </button>
                 </Form>
             )}

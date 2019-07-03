@@ -41,6 +41,7 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         },
         fileNo: {
             type: DataTypes.STRING,
+            unique: true,
         },
         isDisabled: {
             type: DataTypes.BOOLEAN,

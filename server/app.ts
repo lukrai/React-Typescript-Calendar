@@ -86,6 +86,8 @@ class App {
                     where: {email: "admin@admin.local"},
                     defaults: {
                         email: "admin@admin.local",
+                        firstName: "admin",
+                        lastName: "local",
                         password: await bcrypt.hash("Password12", 10),
                         isAdmin: true,
                     },

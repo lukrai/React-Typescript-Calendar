@@ -6,7 +6,6 @@ import EventErrorHandler from "./common/EventErrorHandler";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import {PrivateAdminRoute, PrivateRoute} from "./components/PrivateRoutes";
-import Register from "./components/Register";
 import {Dashboard} from "./dashboard";
 import Login from "./login/Login";
 import {Users} from "./users";
@@ -47,7 +46,6 @@ class App extends Component<any, IState> {
                 <div>
                     <EventErrorHandler ref={eventErrorHandler => this.eventErrorHandler = eventErrorHandler}>
                         <Header isAuthenticated={this.state.isAuthenticated} user={this.state.user} updateUserState={this.updateUserState}/>
-                        <Route exact path="/register" component={Register}/>
                         <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
                         <PrivateRoute
                             exact path="/dashboard" component={Dashboard}

@@ -1,14 +1,15 @@
 import axios from "axios";
-import {Field, Formik} from "formik";
+import {Formik} from "formik";
 import {DateTime} from "luxon";
 import React, {useEffect, useState} from "react";
 import Form from "react-bootstrap/es/Form";
 import * as yup from "yup";
 import {addCourtCase} from "./dashboard.actions";
 import styles from "./dashboard.module.css";
+import Card from "react-bootstrap/es/Card";
 
 const schema = yup.object({
-    fileNo: yup.string().required("Required"),
+    fileNo: yup.string().required("Required").max(19, "Can'tmbe longer that 19 characters."),
 });
 
 export default function Dashboard(props: any) {
@@ -30,55 +31,69 @@ export default function Dashboard(props: any) {
 
     return (
         <div>
-            <Formik
-                initialValues={{fileNo: ""}}
-                validationSchema={schema}
-                onSubmit={async (values, {setSubmitting, resetForm}) => {
-                    try {
-                        const result = await addCourtCase(values.fileNo);
-                        setUserData({...userData, courtCases: [result, ...userData.courtCases]});
-                        setSubmitting(false);
-                        resetForm({
-                            fileNo: "",
-                        });
-                    } catch (err) {
-                        setSubmitting(false);
-                        this.props.triggerErrorToast(err);
-                    }
-                }}
-            >
-                {({
-                      handleSubmit,
-                      handleChange,
-                      handleBlur,
-                      values,
-                      touched,
-                      isValid,
-                      errors,
-                      isSubmitting,
-                  }) => (
-                    <Form noValidate onSubmit={handleSubmit} style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
-                        <Form.Group>
-                            <Form.Label>Bylos nr.</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Bylos Nr."
-                                name="fileNo"
-                                value={values.fileNo}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                isInvalid={!!errors.fileNo && !!touched.fileNo}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                                {touched.fileNo && errors.fileNo}
-                            </Form.Control.Feedback>
-                        </Form.Group>
-                        <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
-                            Submit
-                        </button>
-                    </Form>
-                )}
-            </Formik>
+            <div className={styles.headerContainer}>
+                <Card className={styles.info}>
+                    <Card.Header>My Info</Card.Header>
+                    <Card.Body>
+                        <Card.Text>
+                            {user.court}<br/>
+                            {user.firstName} {user.lastName}<br/>
+                            {user.email}<br/>
+                            {user.phoneNumber}
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+
+                <Formik
+                    initialValues={{fileNo: ""}}
+                    validationSchema={schema}
+                    onSubmit={async (values, {setSubmitting, resetForm}) => {
+                        try {
+                            const result = await addCourtCase(values.fileNo);
+                            setUserData({...userData, courtCases: [result, ...userData.courtCases]});
+                            setSubmitting(false);
+                            resetForm({
+                                fileNo: "",
+                            });
+                        } catch (err) {
+                            setSubmitting(false);
+                            props.triggerErrorToast(err);
+                        }
+                    }}
+                >
+                    {({
+                          handleSubmit,
+                          handleChange,
+                          handleBlur,
+                          values,
+                          touched,
+                          isValid,
+                          errors,
+                          isSubmitting,
+                      }) => (
+                        <Form noValidate onSubmit={handleSubmit} className={styles.form} >
+                            <Form.Group>
+                                <Form.Label>Bylos nr.</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Bylos Nr."
+                                    name="fileNo"
+                                    value={values.fileNo}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={!!errors.fileNo && !!touched.fileNo}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {touched.fileNo && errors.fileNo}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
+                                Submit
+                            </button>
+                        </Form>
+                    )}
+                </Formik>
+            </div>
 
             <h2 className={styles.contentContainer}>Mano užregistruotos bylos</h2>
             <Table courtCases={userData.courtCases}/>
