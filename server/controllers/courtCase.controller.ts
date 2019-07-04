@@ -2,7 +2,7 @@ import * as express from "express";
 import {NextFunction} from "express";
 import {DateTime} from "luxon";
 import HttpException from "../exceptions/HttpException";
-import {getNextMonthsDate} from "../helpers/date.helper";
+import {getNextMonthsDate, getNextWeekDate} from "../helpers/date.helper";
 import {db} from "../models";
 import {ICalendar} from "../models/Calendar.model";
 import {ICourtCase} from "../models/CourtCase.model";
@@ -45,6 +45,8 @@ class CourtCaseController {
                     where: {date: nextMonthsDate},
                     include: [{
                         as: "courtCases",
+                        limit: 200,
+                        order: [["id", "ASC"]],
                         model: db.CourtCase,
                         include: [{
                             model: db.Calendar,
@@ -52,57 +54,79 @@ class CourtCaseController {
                         }],
                     }],
                 });
-            if (!calendar) {
-                calendar = await db.Calendar.create({
-                    date: nextMonthsDate,
-                });
-                const initialCourtCases = [];
-                availableCalendarTimes.map(time => {
-                    for (let i = 0; i < numberOfColums; i += 1) {
-                        initialCourtCases.push({time, calendarId: calendar.id});
-                    }
-                });
 
-                const createdCourtCases: ICourtCase[] = await db.CourtCase.bulkCreate(initialCourtCases, {returning: true});
-                const updatedCourtCase = await db.CourtCase.findOne(
-                    {
-                        where: {id: createdCourtCases[0].id},
-                        include: [{
-                            model: db.Calendar,
-                            as: "calendar",
-                        }],
+            let nextCalendar = true;
+            let tempDate = nextMonthsDate;
+            while (nextCalendar) {
+                if (!calendar) {
+                    calendar = await db.Calendar.create({
+                        date: tempDate,
                     });
-                if (!updatedCourtCase) {
-                    return next(new HttpException(400, "Can't create court case."));
+                    const initialCourtCases = [];
+                    availableCalendarTimes.map(time => {
+                        for (let i = 0; i < numberOfColums; i += 1) {
+                            initialCourtCases.push({time, calendarId: calendar.id});
+                        }
+                    });
+
+                    const createdCourtCases: ICourtCase[] = await db.CourtCase.bulkCreate(initialCourtCases, {returning: true});
+                    const updatedCourtCase = await db.CourtCase.findOne(
+                        {
+                            where: {id: createdCourtCases[0].id},
+                            include: [{
+                                model: db.Calendar,
+                                as: "calendar",
+                            }],
+                        });
+                    if (!updatedCourtCase) {
+                        return next(new HttpException(400, "Can't create court case."));
+                    }
+
+                    updatedCourtCase.fileNo = req.body.fileNo;
+                    updatedCourtCase.firstName = req.user.firstName;
+                    updatedCourtCase.lastName = req.user.lastName;
+                    updatedCourtCase.email = req.user.email;
+                    updatedCourtCase.phoneNumber = req.user.phoneNumber;
+                    updatedCourtCase.court = req.user.court;
+                    updatedCourtCase.userId = req.user.id;
+
+                    await updatedCourtCase.save();
+                    return res.status(201).send(updatedCourtCase);
                 }
 
-                updatedCourtCase.fileNo = req.body.fileNo;
-                updatedCourtCase.firstName = req.user.firstName;
-                updatedCourtCase.lastName = req.user.lastName;
-                updatedCourtCase.email = req.user.email;
-                updatedCourtCase.phoneNumber = req.user.phoneNumber;
-                updatedCourtCase.court = req.user.court;
-                updatedCourtCase.userId = req.user.id;
+                if (calendar.courtCases.length > 0) {
+                    const courtCaseToUpdate: any = calendar.courtCases.find(o => o.isDisabled !== true && o.fileNo == null);
+                    if (courtCaseToUpdate != null) {
+                        courtCaseToUpdate.fileNo = req.body.fileNo;
+                        courtCaseToUpdate.firstName = req.user.firstName;
+                        courtCaseToUpdate.lastName = req.user.lastName;
+                        courtCaseToUpdate.email = req.user.email;
+                        courtCaseToUpdate.phoneNumber = req.user.phoneNumber;
+                        courtCaseToUpdate.court = req.user.court;
+                        courtCaseToUpdate.userId = req.user.id;
 
-                await updatedCourtCase.save();
-                return res.status(201).send(updatedCourtCase);
-            }
-
-            if (calendar.courtCases.length > 0) {
-                const courtCaseToUpdate: any = calendar.courtCases.find(o => o.isDisabled !== false && o.fileNo == null && o.court == null);
-                if (courtCaseToUpdate != null) {
-                    courtCaseToUpdate.fileNo = req.body.fileNo;
-                    courtCaseToUpdate.firstName = req.user.firstName;
-                    courtCaseToUpdate.lastName = req.user.lastName;
-                    courtCaseToUpdate.email = req.user.email;
-                    courtCaseToUpdate.phoneNumber = req.user.phoneNumber;
-                    courtCaseToUpdate.court = req.user.court;
-                    courtCaseToUpdate.userId = req.user.id;
-
-                    await courtCaseToUpdate.save();
-                    return res.status(201).send(courtCaseToUpdate);
+                        await courtCaseToUpdate.save();
+                        return res.status(201).send(courtCaseToUpdate);
+                    }
+                    tempDate = getNextWeekDate(tempDate);
+                    calendar = await db.Calendar.findOne(
+                        {
+                            where: {date: tempDate},
+                            include: [{
+                                as: "courtCases",
+                                model: db.CourtCase,
+                                limit: 200,
+                                order: [["id", "ASC"]],
+                                include: [{
+                                    model: db.Calendar,
+                                    as: "calendar",
+                                }],
+                            }],
+                        });
+                    nextCalendar = true;
+                } else {
+                    nextCalendar = true;
                 }
-                return next(new HttpException(400, "Times are filled for this date."));
             }
         } catch (err) {
             if (err.errors && err.errors[0] && err.errors[0].path === "fileNo") {

@@ -11,3 +11,9 @@ export function getNextMonthsDate(date: DateTime, defaultWeekDay: number): strin
     }
     return weekDayAdjustedDate.toISODate();
 }
+
+export function getNextWeekDate(isoDate: string): string {
+    const date = DateTime.fromISO(isoDate);
+    const nextWeekDate = date.plus({ weeks: 1 });
+    return nextWeekDate.toISODate();
+}

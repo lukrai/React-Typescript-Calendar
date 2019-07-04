@@ -237,9 +237,17 @@ export default class AddEditUserModal extends React.Component<any, any> {
 }
 
 const courtOptions = [
-    "Kauno apygardos teismas",
+    "Alytaus apylinkės teismas Alyatus rūmai",
+    "Alytaus apylinkės teismas Druskininkų rūmai",
+    "Alytaus apylinkės teismas Lazdijų rūmai",
+    "Alytaus apylinkės teismas Prienų rūmai",
+    "Alytaus apylinkės teismas Varėnos rūmai",
     "Kauno apylinkės teismas Kauno rūmai",
     "Kauno apylinkės teismas Kaišiadorių rūmai",
     "Kauno apylinkės teismas Kėdainių rūmai",
     "Kauno apylinkės teismas Jonavos rūmai",
+    "Marijampolės apylinkės teismas Marijampolės rūmai",
+    "Marijampolės apylinkės teismas Jurbarko rūmai",
+    "Marijampolės apylinkės teismas Šakių rūmai",
+    "Marijampolės apylinkės teismas Vilkaviškio rūmai",
 ];
