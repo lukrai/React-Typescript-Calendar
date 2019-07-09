@@ -1,15 +1,16 @@
-import * as bodyParser from "body-parser";
-import * as cookieParser from "cookie-parser";
-import * as cors from "cors";
 import * as bcrypt from "bcryptjs";
+import * as bodyParser from "body-parser";
+import * as cors from "cors";
 import * as express from "express";
+import * as session from "express-session";
 import errorMiddleware from "./middlewares/error.middleware";
 import {createModels} from "./models";
 import {AppSettingsModel} from "./models/AppSettings.model";
+import {UserModel} from "./models/User.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
-import {UserModel} from "./models/User.model";
+import passport from "./helpers/passport";
 
 class App {
     public app: express.Application;
@@ -43,8 +44,19 @@ class App {
     private initializeMiddlewares() {
         this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(bodyParser.json());
-        this.app.use(cookieParser());
         this.app.use(cors({origin: "http://localhost:3000", credentials: true}));
+        this.app.use(session({
+                secret: process.env.COOKIE_SECRET,
+                resave: true,
+                saveUninitialized: true,
+                cookie: {
+                    maxAge: 60 * 60 * 1000,
+                },
+            },
+        ));
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
+
         this.app.use(this.loggerMiddleware);
     }
 

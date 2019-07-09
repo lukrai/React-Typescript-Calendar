@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import {withRouter} from "react-router-dom";
-import {logout} from "../common/auth.actions";
 
 class Header extends Component<any> {
     constructor(props: any) {
@@ -17,16 +16,16 @@ class Header extends Component<any> {
 
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav mr-auto">
-                        {this.props.isAuthenticated && <li className="nav-item">
+                        {user != null && <li className="nav-item">
                           <Link className="nav-link" to="/dashboard">Dashboard</Link>
                         </li>}
                         {
-                            this.props.isAuthenticated && user && user.isAdmin
+                            user != null && user.isAdmin
                                 ? [
-                                    <li className="nav-item">
+                                    <li key={"nav-calendar"} className="nav-item">
                                         <Link className="nav-link" to="/calendar">Calendar</Link>
                                     </li>,
-                                    <li className="nav-item">
+                                    <li  key={"nav-users"} className="nav-item">
                                         <Link className="nav-link" to="/users">Users</Link>
                                     </li>,
                                 ]
@@ -36,7 +35,7 @@ class Header extends Component<any> {
 
                     <ul className="nav navbar-nav ml-auto">
                         {
-                            !this.props.isAuthenticated
+                            user == null
                                 ? [
                                     <li className="nav-item" key="signin">
                                         <Link className="nav-link" to="/login">Sign In</Link>
@@ -45,9 +44,9 @@ class Header extends Component<any> {
                                 : null
                         }
 
-                        {this.props.isAuthenticated ?
+                        {user != null ?
                             <li className="nav-item">
-                                <Link className="nav-link" to="/signout" onClick={this.signOut}>Sign Out</Link>
+                                <a className="nav-link" onClick={this.signOut}>Sign Out</a>
                             </li> : null}
                     </ul>
                 </div>
@@ -56,8 +55,7 @@ class Header extends Component<any> {
     }
 
     private async signOut() {
-        await logout();
-        await this.props.updateUserState({isAuthenticated: false, user: null});
+        await this.props.logout();
         this.props.history.push("/login");
     }
 }

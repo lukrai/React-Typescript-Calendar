@@ -1,14 +1,14 @@
 import React from "react";
-import {Redirect, Route, RouteProps} from "react-router";
+import {Redirect, Route, RouteProps, withRouter} from "react-router";
 
-export const PrivateRoute = (props: { isAuthenticated: boolean; user?: any, triggerErrorToast?: any } & RouteProps) => {
-    const {component, isAuthenticated, ...rest} = props;
+export const PrivateRoute = (props: { user: any, triggerErrorToast?: any } & RouteProps) => {
+    const {component, user, ...rest} = props;
     return (
         <Route
             {...rest}
             render={routeProps => {
-                return isAuthenticated ? (
-                    renderMergedProps(component, routeProps, rest)
+                return user != null ? (
+                    renderMergedProps(component, routeProps, rest, {user})
                 ) : (
                     <Redirect
                         to={{
@@ -22,13 +22,13 @@ export const PrivateRoute = (props: { isAuthenticated: boolean; user?: any, trig
     );
 };
 
-export const PrivateAdminRoute = (props: { isAuthenticated: boolean; user: any, triggerErrorToast?: any } & RouteProps) => {
-    const {component, isAuthenticated, user, ...rest} = props;
+export const PrivateAdminRoute = (props: { user: any, triggerErrorToast?: any } & RouteProps) => {
+    const {component, user, ...rest} = props;
     return (
         <Route
             {...rest}
             render={routeProps => {
-                return isAuthenticated && user && user.isAdmin ? (
+                return user != null && user.isAdmin ? (
                     renderMergedProps(component, routeProps, rest, {user})
                 ) : (
                     <Redirect
@@ -38,6 +38,27 @@ export const PrivateAdminRoute = (props: { isAuthenticated: boolean; user: any, 
                         }}
                     />
                 );
+            }}
+        />
+    );
+};
+
+export const AuthRoute = (props: { user: any, triggerErrorToast?: any } & RouteProps) => {
+    const {component, user, ...rest} = props;
+    return (
+        <Route
+            {...rest}
+            render={routeProps => {
+                return user != null
+                    ? <Redirect
+                        to={{
+                            pathname: "/dashboard",
+                            state: {from: routeProps.location},
+                        }}
+                    />
+                    : (
+                        renderMergedProps(component, routeProps, rest, {user})
+                    );
             }}
         />
     );

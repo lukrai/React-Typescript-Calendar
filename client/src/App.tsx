@@ -1,18 +1,18 @@
 import React, {Component} from "react";
-import {BrowserRouter, Route} from "react-router-dom";
+import {connect} from "react-redux";
+import {BrowserRouter} from "react-router-dom";
 import Calendar from "./calendar/Calendar";
-import {getCurrentUser} from "./common/auth.actions";
+import {checkLoggedIn, logoutAction} from "./common/auth.actions";
 import EventErrorHandler from "./common/EventErrorHandler";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import {PrivateAdminRoute, PrivateRoute} from "./components/PrivateRoutes";
+import {AuthRoute, PrivateAdminRoute, PrivateRoute} from "./components/PrivateRoutes";
 import {Dashboard} from "./dashboard";
 import Login from "./login/Login";
 import {Users} from "./users";
 
 interface IState {
-    isAuthenticated: boolean;
-    user: any;
+    isLoading: boolean;
 }
 
 class App extends Component<any, IState> {
@@ -21,19 +21,13 @@ class App extends Component<any, IState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            isAuthenticated: false,
-            user: null,
+            isLoading: true,
         };
-        console.log(props.history);
     }
 
     public async componentDidMount() {
-        const r = await getCurrentUser();
-        this.setState({isAuthenticated: r.isAuthenticated, user: r.user});
-    }
-
-    public updateUserState = (userObject: IState) => {
-        this.setState(userObject);
+        await this.props.checkLoggedIn();
+        this.setState({isLoading: false});
     }
 
     public triggerErrorToast = (error: Error) => {
@@ -45,32 +39,37 @@ class App extends Component<any, IState> {
             <BrowserRouter>
                 <div>
                     <EventErrorHandler ref={eventErrorHandler => this.eventErrorHandler = eventErrorHandler}>
-                        <Header isAuthenticated={this.state.isAuthenticated} user={this.state.user} updateUserState={this.updateUserState}/>
-                        <Route exact path="/login" render={props => <Login {...props} updateUserState={this.updateUserState} triggerErrorToast={this.triggerErrorToast}/>}/>
-                        <PrivateRoute
-                            exact path="/dashboard" component={Dashboard}
-                            isAuthenticated={this.state.isAuthenticated}
-                            user={this.state.user}
+                        {this.state.isLoading && <div>Loading...</div>}
+                        {!this.state.isLoading && <>
+                          <Header user={this.props.auth} logout={this.props.logout}/>
+                          <AuthRoute
+                            exact
+                            path="/login"
+                            component={Login}
+                            user={this.props.auth}
+                            triggerErrorToast={this.triggerErrorToast}/>
+                          <PrivateRoute
+                            exact path="/dashboard"
+                            component={Dashboard}
+                            user={this.props.auth}
                             triggerErrorToast={this.triggerErrorToast}
-                        />
-                        <PrivateRoute exact path="/" component={Home} isAuthenticated={this.state.isAuthenticated}/>
-                        <PrivateAdminRoute
+                          />
+                          <PrivateRoute exact path="/" component={Home} user={this.props.auth}/>
+                          <PrivateAdminRoute
                             exact
                             path="/calendar"
                             component={Calendar}
-                            isAuthenticated={this.state.isAuthenticated}
-                            user={this.state.user}
+                            user={this.props.auth}
                             triggerErrorToast={this.triggerErrorToast}
-                        />
-                        <PrivateAdminRoute
+                          />
+                          <PrivateAdminRoute
                             exact
                             path="/users"
                             component={Users}
-                            isAuthenticated={this.state.isAuthenticated}
-                            user={this.state.user}
+                            user={this.props.auth}
                             triggerErrorToast={this.triggerErrorToast}
-                        />
-                        {/*{props.children}*/}
+                          />
+                        </>}
                     </EventErrorHandler>
                 </div>
             </BrowserRouter>
@@ -78,4 +77,16 @@ class App extends Component<any, IState> {
     }
 }
 
-export default App;
+const mapStateToProps = ({auth}) => ({
+    auth,
+});
+
+const mapDispatchToProps = dispatch => ({
+    logout: () => dispatch(logoutAction()),
+    checkLoggedIn: () => dispatch(checkLoggedIn()),
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(App);

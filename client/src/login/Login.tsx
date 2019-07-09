@@ -1,8 +1,9 @@
 import {Formik} from "formik";
 import React from "react";
 import Form from "react-bootstrap/es/Form";
+import { connect } from "react-redux";
 import * as yup from "yup";
-import {login} from "../common/auth.actions";
+import {loginAction} from "../common/auth.actions";
 
 const schema = yup.object({
     email: yup.string().email().required("Required"),
@@ -16,8 +17,7 @@ const Login = (props: any) => (
             validationSchema={schema}
             onSubmit={async (values, {setSubmitting}) => {
                 try {
-                    const result = await login({email: values.email, password: values.password});
-                    props.updateUserState(result);
+                    await props.login({email: values.email, password: values.password});
                     setSubmitting(false);
                     props.history.push("/");
                 } catch (err) {
@@ -77,4 +77,11 @@ const Login = (props: any) => (
     </div>
 );
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+    login: user => dispatch(loginAction(user)),
+});
+
+export default connect(
+    null,
+    mapDispatchToProps,
+)(Login);
