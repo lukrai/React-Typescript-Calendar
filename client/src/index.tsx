@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "react-redux";
 import "react-table/react-table.css";
-import App from "./App";
+import {App} from "./app";
 import configureStore from "./common/store";
 import * as serviceWorker from "./serviceWorker";
 

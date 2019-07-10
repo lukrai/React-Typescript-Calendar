@@ -1,15 +1,14 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
-import Calendar from "./calendar/Calendar";
-import {checkLoggedIn, logoutAction} from "./common/auth.actions";
-import EventErrorHandler from "./common/EventErrorHandler";
-import Header from "./components/Header";
-import Home from "./components/Home";
-import {AuthRoute, PrivateAdminRoute, PrivateRoute} from "./components/PrivateRoutes";
-import {Dashboard} from "./dashboard";
-import Login from "./login/Login";
-import {Users} from "./users";
+import {Calendar} from "../calendar";
+import {checkLoggedIn, logoutAction} from "../common/auth/auth.actions";
+import EventErrorHandler from "../common/EventErrorHandler";
+import {AuthRoute, PrivateAdminRoute, PrivateRoute} from "../common/PrivateRoutes";
+import {Dashboard} from "../dashboard";
+import {Login} from "../login";
+import {Users} from "../users";
+import Header from "./Header";
 
 interface IState {
     isLoading: boolean;
@@ -54,7 +53,6 @@ class App extends Component<any, IState> {
                             user={this.props.auth}
                             triggerErrorToast={this.triggerErrorToast}
                           />
-                          <PrivateRoute exact path="/" component={Home} user={this.props.auth}/>
                           <PrivateAdminRoute
                             exact
                             path="/calendar"

@@ -12,7 +12,7 @@ class Header extends Component<any> {
         const {user} = this.props;
         return (
             <nav className="navbar navbar-expand navbar-dark bg-dark" style={{marginBottom: "30px"}}>
-                <Link className="navbar-brand" to="/">Calendar</Link>
+                <div className="navbar-brand">Calendar</div>
 
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav mr-auto">

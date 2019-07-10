@@ -3,7 +3,7 @@ import React from "react";
 import Form from "react-bootstrap/es/Form";
 import { connect } from "react-redux";
 import * as yup from "yup";
-import {loginAction} from "../common/auth.actions";
+import {loginAction} from "../common/auth/auth.actions";
 
 const schema = yup.object({
     email: yup.string().email().required("Required"),
@@ -19,7 +19,7 @@ const Login = (props: any) => (
                 try {
                     await props.login({email: values.email, password: values.password});
                     setSubmitting(false);
-                    props.history.push("/");
+                    props.history.push("/dashboard");
                 } catch (err) {
                     setSubmitting(false);
                     props.triggerErrorToast(err);
