@@ -1,5 +1,6 @@
 import { Router} from "express";
 import CalendarController from "../controllers/calendar.controller";
+import {authMiddlewareAdmin} from "../middlewares/auth.middleware";
 
 class CalendarRouter {
     public router: Router;
@@ -11,11 +12,11 @@ class CalendarRouter {
     }
 
     private init() {
-        this.router.get("/", this.calendarController.getAllCalendarData);
-        this.router.post("/", this.calendarController.createCalendar);
-        this.router.get("/:date", this.calendarController.getCalendar);
-        this.router.put("/:id", this.calendarController.updateCalendar);
-        this.router.delete("/:id", this.calendarController.deleteCalendar);
+        this.router.get("/", authMiddlewareAdmin, this.calendarController.getAllCalendarData);
+        this.router.post("/", authMiddlewareAdmin, this.calendarController.createCalendar);
+        this.router.get("/:date", authMiddlewareAdmin, this.calendarController.getCalendar);
+        this.router.put("/:id", authMiddlewareAdmin, this.calendarController.updateCalendar);
+        this.router.delete("/:id", authMiddlewareAdmin, this.calendarController.deleteCalendar);
     }
 }
 
