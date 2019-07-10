@@ -3,6 +3,7 @@ import * as bodyParser from "body-parser";
 import * as cors from "cors";
 import * as express from "express";
 import * as session from "express-session";
+import passport from "./helpers/passport";
 import errorMiddleware from "./middlewares/error.middleware";
 import {createModels} from "./models";
 import {AppSettingsModel} from "./models/AppSettings.model";
@@ -10,19 +11,17 @@ import {UserModel} from "./models/User.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
-import passport from "./helpers/passport";
 
 class App {
     public app: express.Application;
     public port: number;
+    public db;
+    private SequelizeStore = require("connect-session-sequelize")(session.Store);
 
     constructor(port = 5000) {
         this.app = express();
         this.port = port;
-        this.initializeDatabaseConnection();
-        this.initializeMiddlewares();
-        this.initializeRoutes();
-        this.app.use(errorMiddleware);
+        this.init();
     }
 
     public listen() {
@@ -31,27 +30,42 @@ class App {
         });
     }
 
+    private async init() {
+        await this.initializeDatabaseConnection();
+        this.initializeMiddlewares();
+        this.initializeRoutes();
+        this.app.use(errorMiddleware);
+    }
+
     private async initializeDatabaseConnection() {
-        const db = createModels();
-        db.sequelize.authenticate()
-            .then(() => console.log("Database connected..."))
-            .catch(err => console.log("Error: " + err));
-        await db.sequelize.sync();
-        db.defaultWeekDay = await this.setDefaultDayOfTheWeek(db.AppSettings);
-        await this.setDefaultAdminUser(db.User);
+        try {
+            this.db = createModels();
+            await this.db.sequelize.authenticate();
+            console.log("Database connected...");
+            await this.db.sequelize.sync();
+            this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek(this.db.AppSettings);
+            await this.setDefaultAdminUser(this.db.User);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     private initializeMiddlewares() {
         this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(bodyParser.json());
         this.app.use(cors({origin: "http://localhost:3000", credentials: true}));
+        const dbStore = new this.SequelizeStore({
+            db: this.db.sequelize,
+            table: "Session",
+        });
         this.app.use(session({
                 secret: process.env.COOKIE_SECRET,
-                resave: true,
-                saveUninitialized: true,
+                resave: false,
+                saveUninitialized: false,
                 cookie: {
                     maxAge: 60 * 60 * 1000,
                 },
+                store: dbStore,
             },
         ));
         this.app.use(passport.initialize());
@@ -62,12 +76,6 @@ class App {
 
     private initializeRoutes() {
         const router = express.Router();
-        // placeholder route handler
-        router.get("/", (req, res, next) => {
-            res.json({
-                message: "Hello!",
-            });
-        });
         router.get("/favicon.ico", (req, res) => res.status(204));
         this.app.use("/", router);
         this.app.use("/api/calendar", CalendarRouter);

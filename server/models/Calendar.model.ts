@@ -24,7 +24,14 @@ export const CalendarFactory = (sequelize: Sequelize): CalendarModel => {
         },
     };
 
-    const calendar = sequelize.define("Calendar", attributes) as CalendarModel;
+    const calendar = sequelize.define("Calendar", attributes, {
+        indexes: [
+            {
+                name: "calendar_date_index",
+                fields: ["date"],
+            },
+        ],
+    }) as CalendarModel;
 
     calendar.associate = models => {
         calendar.hasMany(models.CourtCase, {
@@ -38,4 +45,3 @@ export const CalendarFactory = (sequelize: Sequelize): CalendarModel => {
 
     return calendar;
 };
-

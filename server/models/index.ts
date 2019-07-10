@@ -1,8 +1,9 @@
 import {Sequelize} from "sequelize";
 import {IDatabase} from "../typings/DbInterface";
-import {AppSettingsFactory, AppSettingsModel} from "./AppSettings.model";
+import {AppSettingsFactory} from "./AppSettings.model";
 import {CalendarFactory} from "./Calendar.model";
 import {CourtCaseFactory} from "./CourtCase.model";
+import {SessionFactory} from "./Session.model";
 import {UserFactory} from "./User.model";
 
 export let db: IDatabase;
@@ -22,6 +23,7 @@ export const createModels = (): IDatabase => {
         Calendar: CalendarFactory(sequelize),
         CourtCase: CourtCaseFactory(sequelize),
         User: UserFactory(sequelize),
+        Session: SessionFactory(sequelize),
         sequelize,
     };
 

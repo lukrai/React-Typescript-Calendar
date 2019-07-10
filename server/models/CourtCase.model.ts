@@ -51,7 +51,25 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         },
     };
 
-    const courtCase = sequelize.define("CourtCase", attributes) as CourtCaseModel;
+    const courtCase = sequelize.define("CourtCase", attributes, {
+        indexes: [
+            {
+                name: "courtCase_id_index",
+                fields: ["id"],
+            },
+            {
+                name: "courtCase_fileNo_index",
+                fields: ["fileNo"],
+            },            {
+                name: "courtCase_userId_index",
+                fields: ["userId"],
+            },
+            {
+                name: "courtCase_calendarId_index",
+                fields: ["calendarId"],
+            },
+        ],
+    }) as CourtCaseModel;
 
     courtCase.associate = models => {
         courtCase.belongsTo(models.Calendar, {
