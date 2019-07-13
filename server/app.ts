@@ -105,10 +105,11 @@ class App {
                 {
                     where: {email: "admin@admin.local"},
                     defaults: {
-                        email: "admin@admin.local",
-                        firstName: "admin",
-                        lastName: "local",
-                        password: await bcrypt.hash("Password12", 10),
+                        email: process.env.ADMIN_EMAIL,
+                        firstName: process.env.ADMIN_FIRST_NAME,
+                        lastName: process.env.ADMIN_LAST_NAME,
+                        phoneNumber: process.env.ADMIN_PHONE_NUMBER,
+                        password: await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
                         isAdmin: true,
                     },
                 });
