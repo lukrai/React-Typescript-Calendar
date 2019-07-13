@@ -1,29 +1,25 @@
 import axios from "axios";
+import {IUser, IUserLogin} from "../../typings";
 
-export async function login(user: any) {
+export async function login(user: IUserLogin): Promise<IUser> {
     try {
         const response = await axios.post("http://localhost:5000/api/auth/login", user, {withCredentials: true});
-        if (response.data) {
-            return response.data;
-        } else {
-            return null;
-        }
+        return response.data;
     } catch (err) {
         throw new Error(err.response.data.message || err);
     }
 }
 
-export async function logout() {
+export async function logout(): Promise<null> {
     try {
         await axios.post("http://localhost:5000/api/auth/logout", {withCredentials: true});
         return null;
     } catch (err) {
-        console.log(JSON.stringify(err));
         throw new Error(err.response.data.message || err);
     }
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<IUser|null> {
     try {
         const response = await axios.get("http://localhost:5000/api/auth/status");
         if (response.data) {
@@ -32,7 +28,6 @@ export async function getCurrentUser() {
             return null;
         }
     } catch (err) {
-        console.log(JSON.stringify(err));
         return null;
     }
 }
@@ -40,7 +35,7 @@ export async function getCurrentUser() {
 export const RECEIVE_CURRENT_USER = "RECEIVE_CURRENT_USER";
 export const LOGOUT_CURRENT_USER = "LOGOUT_CURRENT_USER";
 
-const receiveCurrentUser = user => ({
+const receiveCurrentUser = (user: IUser) => ({
     type: RECEIVE_CURRENT_USER,
     user,
 });
@@ -49,7 +44,7 @@ const logoutCurrentUser = () => ({
     type: LOGOUT_CURRENT_USER,
 });
 
-export const loginAction = user => async dispatch => {
+export const loginAction = (user: IUserLogin) => async dispatch => {
     try {
         const response = await login(user);
         if (response != null) {

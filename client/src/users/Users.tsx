@@ -2,12 +2,18 @@ import axios from "axios";
 import React, {useEffect, useState} from "react";
 import ReactTable from "react-table";
 import ConfirmDialog from "../common/ConfirmDialog";
+import {IUser} from "../typings";
 import AddEditUserModal from "./AddEditUserModal";
 import {addUser, deleteUser, updateUser} from "./user.actions";
 import styles from "./user.module.css";
 
-export default function Users(props) {
-    const [userData, setUserData] = useState([]);
+interface IProps {
+    user: IUser;
+    triggerErrorToast?(error: Error): void;
+}
+
+export default function Users(props: IProps) {
+    const [userData, setUserData] = useState<IUser[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,25 +24,24 @@ export default function Users(props) {
                 setUserData(result.data);
                 setLoading(false);
             } catch (err) {
-                props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+                props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
             }
         };
         fetchData();
-    }, []);
+    }, [props]);
 
     const updateUserData = user => {
         try {
             setUserData(() => {
-                const data = userData.map(o => {
+                return userData.map(o => {
                     if (user.id === o.id) {
                         return user;
                     }
                     return o;
                 });
-                return data;
             });
         } catch (err) {
-            props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+            props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
         }
     }
 
@@ -44,7 +49,7 @@ export default function Users(props) {
         try {
             setUserData([...userData, user]);
         } catch (err) {
-            props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+            props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
         }
     }
 
@@ -53,7 +58,7 @@ export default function Users(props) {
             const deletedUser = await deleteUser(user.id);
             setUserData(() => userData.filter(o => o.id !== deletedUser.id));
         } catch (err) {
-            props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+            props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
         }
     }
 

@@ -1,9 +1,16 @@
 import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import {Link, RouteComponentProps} from "react-router-dom";
 import {withRouter} from "react-router-dom";
+import {IUser} from "../typings";
 
-class Header extends Component<any> {
-    constructor(props: any) {
+interface IProps extends RouteComponentProps {
+    user: IUser;
+
+    logout(): void;
+}
+
+class Header extends Component<IProps> {
+    constructor(props: IProps) {
         super(props);
         this.signOut = this.signOut.bind(this);
     }
@@ -13,7 +20,6 @@ class Header extends Component<any> {
         return (
             <nav className="navbar navbar-expand navbar-dark bg-dark" style={{marginBottom: "30px"}}>
                 <div className="navbar-brand">Calendar</div>
-
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav mr-auto">
                         {user != null && <li className="nav-item">
@@ -25,7 +31,7 @@ class Header extends Component<any> {
                                     <li key={"nav-calendar"} className="nav-item">
                                         <Link className="nav-link" to="/calendar">Calendar</Link>
                                     </li>,
-                                    <li  key={"nav-users"} className="nav-item">
+                                    <li key={"nav-users"} className="nav-item">
                                         <Link className="nav-link" to="/users">Users</Link>
                                     </li>,
                                 ]
@@ -46,7 +52,7 @@ class Header extends Component<any> {
 
                         {user != null ?
                             <li className="nav-item">
-                                <a className="nav-link" onClick={this.signOut}>Sign Out</a>
+                                <a href="/login" className="nav-link" onClick={this.signOut}>Sign Out</a>
                             </li> : null}
                     </ul>
                 </div>

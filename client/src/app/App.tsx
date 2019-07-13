@@ -1,23 +1,30 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter, Redirect} from "react-router-dom";
 import {Calendar} from "../calendar";
 import {checkLoggedIn, logoutAction} from "../common/auth/auth.actions";
 import EventErrorHandler from "../common/EventErrorHandler";
 import {AuthRoute, PrivateAdminRoute, PrivateRoute} from "../common/PrivateRoutes";
 import {Dashboard} from "../dashboard";
 import {Login} from "../login";
+import {IUser} from "../typings";
 import {Users} from "../users";
 import Header from "./Header";
+
+interface IProps {
+    auth: IUser;
+    checkLoggedIn(): void;
+    logout(): void;
+}
 
 interface IState {
     isLoading: boolean;
 }
 
-class App extends Component<any, IState> {
+class App extends Component<IProps, IState> {
     private eventErrorHandler: any;
 
-    constructor(props: any) {
+    constructor(props: IProps) {
         super(props);
         this.state = {
             isLoading: true,
@@ -67,6 +74,7 @@ class App extends Component<any, IState> {
                             user={this.props.auth}
                             triggerErrorToast={this.triggerErrorToast}
                           />
+                          <Redirect to={this.props.auth ? "/dashboard" : "/login"} />
                         </>}
                     </EventErrorHandler>
                 </div>

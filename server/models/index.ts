@@ -15,6 +15,7 @@ export const createModels = (): IDatabase => {
         process.env.DATABASE_PASSWORD,
         {
             dialect: "postgres",
+            logging: process.env.NODE_ENV === "production",
         },
     );
 

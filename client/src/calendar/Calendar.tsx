@@ -4,9 +4,10 @@ import React, {useEffect, useState} from "react";
 import Button from "react-bootstrap/es/Button";
 import Card from "react-bootstrap/es/Card";
 import ConfirmDialog from "../common/ConfirmDialog";
+import {ICalendarWithCourtCases, ICourtCase} from "../typings";
 import {disableCourtCase, disableEnableCourtCases, getCalendarData} from "./calendar.actions";
-import {CustomDayPickerInput} from "./CustomDayPickerComponent";
 import styles from "./calendar.module.css";
+import {CustomDayPickerInput} from "./CustomDayPickerComponent";
 
 const columnCount = 7;
 
@@ -14,31 +15,7 @@ interface ICalendarProps {
     triggerErrorToast(err: string | Error): void;
 }
 
-interface ICalendarData {
-    courtCases: ICourtCase[];
-    createdAt: string;
-    date: string;
-    id: number;
-    updatedAt: string;
-}
-
-interface ICourtCase {
-    calendarId: number;
-    court: string;
-    createdAt: string;
-    fileNo: string;
-    id: number;
-    isDisabled: boolean;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    time: string;
-    updatedAt: string;
-    userId: number;
-}
-
-const initialCalendarData: ICalendarData = {
+const initialCalendarData: ICalendarWithCourtCases = {
     courtCases: [],
     createdAt: null,
     date: null,
@@ -50,7 +27,7 @@ const defaultWeekDay = 3;
 
 export default function Calendar(props: ICalendarProps) {
     const weekDate = getAdjustedWeekDate(DateTime.local(), defaultWeekDay);
-    const [calendarData, setCalendarData] = useState<ICalendarData>(initialCalendarData);
+    const [calendarData, setCalendarData] = useState<ICalendarWithCourtCases>(initialCalendarData);
     const [dateParam, setDateParam] = useState<string>(weekDate);
     const [date, setDate] = useState<string>(weekDate);
 
@@ -60,7 +37,7 @@ export default function Calendar(props: ICalendarProps) {
                 const result = await getCalendarData(date);
                 setCalendarData(result);
             } catch (err) {
-                props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+                props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
             }
         };
         fetchData();
@@ -113,7 +90,7 @@ export default function Calendar(props: ICalendarProps) {
                 return {...calendarData, courtCases: data};
             });
         } catch (err) {
-            props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+            props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
         }
     }
 
@@ -133,7 +110,7 @@ export default function Calendar(props: ICalendarProps) {
                 return {...calendarData, courtCases: data};
             });
         } catch (err) {
-            props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+            props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
         }
     }
 }

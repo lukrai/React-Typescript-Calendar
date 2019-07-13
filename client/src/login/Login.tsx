@@ -2,15 +2,23 @@ import {Formik} from "formik";
 import React from "react";
 import Form from "react-bootstrap/es/Form";
 import { connect } from "react-redux";
+import {RouteComponentProps} from "react-router";
 import * as yup from "yup";
 import {loginAction} from "../common/auth/auth.actions";
+import {IUser, IUserLogin} from "../typings";
+
+interface IProps extends RouteComponentProps {
+    auth: IUser;
+    login(user: IUserLogin): void;
+    triggerErrorToast?(error: Error): void;
+}
 
 const schema = yup.object({
     email: yup.string().email().required("Required"),
     password: yup.string().required("Required"),
 });
 
-const Login = (props: any) => (
+const Login = (props: IProps) => (
     <div>
         <Formik
             initialValues={{email: "", password: ""}}

@@ -1,7 +1,8 @@
 import React from "react";
-import {Redirect, Route, RouteProps, withRouter} from "react-router";
+import {Redirect, Route, RouteProps} from "react-router";
+import {IUser} from "../typings";
 
-export const PrivateRoute = (props: { user: any, triggerErrorToast?: any } & RouteProps) => {
+export const PrivateRoute = (props: { user: IUser, triggerErrorToast?(error: Error): void } & RouteProps) => {
     const {component, user, ...rest} = props;
     return (
         <Route
@@ -22,7 +23,7 @@ export const PrivateRoute = (props: { user: any, triggerErrorToast?: any } & Rou
     );
 };
 
-export const PrivateAdminRoute = (props: { user: any, triggerErrorToast?: any } & RouteProps) => {
+export const PrivateAdminRoute = (props: { user: IUser,  triggerErrorToast?(error: Error): void } & RouteProps) => {
     const {component, user, ...rest} = props;
     return (
         <Route
@@ -43,7 +44,7 @@ export const PrivateAdminRoute = (props: { user: any, triggerErrorToast?: any } 
     );
 };
 
-export const AuthRoute = (props: { user: any, triggerErrorToast?: any } & RouteProps) => {
+export const AuthRoute = (props: { user: IUser, triggerErrorToast?(error: Error): void } & RouteProps) => {
     const {component, user, ...rest} = props;
     return (
         <Route

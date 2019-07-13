@@ -5,15 +5,21 @@ import React, {useEffect, useState} from "react";
 import Card from "react-bootstrap/es/Card";
 import Form from "react-bootstrap/es/Form";
 import * as yup from "yup";
+import {ICourtCaseWithCalendar, IUser} from "../typings";
 import {addCourtCase} from "./dashboard.actions";
 import styles from "./dashboard.module.css";
+
+interface IProps {
+    user: IUser;
+    triggerErrorToast?(error: Error): void;
+}
 
 const schema = yup.object({
     fileNo: yup.string().required("Required").max(19, "Can'tmbe longer that 19 characters."),
 });
 
-export default function Dashboard(props: any) {
-    const [userData, setUserData]: [any, any] = useState({courtCases: []});
+export default function Dashboard(props: IProps) {
+    const [userData, setUserData] = useState<{courtCases: ICourtCaseWithCalendar[]}>({courtCases: []});
     const {user} = props;
 
     useEffect(() => {
@@ -22,7 +28,7 @@ export default function Dashboard(props: any) {
                 const result = await axios.get(`http://localhost:5000/api/user/${user.id}`);
                 setUserData(result.data);
             } catch (err) {
-                props.triggerErrorToast(err.response && err.response.data && err.response.data.message || err);
+                props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
             }
         };
 
@@ -101,7 +107,7 @@ export default function Dashboard(props: any) {
     );
 }
 
-const Table = (props: { courtCases: any[] }) => {
+const Table = (props: { courtCases: ICourtCaseWithCalendar[] }) => {
     const {courtCases} = props;
     return (
         <div className={`table-responsive ${styles.contentContainer}`}>
