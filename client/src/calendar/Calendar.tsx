@@ -1,15 +1,16 @@
-import Octicon, {CircleSlash} from "@primer/octicons-react";
+import Octicon, {CircleSlash, Trashcan} from "@primer/octicons-react";
 import {DateTime} from "luxon";
 import React, {useEffect, useState} from "react";
 import Button from "react-bootstrap/es/Button";
 import Card from "react-bootstrap/es/Card";
 import ConfirmDialog from "../common/ConfirmDialog";
 import {ICalendarWithCourtCases, ICourtCase} from "../typings";
-import {disableCourtCase, disableEnableCourtCases, getCalendarData} from "./calendar.actions";
+import {deleteCourtCase, disableCourtCase, disableEnableCourtCases, getCalendarData} from "./calendar.actions";
 import styles from "./calendar.module.css";
 import {CustomDayPickerInput} from "./CustomDayPickerComponent";
 
 const columnCount = 7;
+const hoverColor = "#e0e0e0";
 
 interface ICalendarProps {
     triggerErrorToast(err: string | Error): void;
@@ -71,7 +72,7 @@ export default function Calendar(props: ICalendarProps) {
                 {calendarData.courtCases
                 && calendarData.courtCases.length > 0
                 && Object.keys(groupedCourtCases).map((key: string, index: number) =>
-                    <CalendarRow key={key} time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem}/>,
+                    <CalendarRow key={key} time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem} deleteGridItem={deleteGridItem}/>,
                 )}
             </div>
         </>
@@ -113,6 +114,23 @@ export default function Calendar(props: ICalendarProps) {
             props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
         }
     }
+
+    async function deleteGridItem(courtCase: ICourtCase) {
+        try {
+            const result: ICourtCase = await deleteCourtCase(courtCase.id);
+            setCalendarData(() => {
+                const data = calendarData.courtCases.map(o => {
+                    if (o.id === result.id) {
+                        return {o, ...result};
+                    }
+                    return o;
+                });
+                return {...calendarData, courtCases: data};
+            });
+        } catch (err) {
+            props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
+        }
+    }
 }
 
 interface ICalendarRowProps {
@@ -121,6 +139,7 @@ interface ICalendarRowProps {
     rowIndex: number;
 
     disableGridItem(courtCase: ICourtCase): void;
+    deleteGridItem?(courtCase: ICourtCase): void;
 }
 
 function CalendarRow(props: ICalendarRowProps): JSX.Element { // tslint:disable-line:function-name
@@ -134,7 +153,14 @@ function CalendarRow(props: ICalendarRowProps): JSX.Element { // tslint:disable-
                 if (o != null && o.isDisabled === true) {
                     return <DisabledItem key={o.id} courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
                 }
-                return <CalendarItem key={o.id} courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
+                return <CalendarItem
+                    key={o.id}
+                    courtCase={o}
+                    rowIndex={rowIndex}
+                    columnIndex={index}
+                    disableGridItem={props.disableGridItem}
+                    deleteGridItem={props.deleteGridItem}
+                />;
             })}
         </div>
     );
@@ -144,7 +170,7 @@ function GridColumnHeadings(props: { columnCount: number, disableGridColumn(colu
     const headings: JSX.Element[] = [];
     for (let i = 0; i < props.columnCount; i += 1) {
         headings.push(
-            <div className="col" key={i} style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px", minWidth: "148px", textAlign: "center"}}>
+            <div className={`col ${styles.calendarHeaderItem}`} key={i}>
                 <h3>
                     K{i + 1}
                 </h3>
@@ -160,8 +186,8 @@ function GridColumnHeadings(props: { columnCount: number, disableGridColumn(colu
     }
 
     return (
-        <div className="row" style={{flexWrap: "nowrap", marginTop: "12px", marginBottom: "12px"}}>
-            <div style={{minWidth: "38px"}}>
+        <div className={`row ${styles.calendarHeaderContainer}`}>
+            <div className={styles.calendarHeaderTimeColumn}>
                 Time
             </div>
             {headings}
@@ -184,6 +210,7 @@ interface IPropsGridItem {
     courtCase: ICourtCase;
 
     disableGridItem(courtCase: ICourtCase): void;
+    deleteGridItem?(courtCase: ICourtCase): void;
 }
 
 export function CalendarItem(props: IPropsGridItem) {
@@ -191,9 +218,9 @@ export function CalendarItem(props: IPropsGridItem) {
     const [isVisible, setIsVisible] = useState(false);
 
     return (
-        <div className="col" style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px"}}>
-            <Card style={{minHeight: "192px"}}>
-                <Card.Body className={styles.cardBody} >
+        <div className={`col ${styles.calendarItemContainer}`}>
+            <Card className={styles.calendarItemCard}>
+                <Card.Body className={styles.cardBody}>
                     <Card.Title>{fileNo}</Card.Title>
                     <Card.Text>
                         {court}
@@ -207,21 +234,20 @@ export function CalendarItem(props: IPropsGridItem) {
                     <Card.Text>
                         {phoneNumber}
                     </Card.Text>
-                    <div
+                    <div className={styles.gridItemHover}
                         style={{
-                            height: "100%",
-                            position: "absolute",
-                            top: "0",
-                            right: "0",
-                            backgroundColor: isVisible ? "#e0e0e0" : "",
+                            backgroundColor: isVisible ? hoverColor : "",
                             opacity: isVisible ? 0.75 : 0,
-                            borderRadius: "4px",
                         }}
                         onMouseOver={() => setIsVisible(true)}
                         onMouseOut={() => setIsVisible(false)}
                     >
                         <Button color="secondary" onClick={() => props.disableGridItem(props.courtCase)}>
                             <Octicon icon={CircleSlash} verticalAlign="middle"/>
+                        </Button>
+                        <br/>
+                        <Button color="secondary" onClick={() => props.deleteGridItem(props.courtCase)}>
+                            <Octicon icon={Trashcan} verticalAlign="middle"/>
                         </Button>
                     </div>
                 </Card.Body>
@@ -235,19 +261,15 @@ export function DisabledItem(props: IPropsGridItem) {
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     return (
-        <div className="col" style={{paddingLeft: "2px", paddingRight: "2px", paddingBottom: "4px", minWidth: "148px", textAlign: "center"}}>
-            <Card bg="danger" text="white" style={{minHeight: "192px"}}>
+        <div className={`col ${styles.calendarItemContainer}`}>
+            <Card bg="danger" text="white" className={styles.calendarItemCardDisabled}>
                 <Card.Body>
                     <Octicon icon={CircleSlash} size="large" verticalAlign="middle"/>
                     <div
+                        className={styles.gridItemHover}
                         style={{
-                            height: "100%",
-                            position: "absolute",
-                            top: "0",
-                            right: "0",
-                            backgroundColor: isVisible ? "#e0e0e0" : "",
+                            backgroundColor: isVisible ? hoverColor : "",
                             opacity: isVisible ? 0.75 : 0,
-                            borderRadius: "4px",
                         }}
                         onMouseOver={() => setIsVisible(true)}
                         onMouseOut={() => setIsVisible(false)}

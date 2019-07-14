@@ -22,3 +22,51 @@
         text-overflow: ellipsis;
     }
 }
+
+.gridItemHover {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 4px;
+    width: 40px;
+}
+
+.gridItemHover > button {
+    width: 100%;
+}
+
+.calendarItemContainer {
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 4px;
+}
+
+.calendarItemCard {
+    min-height: 192px;
+    height: 100%;
+}
+
+.calendarItemCardDisabled {
+    min-height: 100%;
+    min-width: 148px;
+    text-align: center;
+}
+
+.calendarHeaderContainer {
+    flex-wrap: nowrap;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.calendarHeaderTimeColumn {
+    min-width: 38px;
+}
+
+.calendarHeaderItem {
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 4px;
+    min-width: 148px;
+    text-align: center;
+}

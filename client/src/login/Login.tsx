@@ -14,8 +14,8 @@ interface IProps extends RouteComponentProps {
 }
 
 const schema = yup.object({
-    email: yup.string().email().required("Required"),
-    password: yup.string().required("Required"),
+    email: yup.string().email().required("Privalomas laukas"),
+    password: yup.string().required("Privalomas laukas"),
 });
 
 const Login = (props: IProps) => (
@@ -46,10 +46,10 @@ const Login = (props: IProps) => (
               }) => (
                 <Form noValidate onSubmit={handleSubmit} style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
                     <Form.Group>
-                        <Form.Label>Email</Form.Label>
+                        <Form.Label>El. paštas</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Email"
+                            placeholder="Jūsų el. paštas"
                             aria-describedby="inputGroupPrepend"
                             name="email"
                             value={values.email}
@@ -62,10 +62,10 @@ const Login = (props: IProps) => (
                         </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Password</Form.Label>
+                        <Form.Label>Slaptažodis</Form.Label>
                         <Form.Control
                             type="password"
-                            placeholder="Password"
+                            placeholder="***********"
                             name="password"
                             value={values.password}
                             onChange={handleChange}
@@ -77,7 +77,7 @@ const Login = (props: IProps) => (
                         </Form.Control.Feedback>
                     </Form.Group>
                     <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
-                        Login
+                        Prisijungti
                     </button>
                 </Form>
             )}

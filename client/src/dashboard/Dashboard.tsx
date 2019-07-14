@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const schema = yup.object({
-    fileNo: yup.string().required("Required").max(19, "Can'tmbe longer that 19 characters."),
+    fileNo: yup.string().required("Privalomas laukas").max(19, "Can'tmbe longer that 19 characters."),
 });
 
 export default function Dashboard(props: IProps) {
@@ -39,7 +39,7 @@ export default function Dashboard(props: IProps) {
         <div>
             <div className={styles.headerContainer}>
                 <Card className={styles.info}>
-                    <Card.Header>My Info</Card.Header>
+                    <Card.Header>Mano duomenys</Card.Header>
                     <Card.Body>
                         <Card.Text>
                             {user.court}<br/>
@@ -94,7 +94,7 @@ export default function Dashboard(props: IProps) {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
-                                Submit
+                                Registruoti
                             </button>
                         </Form>
                     )}
@@ -115,9 +115,9 @@ const Table = (props: { courtCases: ICourtCaseWithCalendar[] }) => {
                 <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Registered At</th>
-                    <th scope="col">File No.</th>
-                    <th scope="col">Created At</th>
+                    <th scope="col">Priskirtas laikas</th>
+                    <th scope="col">Bylos nr.</th>
+                    <th scope="col">Registracijos data</th>
                 </tr>
                 </thead>
                 <tbody>

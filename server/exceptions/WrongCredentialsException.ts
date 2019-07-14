@@ -2,6 +2,6 @@ import HttpException from "./HttpException";
 
 export default class WrongCredentialsException extends HttpException {
     constructor() {
-        super(401, `Wrong credentials provided`);
+        super(401, `Neteisingai įvestas el. paštas arba slaptažodis.`);
     }
 }

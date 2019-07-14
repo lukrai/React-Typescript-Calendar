@@ -7,6 +7,7 @@ import {db} from "../models";
 import {ICalendar} from "../models/Calendar.model";
 import {ICourtCase} from "../models/CourtCase.model";
 import {IRequestWithUser} from "../typings/Authentication";
+import Model from "sequelize";
 
 const availableCalendarTimes = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
 const numberOfColums = 7;
@@ -130,7 +131,7 @@ class CourtCaseController {
             }
         } catch (err) {
             if (err.errors && err.errors[0] && err.errors[0].path === "fileNo") {
-                return next(new HttpException(400, `Court case no.: ${err.errors[0].value} already exist.`));
+                return next(new HttpException(400, `Byla su numeriu: ${err.errors[0].value} jau egzistuoja.`));
             }
             return next(new HttpException(400, "Can't create court case."));
         }
@@ -144,7 +145,6 @@ class CourtCaseController {
             }
 
             courtCase.court = req.body.court || courtCase.court;
-            courtCase.courtNo = req.body.courtNo || courtCase.court;
             courtCase.fileNo = req.body.fileNo || courtCase.fileNo;
             courtCase.isDisabled = req.body.isDisabled === false ? false : req.body.isDisabled === true ? true : courtCase.isDisabled;
             await courtCase.save();
@@ -184,13 +184,16 @@ class CourtCaseController {
             }
 
             courtCase.court = null;
-            courtCase.courtNo = null;
             courtCase.fileNo = null;
             courtCase.isDisabled = null;
-            // courtCase.userId = null;
+            courtCase.userId = null;
+            courtCase.firstName = null;
+            courtCase.lastName = null;
+            courtCase.phoneNumber = null;
+            courtCase.email = null;
             await courtCase.save();
 
-            return res.status(200).send({courtCase});
+            return res.status(200).send(courtCase);
         } catch (err) {
             return next(new HttpException(400, "Can't update court case."));
         }

@@ -13,6 +13,7 @@ export interface ICourtCase {
     phoneNumber: string;
     isDisabled?: boolean;
     time: string;  // e.g. 9:00
+    userId: number;
     createdAt?: Date;
     updatedAt?: Date;
 }

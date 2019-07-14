@@ -19,20 +19,20 @@ class Header extends Component<IProps> {
         const {user} = this.props;
         return (
             <nav className="navbar navbar-expand navbar-dark bg-dark" style={{marginBottom: "30px"}}>
-                <div className="navbar-brand">Calendar</div>
+                <div className="navbar-brand">Bylų registracijos sistema</div>
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav mr-auto">
                         {user != null && <li className="nav-item">
-                          <Link className="nav-link" to="/dashboard">Dashboard</Link>
+                          <Link className="nav-link" to="/dashboard">Registruoti bylą</Link>
                         </li>}
                         {
                             user != null && user.isAdmin
                                 ? [
                                     <li key={"nav-calendar"} className="nav-item">
-                                        <Link className="nav-link" to="/calendar">Calendar</Link>
+                                        <Link className="nav-link" to="/calendar">Kalendorius</Link>
                                     </li>,
                                     <li key={"nav-users"} className="nav-item">
-                                        <Link className="nav-link" to="/users">Users</Link>
+                                        <Link className="nav-link" to="/users">Vartotojai</Link>
                                     </li>,
                                 ]
                                 : null
@@ -44,7 +44,7 @@ class Header extends Component<IProps> {
                             user == null
                                 ? [
                                     <li className="nav-item" key="signin">
-                                        <Link className="nav-link" to="/login">Sign In</Link>
+                                        <Link className="nav-link" to="/login">Prisijungti</Link>
                                     </li>,
                                 ]
                                 : null
@@ -52,7 +52,7 @@ class Header extends Component<IProps> {
 
                         {user != null ?
                             <li className="nav-item">
-                                <a href="/login" className="nav-link" onClick={this.signOut}>Sign Out</a>
+                                <a href="/login" className="nav-link" onClick={this.signOut}>Atsijungti</a>
                             </li> : null}
                     </ul>
                 </div>
