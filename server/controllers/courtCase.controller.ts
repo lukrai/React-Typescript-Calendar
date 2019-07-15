@@ -7,10 +7,9 @@ import {db} from "../models";
 import {ICalendar} from "../models/Calendar.model";
 import {ICourtCase} from "../models/CourtCase.model";
 import {IRequestWithUser} from "../typings/Authentication";
-import Model from "sequelize";
 
 const availableCalendarTimes = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
-const numberOfColums = 7;
+const numberOfColumns = 7;
 
 class CourtCaseController {
     constructor() {
@@ -65,7 +64,7 @@ class CourtCaseController {
                     });
                     const initialCourtCases = [];
                     availableCalendarTimes.map(time => {
-                        for (let i = 0; i < numberOfColums; i += 1) {
+                        for (let i = 0; i < numberOfColumns; i += 1) {
                             initialCourtCases.push({time, calendarId: calendar.id});
                         }
                     });
