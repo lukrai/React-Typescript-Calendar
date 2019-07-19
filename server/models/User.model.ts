@@ -50,7 +50,18 @@ export const UserFactory = (sequelize: Sequelize): UserModel => {
         },
     };
 
-    const user = sequelize.define("User", attributes) as UserModel;
+    const user = sequelize.define("User", attributes, {
+        indexes: [
+            {
+                name: "user_id_index",
+                fields: ["id"],
+            },
+            {
+                name: "user_email_index",
+                fields: ["email"],
+            },
+        ],
+    }) as UserModel;
 
     user.associate = models => {
         user.hasMany(models.CourtCase, {

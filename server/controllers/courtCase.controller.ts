@@ -2,14 +2,14 @@ import * as express from "express";
 import {NextFunction} from "express";
 import {DateTime} from "luxon";
 import HttpException from "../exceptions/HttpException";
-import {getNextMonthsDate} from "../helpers/date.helper";
+import {getNextMonthsDate, getNextWeekDate} from "../helpers/date.helper";
 import {db} from "../models";
 import {ICalendar} from "../models/Calendar.model";
 import {ICourtCase} from "../models/CourtCase.model";
 import {IRequestWithUser} from "../typings/Authentication";
 
 const availableCalendarTimes = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00"];
-const numberOfColums = 7;
+const numberOfColumns = 7;
 
 class CourtCaseController {
     constructor() {
@@ -45,6 +45,8 @@ class CourtCaseController {
                     where: {date: nextMonthsDate},
                     include: [{
                         as: "courtCases",
+                        limit: 200,
+                        order: [["id", "ASC"]],
                         model: db.CourtCase,
                         include: [{
                             model: db.Calendar,
@@ -52,45 +54,84 @@ class CourtCaseController {
                         }],
                     }],
                 });
-            if (!calendar) {
-                calendar = await db.Calendar.create({
-                    date: nextMonthsDate,
-                });
-                const initialCourtCases = [];
-                availableCalendarTimes.map(time => {
-                    for (let i = 0; i < numberOfColums; i += 1) {
-                        initialCourtCases.push({time, calendarId: calendar.id});
+
+            let nextCalendar = true;
+            let tempDate = nextMonthsDate;
+            while (nextCalendar) {
+                if (!calendar) {
+                    calendar = await db.Calendar.create({
+                        date: tempDate,
+                    });
+                    const initialCourtCases = [];
+                    availableCalendarTimes.map(time => {
+                        for (let i = 0; i < numberOfColumns; i += 1) {
+                            initialCourtCases.push({time, calendarId: calendar.id});
+                        }
+                    });
+
+                    const createdCourtCases: ICourtCase[] = await db.CourtCase.bulkCreate(initialCourtCases, {returning: true});
+                    const updatedCourtCase = await db.CourtCase.findOne(
+                        {
+                            where: {id: createdCourtCases[0].id},
+                            include: [{
+                                model: db.Calendar,
+                                as: "calendar",
+                            }],
+                        });
+                    if (!updatedCourtCase) {
+                        return next(new HttpException(400, "Can't create court case."));
                     }
-                });
 
-                const createdCourtCases: ICourtCase[] = await db.CourtCase.bulkCreate(initialCourtCases, {returning: true});
-                const updatedCourtCase = await db.CourtCase.findOne({where: {id: createdCourtCases[0].id}});
-                if (!updatedCourtCase) {
-                    return next(new HttpException(400, "Can't create court case."));
+                    updatedCourtCase.fileNo = req.body.fileNo;
+                    updatedCourtCase.firstName = req.user.firstName;
+                    updatedCourtCase.lastName = req.user.lastName;
+                    updatedCourtCase.email = req.user.email;
+                    updatedCourtCase.phoneNumber = req.user.phoneNumber;
+                    updatedCourtCase.court = req.user.court;
+                    updatedCourtCase.userId = req.user.id;
+
+                    await updatedCourtCase.save();
+                    return res.status(201).send(updatedCourtCase);
                 }
-                updatedCourtCase.court = req.body.court;
-                updatedCourtCase.courtNo = req.body.courtNo;
-                updatedCourtCase.fileNo = req.body.fileNo;
-                updatedCourtCase.userId = req.user.id;
 
-                await updatedCourtCase.save();
-                return res.status(201).send(updatedCourtCase);
-            }
+                if (calendar.courtCases.length > 0) {
+                    const courtCaseToUpdate: any = calendar.courtCases.find(o => o.isDisabled !== true && o.fileNo == null);
+                    if (courtCaseToUpdate != null) {
+                        courtCaseToUpdate.fileNo = req.body.fileNo;
+                        courtCaseToUpdate.firstName = req.user.firstName;
+                        courtCaseToUpdate.lastName = req.user.lastName;
+                        courtCaseToUpdate.email = req.user.email;
+                        courtCaseToUpdate.phoneNumber = req.user.phoneNumber;
+                        courtCaseToUpdate.court = req.user.court;
+                        courtCaseToUpdate.userId = req.user.id;
 
-            if (calendar.courtCases.length > 0) {
-                const courtCaseToUpdate: any = calendar.courtCases.find(o => o.isDisabled !== false && o.fileNo == null && o.court == null && o.courtNo == null);
-                if (courtCaseToUpdate != null) {
-                    courtCaseToUpdate.court = req.body.court;
-                    courtCaseToUpdate.courtNo = req.body.courtNo;
-                    courtCaseToUpdate.fileNo = req.body.fileNo;
-                    courtCaseToUpdate.userId = req.user.id;
-
-                    await courtCaseToUpdate.save();
-                    return res.status(201).send(courtCaseToUpdate);
+                        await courtCaseToUpdate.save();
+                        return res.status(201).send(courtCaseToUpdate);
+                    }
+                    tempDate = getNextWeekDate(tempDate);
+                    calendar = await db.Calendar.findOne(
+                        {
+                            where: {date: tempDate},
+                            include: [{
+                                as: "courtCases",
+                                model: db.CourtCase,
+                                limit: 200,
+                                order: [["id", "ASC"]],
+                                include: [{
+                                    model: db.Calendar,
+                                    as: "calendar",
+                                }],
+                            }],
+                        });
+                    nextCalendar = true;
+                } else {
+                    nextCalendar = true;
                 }
-                return res.status(201).send({courtCase: null, message: "Times are filled for this date."});
             }
         } catch (err) {
+            if (err.errors && err.errors[0] && err.errors[0].path === "fileNo") {
+                return next(new HttpException(400, `Byla su numeriu: ${err.errors[0].value} jau egzistuoja.`));
+            }
             return next(new HttpException(400, "Can't create court case."));
         }
     }
@@ -103,7 +144,6 @@ class CourtCaseController {
             }
 
             courtCase.court = req.body.court || courtCase.court;
-            courtCase.courtNo = req.body.courtNo || courtCase.court;
             courtCase.fileNo = req.body.fileNo || courtCase.fileNo;
             courtCase.isDisabled = req.body.isDisabled === false ? false : req.body.isDisabled === true ? true : courtCase.isDisabled;
             await courtCase.save();
@@ -121,7 +161,7 @@ class CourtCaseController {
             }
             const ids = req.body.courtCases.map(o => o.id);
 
-            const courtCases = await db.CourtCase.findAll({ where : { id : ids }});
+            const courtCases = await db.CourtCase.findAll({where: {id: ids}});
             const isDisabled = !courtCases.some(o => o.isDisabled === true);
             const promises = courtCases.map(o => {
                 o.isDisabled = isDisabled;
@@ -143,13 +183,16 @@ class CourtCaseController {
             }
 
             courtCase.court = null;
-            courtCase.courtNo = null;
             courtCase.fileNo = null;
             courtCase.isDisabled = null;
-            // courtCase.userId = null;
+            courtCase.userId = null;
+            courtCase.firstName = null;
+            courtCase.lastName = null;
+            courtCase.phoneNumber = null;
+            courtCase.email = null;
             await courtCase.save();
 
-            return res.status(200).send({courtCase});
+            return res.status(200).send(courtCase);
         } catch (err) {
             return next(new HttpException(400, "Can't update court case."));
         }

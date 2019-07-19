@@ -1,60 +1,83 @@
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import {Formik} from "formik";
 import React from "react";
-import {login} from "../common/auth.actions";
+import Form from "react-bootstrap/es/Form";
+import { connect } from "react-redux";
+import {RouteComponentProps} from "react-router";
+import * as yup from "yup";
+import {loginAction} from "../common/auth/auth.actions";
+import {IUser, IUserLogin} from "../typings";
 
-const Login = (props: any) => (
+interface IProps extends RouteComponentProps {
+    auth: IUser;
+    login(user: IUserLogin): void;
+    triggerErrorToast?(error: Error): void;
+}
+
+const schema = yup.object({
+    email: yup.string().email().required("Privalomas laukas"),
+    password: yup.string().required("Privalomas laukas"),
+});
+
+const Login = (props: IProps) => (
     <div>
         <Formik
             initialValues={{email: "", password: ""}}
-            validate={values => {
-                const errors: any = {};
-                if (!values.email) {
-                    errors.email = "Required";
-                } else if (
-                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                ) {
-                    errors.email = "Invalid email address";
-                }
-                return errors;
-            }}
+            validationSchema={schema}
             onSubmit={async (values, {setSubmitting}) => {
                 try {
-                    const result = await login({email: values.email, password: values.password});
-                    props.updateUserState(result);
+                    await props.login({email: values.email, password: values.password});
                     setSubmitting(false);
-                    props.history.push("/");
+                    props.history.push("/dashboard");
                 } catch (err) {
                     setSubmitting(false);
                     props.triggerErrorToast(err);
                 }
             }}
         >
-            {({errors, isSubmitting}) => (
-                <Form style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputEmail1">Email address</label>
-                        <Field
-                            className="form-control"
-                            placeholder="Email"
-                            type="email"
+            {({
+                  handleSubmit,
+                  handleChange,
+                  handleBlur,
+                  values,
+                  touched,
+                  isValid,
+                  errors,
+                  isSubmitting,
+              }) => (
+                <Form noValidate onSubmit={handleSubmit} style={{width: "100%", maxWidth: "330px", padding: "15px", margin: "0 auto"}}>
+                    <Form.Group>
+                        <Form.Label>El. paštas</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Jūsų el. paštas"
+                            aria-describedby="inputGroupPrepend"
                             name="email"
+                            value={values.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!errors.email && !!touched.email}
                         />
-                    </div>
-                    <ErrorMessage name="email" component="div"/>
-                    {/*{touched.password && errors.password && <div>{errors.password}</div>}*/}
-
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Password</label>
-                        <Field
-                            className="form-control"
-                            placeholder="Password"
+                        <Form.Control.Feedback type="invalid">
+                            {errors.email}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Slaptažodis</Form.Label>
+                        <Form.Control
                             type="password"
+                            placeholder="***********"
                             name="password"
+                            value={values.password}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!errors.password && !!touched.password}
                         />
-                    </div>
-                    <ErrorMessage name="password" component="div"/>
+                        <Form.Control.Feedback type="invalid">
+                            {errors.password}
+                        </Form.Control.Feedback>
+                    </Form.Group>
                     <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
-                        Submit
+                        Prisijungti
                     </button>
                 </Form>
             )}
@@ -62,4 +85,11 @@ const Login = (props: any) => (
     </div>
 );
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+    login: user => dispatch(loginAction(user)),
+});
+
+export default connect(
+    null,
+    mapDispatchToProps,
+)(Login);

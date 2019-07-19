@@ -7,9 +7,13 @@ export interface ICourtCase {
     calendarId: number;
     fileNo: string;
     court: string;
-    courtNo: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
     isDisabled?: boolean;
     time: string;  // e.g. 9:00
+    userId: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -24,11 +28,21 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         court: {
             type: DataTypes.STRING,
         },
-        courtNo: {
+        firstName: {
+            type: DataTypes.STRING,
+        },
+        lastName: {
+            type: DataTypes.STRING,
+        },
+        email: {
+            type: DataTypes.STRING,
+        },
+        phoneNumber: {
             type: DataTypes.STRING,
         },
         fileNo: {
             type: DataTypes.STRING,
+            unique: true,
         },
         isDisabled: {
             type: DataTypes.BOOLEAN,
@@ -38,7 +52,25 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         },
     };
 
-    const courtCase = sequelize.define("CourtCase", attributes) as CourtCaseModel;
+    const courtCase = sequelize.define("CourtCase", attributes, {
+        indexes: [
+            {
+                name: "courtCase_id_index",
+                fields: ["id"],
+            },
+            {
+                name: "courtCase_fileNo_index",
+                fields: ["fileNo"],
+            },            {
+                name: "courtCase_userId_index",
+                fields: ["userId"],
+            },
+            {
+                name: "courtCase_calendarId_index",
+                fields: ["calendarId"],
+            },
+        ],
+    }) as CourtCaseModel;
 
     courtCase.associate = models => {
         courtCase.belongsTo(models.Calendar, {

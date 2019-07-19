@@ -38,3 +38,12 @@ export async function disableEnableCourtCases(courtCases: any) {
         throw new Error(err.response.data.message || err);
     }
 }
+
+export async function deleteCourtCase(id: number) {
+    try {
+        const response = await axios.delete(`http://localhost:5000/api/court-case/${id}`);
+        return response.data;
+    } catch (err) {
+        throw new Error(err.response.data.message || err);
+    }
+}

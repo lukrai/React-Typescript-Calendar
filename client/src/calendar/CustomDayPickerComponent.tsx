@@ -2,6 +2,7 @@ import {DateTime} from "luxon";
 import React from "react";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
+import {getEnabledWeekDay, isCalendarDateValid} from "./helpers";
 
 const MONTHS = [
     "Sausis",
@@ -86,29 +87,16 @@ export class CustomDayPickerInput extends React.Component<IProps> {
     }
 
     private modifier(date: Date) {
-        const enabledWeekDay = getEnabledWeekDay(date);
+        const enabledWeekDay = getEnabledWeekDay(date, enabledDaysByMonths);
         return [0, 1, 2, 3, 4, 5, 6].filter(o => o !== enabledWeekDay);
     }
 
     private renderDateWarning(selectedDay: Date) {
-        if (!isCalendarDateValid(selectedDay, getEnabledWeekDay(selectedDay))) {
+        if (!isCalendarDateValid(selectedDay, getEnabledWeekDay(selectedDay, enabledDaysByMonths))) {
             return <h5 style={{alignSelf: "flex-end", marginLeft: "1em"}}>Pasirinkta neteisinga data</h5>;
         }
         return null;
     }
 }
 
-function getEnabledWeekDay(date: Date) {
-    let tempEnabledDay = {enabledDay: 3, fromDate: new Date(2018)};
-    enabledDaysByMonths.length > 0 && enabledDaysByMonths.sort((a, b) => a.fromDate.getTime() - b.fromDate.getTime());
-    for (const o of enabledDaysByMonths) {
-        if (date != null && date > o.fromDate && date > tempEnabledDay.fromDate) {
-            tempEnabledDay = o;
-        }
-    }
-    return tempEnabledDay.enabledDay;
-}
 
-function isCalendarDateValid(selectedDate: Date, enabledWeekDay: number) {
-    return selectedDate && selectedDate.getDay() === enabledWeekDay;
-}

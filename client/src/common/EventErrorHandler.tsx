@@ -8,17 +8,16 @@ export default class EventErrorHandler extends Component {
             position: "top-center",
             autoClose: 7000,
             hideProgressBar: false,
-            closeOnClick: false,
             pauseOnHover: true,
             draggable: false,
             transition: Flip,
         });
     }
-    private static getDerivedStateFromError(error: Error) { // tslint:disable-line:member-ordering
-        console.log(error);
-    }
 
     public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        process.env.NODE_ENV === "development" && console.log(
+        (errorInfo && errorInfo.componentStack) || errorInfo,
+        (error && error.stack) || error);
         this.triggerErrorToast(error);
     }
 
@@ -31,10 +30,3 @@ export default class EventErrorHandler extends Component {
         );
     }
 }
-
-// public handleReactError = (error: Error, errorInfo: React.ErrorInfo) => {
-//     process.env.NODE_ENV === "development" && console.log(
-//         (errorInfo && errorInfo.componentStack) || errorInfo,
-//         (error && error.stack) || error);
-//     this.showError((error && error.message) || String(error));
-// };

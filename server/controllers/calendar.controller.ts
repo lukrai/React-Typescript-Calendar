@@ -9,7 +9,7 @@ class CalendarController {
         console.log("Initialize calendar controller");
     }
 
-    public getAllCalendarData = async (req: express.Request, res: express.Response) => {
+    public getAllCalendarData = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             const calendars = await db.Calendar.findAll({
                 include: [{
@@ -17,9 +17,9 @@ class CalendarController {
                     model: db.CourtCase,
                 }],
             });
-            res.status(200).json({calendars});
+            res.status(200).json(calendars);
         } catch (err) {
-            res.status(500).json({err: ["oops", err]});
+            return next(new HttpException(404, "Can't fetch calendar."));
         }
     }
 
@@ -49,14 +49,14 @@ class CalendarController {
         }
     }
 
-    public createCalendar = async (req: express.Request, res: express.Response) => {
+    public createCalendar = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             const calendar: ICalendar = await db.Calendar.create({
                 date: req.body.date,
             });
-            return res.status(201).send({calendar});
+            return res.status(201).send(calendar);
         } catch (err) {
-            return res.status(400).send(err);
+            return next(new HttpException(404, "Can't add calendar."));
         }
     }
 
