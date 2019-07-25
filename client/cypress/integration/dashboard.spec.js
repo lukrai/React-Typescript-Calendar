@@ -1,4 +1,4 @@
-describe('Dashboard Page', function () {
+describe('Dashboard Page + Calandar Page', function () {
   it('Admin goes to dashboard and submits a court case checks it in calendar', function () {
     const email = Cypress.env('ADMIN_EMAIL');
     const password = Cypress.env('ADMIN_PASSWORD');
@@ -18,8 +18,7 @@ describe('Dashboard Page', function () {
 
     cy.wait(500);
 
-    const firstTableRow = cy.get("table").find('tbody tr:first');
-    firstTableRow.find('th').last().invoke('text').then(text => {
+    cy.get("table").find('tbody tr:first').find('th').last().invoke('text').then(text => {
       const courtCaseDate = text.split(" ");
       cy.visit('/calendar');
       cy.get(".DayPickerInput > input").clear().type(courtCaseDate[0]).should('have.value', courtCaseDate[0]);
