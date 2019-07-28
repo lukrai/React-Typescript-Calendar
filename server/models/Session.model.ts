@@ -20,7 +20,7 @@ export const SessionFactory = (sequelize: Sequelize): SessionModel => {
             primaryKey: true,
         },
         expires: DataTypes.DATE,
-        data: DataTypes.STRING(50000),
+        data: DataTypes.STRING(50000) as unknown as string,
     };
 
     return sequelize.define("Session", attributes, {

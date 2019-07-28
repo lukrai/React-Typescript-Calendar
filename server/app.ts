@@ -3,11 +3,12 @@ import * as bodyParser from "body-parser";
 import * as cors from "cors";
 import * as express from "express";
 import * as session from "express-session";
+import * as path from "path";
 import passport from "./helpers/passport";
 import errorMiddleware from "./middlewares/error.middleware";
-import {createModels} from "./models";
-import {AppSettingsModel} from "./models/AppSettings.model";
-import {UserModel} from "./models/User.model";
+import { createModels } from "./models";
+import { AppSettingsModel } from "./models/AppSettings.model";
+import { UserModel } from "./models/User.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
@@ -18,13 +19,21 @@ class App {
     public db;
     private SequelizeStore = require("connect-session-sequelize")(session.Store);
 
-    constructor(port = 5000) {
+    constructor() {
         this.app = express();
-        this.port = port;
+        this.port = (process.env.PORT as unknown as number) || 5000;
         this.init();
     }
 
     public listen() {
+        if (process.env.NODE_ENV === "production") {
+            this.app.use(express.static(path.join(__dirname, "..", "client/build")));
+
+            this.app.get("/*", (req, res) => {
+                res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+            });
+        }
+
         this.app.listen(this.port, () => {
             console.log(`App listening on the port ${this.port}`);
         });
@@ -51,22 +60,22 @@ class App {
     }
 
     private initializeMiddlewares() {
-        this.app.use(bodyParser.urlencoded({extended: true}));
+        this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
-        this.app.use(cors({origin: "http://localhost:3000", credentials: true}));
+        this.app.use(cors({ origin: "http://localhost:3000", credentials: true }));
         const dbStore = new this.SequelizeStore({
             db: this.db.sequelize,
             table: "Session",
         });
         this.app.use(session({
-                secret: process.env.COOKIE_SECRET,
-                resave: false,
-                saveUninitialized: false,
-                cookie: {
-                    maxAge: 60 * 60 * 1000,
-                },
-                store: dbStore,
+            secret: process.env.COOKIE_SECRET,
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                maxAge: 60 * 60 * 1000,
             },
+            store: dbStore,
+        },
         ));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
@@ -90,9 +99,9 @@ class App {
 
     private async setDefaultDayOfTheWeek(AppSettings: AppSettingsModel) {
         try {
-            return AppSettings.findOrCreate({where: {id: 1}, defaults: {weekDay: 3}})
+            return AppSettings.findOrCreate({ where: { id: 1 }, defaults: { weekDay: 3 } })
                 .spread((setting, created) => {
-                    return setting.get({plain: true}).weekDay;
+                    return setting.get({ plain: true }).weekDay;
                 });
         } catch (err) {
             console.log(err);
@@ -103,7 +112,7 @@ class App {
         try {
             await User.findOrCreate(
                 {
-                    where: {email: "admin@admin.local"},
+                    where: { email: "admin@admin.local" },
                     defaults: {
                         email: process.env.ADMIN_EMAIL,
                         firstName: process.env.ADMIN_FIRST_NAME,
