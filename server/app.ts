@@ -29,9 +29,9 @@ class App {
         if (process.env.NODE_ENV === "production") {
             this.app.use(express.static(path.join(__dirname, "..", "client/build")));
 
-            this.app.get("/*", (req, res) => {
-                res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
-            });
+            // this.app.get("/*", (req, res) => {
+            //     res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+            // });
         }
 
         this.app.listen(this.port, () => {
@@ -62,7 +62,7 @@ class App {
     private initializeMiddlewares() {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
-        this.app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+        // this.app.use(cors({ origin: "http://localhost:3000", credentials: true }));
         const dbStore = new this.SequelizeStore({
             db: this.db.sequelize,
             table: "Session",
@@ -90,6 +90,9 @@ class App {
         this.app.use("/api/calendar", CalendarRouter);
         this.app.use("/api", UserRouter);
         this.app.use("/api/court-case", CourtCaseRouter);
+        this.app.get("/*", (req, res) => {
+            res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+        });
     }
 
     private loggerMiddleware(request: express.Request, response: express.Response, next) {
