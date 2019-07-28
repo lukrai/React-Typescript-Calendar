@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const schema = yup.object({
-    fileNo: yup.string().required("Privalomas laukas").max(19, "Can'tmbe longer that 19 characters."),
+    fileNo: yup.string().required("Privalomas laukas").max(19, "Bylos nr. negali būti ilgesnė už 19 simbolių."),
 });
 
 export default function Dashboard(props: IProps) {
@@ -25,7 +25,7 @@ export default function Dashboard(props: IProps) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const result = await axios.get(`http://localhost:5000/api/user/${user.id}`);
+                const result = await axios.get(`/api/user/${user.id}`);
                 setUserData(result.data);
             } catch (err) {
                 props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);

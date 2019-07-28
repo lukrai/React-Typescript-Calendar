@@ -51,5 +51,6 @@
   "devDependencies": {
     "@types/react-router-dom": "^4.3.4",
     "cypress": "^3.4.0"
-  }
+  },
+  "proxy": "http://localhost:5000"
 }

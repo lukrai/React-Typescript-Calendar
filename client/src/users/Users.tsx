@@ -20,7 +20,7 @@ export default function Users(props: IProps) {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const result = await axios.get("http://localhost:5000/api/user");
+                const result = await axios.get("/api/user");
                 setUserData(result.data);
                 setLoading(false);
             } catch (err) {
