@@ -220,7 +220,7 @@ export function CalendarItem(props: IPropsGridItem) {
     return (
         <div className={`col ${styles.calendarItemContainer}`}>
             <Card className={styles.calendarItemCard}>
-                <Card.Body className={styles.cardBody}>
+                <Card.Body className={styles.cardBody} id="cardBody">
                     <Card.Title>{fileNo}</Card.Title>
                     <Card.Text>
                         {court}
@@ -246,7 +246,7 @@ export function CalendarItem(props: IPropsGridItem) {
                             <Octicon icon={CircleSlash} verticalAlign="middle"/>
                         </Button>
                         <br/>
-                        <Button color="secondary" onClick={() => props.deleteGridItem(props.courtCase)}>
+                        <Button color="secondary" onClick={() => props.deleteGridItem(props.courtCase)} name="delete">
                             <Octicon icon={Trashcan} verticalAlign="middle"/>
                         </Button>
                     </div>

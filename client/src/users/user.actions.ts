@@ -29,7 +29,6 @@ export async function updateUser(user) {
 export async function deleteUser(id) {
     try {
         const response = await axios.delete(`http://localhost:5000/api/user/${id}`);
-        console.log(response);
         if (response.data) {
             return response.data;
         } else {

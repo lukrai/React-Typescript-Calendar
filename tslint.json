@@ -7,5 +7,10 @@
     "no-unused-expression": false,
     "max-line-length": [true, 180],
     "object-literal-sort-keys": false
+  },
+  "linterOptions": {
+    "exclude": [
+      "client/cypress/**/*.js"
+    ]
   }
 }

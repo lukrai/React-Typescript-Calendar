@@ -111,7 +111,11 @@ class UserController {
 
     public deleteUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
         try {
-            const user = await db.User.findByPk(req.params.id);
+            const user = await db.User.findByPk(req.params.id, {
+                attributes: {
+                    exclude: ["password"],
+                },
+            });
             if (!user) {
                 return next(new HttpException(404, "Can't delete user. User not found."));
             }

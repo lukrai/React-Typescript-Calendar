@@ -3,6 +3,8 @@ import React from "react";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
 import {getEnabledWeekDay, isCalendarDateValid} from "./helpers";
+// @ts-ignore
+import MomentLocaleUtils, {formatDate, parseDate} from "react-day-picker/moment";
 
 const MONTHS = [
     "Sausis",
@@ -39,36 +41,29 @@ const enabledDaysByMonths: any[] = [
 
 interface IProps {
     selectedDay: Date;
+
     setDateParam(date: string): void;
 }
 
 export class CustomDayPickerInput extends React.Component<IProps> {
-    constructor(props: any) {
-        super(props);
-
-        this.handleDayClick = this.handleDayClick.bind(this);
-        this.modifier = this.modifier.bind(this);
-    }
-
     public render() {
         return (
             <div style={{display: "flex", marginLeft: "16px"}}>
                 <h5 className="font-weight-bold" style={{alignSelf: "flex-end", marginRight: "1em"}}>Posėdžių data</h5>
                 <DayPickerInput
-                    inputProps={{ className: "form-control"}}
+                    onDayChange={this.handleDayChange}
+                    inputProps={{className: "form-control"}}
                     value={this.props.selectedDay}
-                    // formatDate={formatDate}
-                    // parseDate={parseDate}
-                    format="L"
+                    formatDate={formatDate}
+                    parseDate={parseDate}
+                    format="YYYY-MM-DD"
                     dayPickerProps={{
-                        onDayClick: this.handleDayClick,
                         firstDayOfWeek: 1,
                         disabledDays: {
                             daysOfWeek: this.modifier(this.props.selectedDay),
                         },
                         showWeekNumbers: true,
-                        locale: "lt",
-                        // localeUtils: MomentLocaleUtils,
+                        localeUtils: MomentLocaleUtils,
                         months: MONTHS,
                         weekdaysLong: WEEKDAYS_LONG,
                         weekdaysShort: WEEKDAYS_SHORT,
@@ -81,9 +76,10 @@ export class CustomDayPickerInput extends React.Component<IProps> {
         );
     }
 
-    private handleDayClick(day: Date) {
-        const date = DateTime.fromJSDate(day);
-        this.props.setDateParam(date.toISODate());
+    private handleDayChange = (selectedDay) => {
+        if (selectedDay) {
+            this.props.setDateParam(DateTime.fromJSDate(selectedDay).toISODate());
+        }
     }
 
     private modifier(date: Date) {
@@ -98,5 +94,3 @@ export class CustomDayPickerInput extends React.Component<IProps> {
         return null;
     }
 }
-
-

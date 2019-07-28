@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {BrowserRouter, Redirect} from "react-router-dom";
+import {BrowserRouter, Redirect, Switch} from "react-router-dom";
 import {Calendar} from "../calendar";
 import {checkLoggedIn, logoutAction} from "../common/auth/auth.actions";
 import EventErrorHandler from "../common/EventErrorHandler";
@@ -48,33 +48,35 @@ class App extends Component<IProps, IState> {
                         {this.state.isLoading && <div>Loading...</div>}
                         {!this.state.isLoading && <>
                           <Header user={this.props.auth} logout={this.props.logout}/>
-                          <AuthRoute
-                            exact
-                            path="/login"
-                            component={Login}
-                            user={this.props.auth}
-                            triggerErrorToast={this.triggerErrorToast}/>
-                          <PrivateRoute
-                            exact path="/dashboard"
-                            component={Dashboard}
-                            user={this.props.auth}
-                            triggerErrorToast={this.triggerErrorToast}
-                          />
-                          <PrivateAdminRoute
-                            exact
-                            path="/calendar"
-                            component={Calendar}
-                            user={this.props.auth}
-                            triggerErrorToast={this.triggerErrorToast}
-                          />
-                          <PrivateAdminRoute
-                            exact
-                            path="/users"
-                            component={Users}
-                            user={this.props.auth}
-                            triggerErrorToast={this.triggerErrorToast}
-                          />
-                          <Redirect to={this.props.auth ? "/dashboard" : "/login"} />
+                          <Switch>
+                              <AuthRoute
+                                exact
+                                path="/login"
+                                component={Login}
+                                user={this.props.auth}
+                                triggerErrorToast={this.triggerErrorToast}/>
+                              <PrivateRoute
+                                exact path="/dashboard"
+                                component={Dashboard}
+                                user={this.props.auth}
+                                triggerErrorToast={this.triggerErrorToast}
+                              />
+                              <PrivateAdminRoute
+                                exact
+                                path="/calendar"
+                                component={Calendar}
+                                user={this.props.auth}
+                                triggerErrorToast={this.triggerErrorToast}
+                              />
+                              <PrivateAdminRoute
+                                exact
+                                path="/users"
+                                component={Users}
+                                user={this.props.auth}
+                                triggerErrorToast={this.triggerErrorToast}
+                              />
+                              <Redirect to="login"/>
+                          </Switch>
                         </>}
                     </EventErrorHandler>
                 </div>
