@@ -3,7 +3,7 @@ import {IUser, IUserLogin} from "../../typings";
 
 export async function login(user: IUserLogin): Promise<IUser> {
     try {
-        const response = await axios.post("http://localhost:5000/api/auth/login", user, {withCredentials: true});
+        const response = await axios.post("/api/auth/login", user, {withCredentials: true});
         return response.data;
     } catch (err) {
         throw new Error(err.response.data.message || err);
@@ -12,7 +12,7 @@ export async function login(user: IUserLogin): Promise<IUser> {
 
 export async function logout(): Promise<null> {
     try {
-        await axios.post("http://localhost:5000/api/auth/logout", {withCredentials: true});
+        await axios.post("/api/auth/logout", {withCredentials: true});
         return null;
     } catch (err) {
         throw new Error(err.response.data.message || err);
@@ -21,7 +21,7 @@ export async function logout(): Promise<null> {
 
 export async function getCurrentUser(): Promise<IUser|null> {
     try {
-        const response = await axios.get("http://localhost:5000/api/auth/status");
+        const response = await axios.get("/api/auth/status");
         if (response.data) {
             return response.data;
         } else {

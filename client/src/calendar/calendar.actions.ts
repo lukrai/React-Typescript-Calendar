@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getCalendarData(date: string) {
     try {
-        const response = await axios.get(`http://localhost:5000/api/calendar/${date}`);
+        const response = await axios.get(`/api/calendar/${date}`);
         if (response.data) {
             return response.data;
         } else {
@@ -15,7 +15,7 @@ export async function getCalendarData(date: string) {
 
 export async function disableCourtCase(id: number, disable: boolean) {
     try {
-        const response = await axios.put(`http://localhost:5000/api/court-case/${id}`, {isDisabled: disable});
+        const response = await axios.put(`/api/court-case/${id}`, {isDisabled: disable});
         if (response.data) {
             return response.data;
         } else {
@@ -28,7 +28,7 @@ export async function disableCourtCase(id: number, disable: boolean) {
 
 export async function disableEnableCourtCases(courtCases: any) {
     try {
-        const response = await axios.put(`http://localhost:5000/api/court-case`, {courtCases});
+        const response = await axios.put(`/api/court-case`, {courtCases});
         if (response.data) {
             return response.data;
         } else {
@@ -41,7 +41,7 @@ export async function disableEnableCourtCases(courtCases: any) {
 
 export async function deleteCourtCase(id: number) {
     try {
-        const response = await axios.delete(`http://localhost:5000/api/court-case/${id}`);
+        const response = await axios.delete(`/api/court-case/${id}`);
         return response.data;
     } catch (err) {
         throw new Error(err.response.data.message || err);

@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function addUser(user) {
     try {
-        const response = await axios.post(`http://localhost:5000/api/user`, user);
+        const response = await axios.post(`/api/user`, user);
         if (response.data) {
             return response.data;
         } else {
@@ -15,7 +15,7 @@ export async function addUser(user) {
 
 export async function updateUser(user) {
     try {
-        const response = await axios.put(`http://localhost:5000/api/user/${user.id}`, user);
+        const response = await axios.put(`/api/user/${user.id}`, user);
         if (response.data) {
             return response.data;
         } else {
@@ -28,7 +28,7 @@ export async function updateUser(user) {
 
 export async function deleteUser(id) {
     try {
-        const response = await axios.delete(`http://localhost:5000/api/user/${id}`);
+        const response = await axios.delete(`/api/user/${id}`);
         if (response.data) {
             return response.data;
         } else {
