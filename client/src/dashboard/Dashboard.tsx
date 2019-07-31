@@ -108,7 +108,7 @@ export default function Dashboard(props: IProps) {
 }
 
 const Table = (props: { courtCases: ICourtCaseWithCalendar[] }) => {
-    const {courtCases} = props;
+    const {courtCases = []} = props;
     return (
         <div className={`table-responsive ${styles.contentContainer}`}>
             <table className="table table-sm">
