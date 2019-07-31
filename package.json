@@ -8,7 +8,7 @@
     "test-coverage": "jest --coverage",
     "dev-nodemon": "nodemon --watch server/**/*.ts --exec ts-node ./server/index.ts",
     "client-dev": "npm start --prefix client",
-    "client-prod": "npm run build --prefix client",
+    "client-prod": "SET GENERATE_SOURCEMAP=false&& npm run build --prefix client",
     "start-dev": "concurrently \"npm run dev-nodemon\" \"npm run client-dev\"",
     "start-prod": "SET NODE_ENV=production&& npm run client-prod && tsc && node build/index.js"
   },

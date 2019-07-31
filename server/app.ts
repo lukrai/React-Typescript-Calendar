@@ -12,6 +12,7 @@ import { UserModel } from "./models/User.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
+import { IRequestWithUser } from "typings/Authentication";
 
 class App {
     public app: express.Application;
@@ -26,14 +27,6 @@ class App {
     }
 
     public listen() {
-        if (process.env.NODE_ENV === "production") {
-            this.app.use(express.static(path.join(__dirname, "..", "client/build")));
-
-            // this.app.get("/*", (req, res) => {
-            //     res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
-            // });
-        }
-
         this.app.listen(this.port, () => {
             console.log(`App listening on the port ${this.port}`);
         });
@@ -90,13 +83,23 @@ class App {
         this.app.use("/api/calendar", CalendarRouter);
         this.app.use("/api", UserRouter);
         this.app.use("/api/court-case", CourtCaseRouter);
-        this.app.get("/*", (req, res) => {
-            res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
-        });
+        if (process.env.NODE_ENV === "production") {
+            this.app.use(express.static(path.join(__dirname, "..", "client/build")));
+
+            this.app.get("/*", (req, res) => {
+                res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+            });
+        }
     }
 
-    private loggerMiddleware(request: express.Request, response: express.Response, next) {
-        console.log(`${request.method} ${request.path}`);
+    private loggerMiddleware(request: IRequestWithUser, response: express.Response, next) {
+        if (request.path !== "/favicon.ico" && !request.path.includes("static") && !request.path.includes("manifest")) {
+            console.log(`${request.method} ${request.path} ${request.user && request.user.email}`);
+            response.on("finish", () => {
+                // tslint:disable-next-line:max-line-length
+                console.info(`${request.method} ${request.path} ${request.user && request.user.email} ${response.statusCode} ${response.statusMessage} ${response.get("Content-Length") || 0}b sent`);
+            });
+        }
         next();
     }
 
