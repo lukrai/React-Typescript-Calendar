@@ -97,7 +97,7 @@ class App {
             console.log(`${request.method} ${request.path} ${request.user && request.user.email}`);
             response.on("finish", () => {
                 // tslint:disable-next-line:max-line-length
-                console.info(`${request.method} ${request.path} ${request.user && request.user.email} ${response.statusCode} ${response.statusMessage} ${response.get("Content-Length") || 0}b sent`);
+                console.info(`${new Date()} ${request.method} ${request.path} ${request.user && request.user.email} ${response.statusCode} ${response.statusMessage} ${response.get("Content-Length") || 0}b sent`);
             });
         }
         next();
