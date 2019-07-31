@@ -11,7 +11,7 @@
     "client-prod": "SET GENERATE_SOURCEMAP=false&& npm run build --prefix client",
     "start-dev": "concurrently \"npm run dev-nodemon\" \"npm run client-dev\"",
     "start-prod": "SET NODE_ENV=production&& npm run client-prod && tsc && node build/index.js",
-    "build": "SET NODE_ENV=production&& npm run client-prod && tsc",
+    "build": "cd client && npm i && GENERATE_SOURCEMAP=false npm run build && cd .. && tsc",
     "start": "node build/index.js"
   },
   "repository": {
