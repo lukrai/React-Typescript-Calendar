@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Button, {ButtonProps} from "react-bootstrap/es/Button";
 import Modal from "react-bootstrap/es/Modal";
 
-export default function ConfirmDialog(props: { title: string; message: string; buttonText: string; buttonVariant: ButtonProps["variant"]; callback(): void }) {
+export default function ConfirmDialog(props: { title: string; message: string; buttonText: string | JSX.Element; buttonVariant: ButtonProps["variant"]; callback(): void }) {
     const [isOpen, setIsOpen] = useState(false);
 
     function handleClose() {

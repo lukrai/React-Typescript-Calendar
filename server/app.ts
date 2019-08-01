@@ -4,6 +4,7 @@ import * as cors from "cors";
 import * as express from "express";
 import * as session from "express-session";
 import * as path from "path";
+import { IRequestWithUser } from "typings/Authentication";
 import passport from "./helpers/passport";
 import errorMiddleware from "./middlewares/error.middleware";
 import { createModels } from "./models";
@@ -12,7 +13,6 @@ import { UserModel } from "./models/User.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
-import { IRequestWithUser } from "typings/Authentication";
 
 class App {
     public app: express.Application;
@@ -123,6 +123,7 @@ class App {
                         email: process.env.ADMIN_EMAIL,
                         firstName: process.env.ADMIN_FIRST_NAME,
                         lastName: process.env.ADMIN_LAST_NAME,
+                        court: "Kauno apygardos teismas",
                         phoneNumber: process.env.ADMIN_PHONE_NUMBER,
                         password: await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
                         isAdmin: true,

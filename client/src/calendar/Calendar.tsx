@@ -176,7 +176,7 @@ function GridColumnHeadings(props: { columnCount: number, disableGridColumn(colu
                 </h3>
                 <ConfirmDialog
                     title={"Disable grid elements in this column?"}
-                    message={"This will disable all columns in this grid and existing items will be lost. Continue?"}
+                    message={"This will disable all items in this grid column and no new court cases will be created in this column. Continue?"}
                     buttonText={"Disable/Enable"}
                     buttonVariant={"primary"}
                     callback={props.disableGridColumn.bind(null, i)}
@@ -216,6 +216,7 @@ interface IPropsGridItem {
 export function CalendarItem(props: IPropsGridItem) {
     const {fileNo, court, firstName, lastName, email, phoneNumber} = props.courtCase;
     const [isVisible, setIsVisible] = useState(false);
+    const icon = <Octicon icon={Trashcan} verticalAlign="middle"/>;
 
     return (
         <div className={`col ${styles.calendarItemContainer}`}>
@@ -246,9 +247,13 @@ export function CalendarItem(props: IPropsGridItem) {
                             <Octicon icon={CircleSlash} verticalAlign="middle"/>
                         </Button>
                         <br/>
-                        <Button color="secondary" onClick={() => props.deleteGridItem(props.courtCase)} name="delete">
-                            <Octicon icon={Trashcan} verticalAlign="middle"/>
-                        </Button>
+                        <ConfirmDialog
+                            title={"Delete this item?"}
+                            message={"This item will be deleted and existing information would be lost. Continue?"}
+                            buttonText={icon}
+                            buttonVariant={"primary"}
+                            callback={props.deleteGridItem.bind(null, props.courtCase)}
+                        />
                     </div>
                 </Card.Body>
             </Card>

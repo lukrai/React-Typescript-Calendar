@@ -237,6 +237,7 @@ export default class AddEditUserModal extends React.Component<any, any> {
 }
 
 const courtOptions = [
+    "Kauno apygardos teismas",
     "Alytaus apylinkės teismas Alyatus rūmai",
     "Alytaus apylinkės teismas Druskininkų rūmai",
     "Alytaus apylinkės teismas Lazdijų rūmai",
