@@ -1,3 +1,5 @@
+import "react-app-polyfill/ie11";
+import "react-app-polyfill/stable";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.css";
 import React from "react";
