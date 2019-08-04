@@ -2,14 +2,11 @@ import * as express from "express";
 import {NextFunction} from "express";
 import {DateTime} from "luxon";
 import HttpException from "../exceptions/HttpException";
-import {getNextMonthsDate, getNextWeekDate} from "../helpers/date.helper";
+import {availableCalendarTimes, getNextMonthsDate, getNextWeekDate, numberOfColumns} from "../helpers/date.helper";
 import {db} from "../models";
 import {ICalendar} from "../models/Calendar.model";
 import {ICourtCase} from "../models/CourtCase.model";
 import {IRequestWithUser} from "../typings/Authentication";
-
-const availableCalendarTimes = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30"];
-const numberOfColumns = 7;
 
 class CourtCaseController {
     constructor() {

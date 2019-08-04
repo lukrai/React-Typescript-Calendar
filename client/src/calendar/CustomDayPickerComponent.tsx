@@ -48,8 +48,8 @@ interface IProps {
 export class CustomDayPickerInput extends React.Component<IProps> {
     public render() {
         return (
-            <div style={{display: "flex", marginLeft: "16px"}}>
-                <h5 className="font-weight-bold" style={{alignSelf: "flex-end", marginRight: "1em"}}>Posėdžių data</h5>
+            <div style={{display: "flex", marginLeft: "20px", marginRight: "2em"}}>
+                <h5 className="font-weight-bold" style={{alignSelf: "flex-end", marginRight: "1em"}}>Pasirinkta data</h5>
                 <DayPickerInput
                     onDayChange={this.handleDayChange}
                     inputProps={{className: "form-control"}}

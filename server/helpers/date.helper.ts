@@ -1,5 +1,8 @@
 import {DateTime} from "luxon";
 
+export const availableCalendarTimes = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30"];
+export const numberOfColumns = 7;
+
 export function getNextMonthsDate(date: DateTime, defaultWeekDay: number): string {
     const nextMonthDate = date.plus({ weeks: 5 });
     let weekDayAdjustedDate = nextMonthDate;

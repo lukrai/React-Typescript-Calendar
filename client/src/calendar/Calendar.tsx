@@ -1,13 +1,13 @@
-import Octicon, {CircleSlash, Trashcan} from "@primer/octicons-react";
-import {DateTime} from "luxon";
-import React, {useEffect, useState} from "react";
+import Octicon, { CircleSlash, Trashcan } from "@primer/octicons-react";
+import { DateTime } from "luxon";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/es/Button";
 import Card from "react-bootstrap/es/Card";
 import ConfirmDialog from "../common/ConfirmDialog";
-import {ICalendarWithCourtCases, ICourtCase} from "../typings";
-import {deleteCourtCase, disableCourtCase, disableEnableCourtCases, getCalendarData} from "./calendar.actions";
+import { ICalendarWithCourtCases, ICourtCase } from "../typings";
+import { deleteCourtCase, disableCourtCase, disableEnableCourtCases, getCalendarData } from "./calendar.actions";
 import styles from "./calendar.module.css";
-import {CustomDayPickerInput} from "./CustomDayPickerComponent";
+import { CustomDayPickerInput } from "./CustomDayPickerComponent";
 
 const columnCount = 7;
 const hoverColor = "#e0e0e0";
@@ -45,7 +45,7 @@ export default function Calendar(props: ICalendarProps) {
     }, [date]);
 
     const groupedCourtCases = calendarData.courtCases
-    && calendarData.courtCases.length > 0
+        && calendarData.courtCases.length > 0
         ? groupByTime(calendarData.courtCases)
         : {};
 
@@ -63,17 +63,20 @@ export default function Calendar(props: ICalendarProps) {
                         Search
                     </button>
                 </CustomDayPickerInput>
+                <h5 className="font-weight-bold" style={{ alignSelf: "flex-end", marginRight: "1em", marginLeft: "1em" }}>
+                    Posėdžių data: {calendarData.date}
+                </h5>
             </div>
             <div className="container-fluid">
                 {calendarData.courtCases
-                && calendarData.courtCases.length > 0
-                && <GridColumnHeadings disableGridColumn={disableGridColumn} columnCount={columnCount}/>}
+                    && calendarData.courtCases.length > 0
+                    && <GridColumnHeadings disableGridColumn={disableGridColumn} columnCount={columnCount} />}
 
                 {calendarData.courtCases
-                && calendarData.courtCases.length > 0
-                && Object.keys(groupedCourtCases).map((key: string, index: number) =>
-                    <CalendarRow key={key} time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem} deleteGridItem={deleteGridItem}/>,
-                )}
+                    && calendarData.courtCases.length > 0
+                    && Object.keys(groupedCourtCases).map((key: string, index: number) =>
+                        <CalendarRow key={key} time={key} courtCases={groupedCourtCases[key]} rowIndex={index} disableGridItem={disableGridItem} deleteGridItem={deleteGridItem} />,
+                    )}
             </div>
         </>
     );
@@ -84,11 +87,11 @@ export default function Calendar(props: ICalendarProps) {
             setCalendarData(() => {
                 const data = calendarData.courtCases.map(o => {
                     if (o.id === result.id) {
-                        return {...o, isDisabled: result.isDisabled};
+                        return { ...o, isDisabled: result.isDisabled };
                     }
                     return o;
                 });
-                return {...calendarData, courtCases: data};
+                return { ...calendarData, courtCases: data };
             });
         } catch (err) {
             props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
@@ -108,7 +111,7 @@ export default function Calendar(props: ICalendarProps) {
                     }
                     return courtCase;
                 });
-                return {...calendarData, courtCases: data};
+                return { ...calendarData, courtCases: data };
             });
         } catch (err) {
             props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
@@ -121,11 +124,11 @@ export default function Calendar(props: ICalendarProps) {
             setCalendarData(() => {
                 const data = calendarData.courtCases.map(o => {
                     if (o.id === result.id) {
-                        return {o, ...result};
+                        return { o, ...result };
                     }
                     return o;
                 });
-                return {...calendarData, courtCases: data};
+                return { ...calendarData, courtCases: data };
             });
         } catch (err) {
             props.triggerErrorToast((err.response && err.response.data && err.response.data.message) || err);
@@ -143,25 +146,25 @@ interface ICalendarRowProps {
 }
 
 function CalendarRow(props: ICalendarRowProps): JSX.Element { // tslint:disable-line:function-name
-    const {courtCases, time, rowIndex} = props;
+    const { courtCases, time, rowIndex } = props;
     const isCasesNotEmpty = courtCases.some(courtCase => courtCase != null);
     return (
-        <div className="row" style={{flexWrap: "nowrap"}}>
+        <div className="row" style={{ flexWrap: "nowrap" }}>
             <div>{time}</div>
             {isCasesNotEmpty
-            && courtCases.map((o, index: number) => {
-                if (o != null && o.isDisabled === true) {
-                    return <DisabledItem key={o.id} courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem}/>;
-                }
-                return <CalendarItem
-                    key={o.id}
-                    courtCase={o}
-                    rowIndex={rowIndex}
-                    columnIndex={index}
-                    disableGridItem={props.disableGridItem}
-                    deleteGridItem={props.deleteGridItem}
-                />;
-            })}
+                && courtCases.map((o, index: number) => {
+                    if (o != null && o.isDisabled === true) {
+                        return <DisabledItem key={o.id} courtCase={o} rowIndex={rowIndex} columnIndex={index} disableGridItem={props.disableGridItem} />;
+                    }
+                    return <CalendarItem
+                        key={o.id}
+                        courtCase={o}
+                        rowIndex={rowIndex}
+                        columnIndex={index}
+                        disableGridItem={props.disableGridItem}
+                        deleteGridItem={props.deleteGridItem}
+                    />;
+                })}
         </div>
     );
 }
@@ -214,9 +217,9 @@ interface IPropsGridItem {
 }
 
 export function CalendarItem(props: IPropsGridItem) {
-    const {fileNo, court, firstName, lastName, email, phoneNumber} = props.courtCase;
+    const { fileNo, court, firstName, lastName, email, phoneNumber } = props.courtCase;
     const [isVisible, setIsVisible] = useState(false);
-    const icon = <Octicon icon={Trashcan} verticalAlign="middle"/>;
+    const icon = <Octicon icon={Trashcan} verticalAlign="middle" />;
 
     return (
         <div className={`col ${styles.calendarItemContainer}`}>
@@ -244,9 +247,9 @@ export function CalendarItem(props: IPropsGridItem) {
                         onMouseOut={() => setIsVisible(false)}
                     >
                         <Button color="secondary" onClick={() => props.disableGridItem(props.courtCase)}>
-                            <Octicon icon={CircleSlash} verticalAlign="middle"/>
+                            <Octicon icon={CircleSlash} verticalAlign="middle" />
                         </Button>
-                        <br/>
+                        <br />
                         <ConfirmDialog
                             title={"Delete this item?"}
                             message={"This item will be deleted and existing information would be lost. Continue?"}
@@ -269,7 +272,7 @@ export function DisabledItem(props: IPropsGridItem) {
         <div className={`col ${styles.calendarItemContainer}`}>
             <Card bg="danger" text="white" className={styles.calendarItemCardDisabled}>
                 <Card.Body>
-                    <Octicon icon={CircleSlash} size="large" verticalAlign="middle"/>
+                    <Octicon icon={CircleSlash} size="large" verticalAlign="middle" />
                     <div
                         className={styles.gridItemHover}
                         style={{
@@ -280,7 +283,7 @@ export function DisabledItem(props: IPropsGridItem) {
                         onMouseOut={() => setIsVisible(false)}
                     >
                         <Button color="secondary" onClick={() => props.disableGridItem(props.courtCase)}>
-                            <Octicon icon={CircleSlash} verticalAlign="middle"/>
+                            <Octicon icon={CircleSlash} verticalAlign="middle" />
                         </Button>
                     </div>
                 </Card.Body>
@@ -293,9 +296,9 @@ export function getAdjustedWeekDate(date: DateTime, weekDay: number): string {
     const nextMonthDate = date;
     let weekDayAdjustedDate = nextMonthDate;
     if (nextMonthDate.weekday !== weekDay) {
-        weekDayAdjustedDate = nextMonthDate.set({weekday: weekDay});
+        weekDayAdjustedDate = nextMonthDate.set({ weekday: weekDay });
         if (weekDayAdjustedDate < nextMonthDate) {
-            weekDayAdjustedDate = weekDayAdjustedDate.plus({weeks: 1});
+            weekDayAdjustedDate = weekDayAdjustedDate.plus({ weeks: 1 });
         }
     }
     return weekDayAdjustedDate.toISODate();

@@ -1,8 +1,9 @@
 import * as express from "express";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 import HttpException from "../exceptions/HttpException";
-import {db} from "../models";
-import {ICalendar} from "../models/Calendar.model";
+import { availableCalendarTimes, numberOfColumns } from "../helpers/date.helper";
+import { db } from "../models";
+import { ICalendar } from "../models/Calendar.model";
 
 class CalendarController {
     constructor() {
@@ -19,7 +20,7 @@ class CalendarController {
             });
             res.status(200).json(calendars);
         } catch (err) {
-            return next(new HttpException(404, "Can't fetch calendar."));
+            return next(new HttpException(404, "Can't fetch calendars."));
         }
     }
 
@@ -29,22 +30,41 @@ class CalendarController {
             if (!dateFromParam.isValid) {
                 return next(new HttpException(400, "Wrong date param format. Should be YYYY-MM-DD."));
             }
-
-            const calendar = await db.Calendar.findOne({
-                where: {date: req.params.date},
+            if (dateFromParam.weekday !== db.defaultWeekDay) {
+                return next(new HttpException(400, `Wrong week day. Current availble week day: ${db.defaultWeekDay}.`));
+            }
+            let jsonCalendar;
+            let calendar: ICalendar = await db.Calendar.findOne({
+                where: { date: req.params.date },
                 include: [{
                     as: "courtCases",
-                    model: db.CourtCase,
-                    limit: 100,
+                    limit: 200,
                     order: [["id", "ASC"]],
+                    model: db.CourtCase,
                 }],
             });
 
             if (!calendar) {
-                return next(new HttpException(404, `Calendar for date ${req.params.date} does not exist.`));
+                calendar = await db.Calendar.create({
+                    date: req.params.date,
+                });
+                const initialCourtCases = [];
+                availableCalendarTimes.map(time => {
+                    for (let i = 0; i < numberOfColumns; i += 1) {
+                        initialCourtCases.push({ time, calendarId: calendar.id });
+                    }
+                });
+
+                const createdCourtCases = await db.CourtCase.bulkCreate(initialCourtCases, { returning: true });
+                jsonCalendar = calendar.toJSON();
+                jsonCalendar.courtCases = [...createdCourtCases];
+            } else {
+                jsonCalendar = calendar.toJSON();
             }
-            return res.status(200).send(calendar);
+
+            return res.status(200).send(jsonCalendar);
         } catch (err) {
+            console.log(err);
             return next(new HttpException(404, "Can't fetch calendar."));
         }
     }
@@ -71,7 +91,7 @@ class CalendarController {
             await calendar.updateAttributes({
                 date: req.body.date || calendar.date,
             });
-            return res.status(200).send({calendar});
+            return res.status(200).send({ calendar });
         } catch (err) {
             return res.status(400).send(err);
         }
