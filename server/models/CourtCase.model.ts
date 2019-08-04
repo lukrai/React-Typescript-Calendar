@@ -14,6 +14,7 @@ export interface ICourtCase {
     isDisabled?: boolean;
     time: string;  // e.g. 9:00
     userId: number;
+    registeredAt?: Date;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -49,6 +50,9 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         },
         time: {
             type: DataTypes.STRING,
+        },
+        registeredAt: {
+            type: DataTypes.DATE,
         },
     };
 

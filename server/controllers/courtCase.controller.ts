@@ -86,6 +86,7 @@ class CourtCaseController {
                     updatedCourtCase.phoneNumber = req.user.phoneNumber;
                     updatedCourtCase.court = req.user.court;
                     updatedCourtCase.userId = req.user.id;
+                    updatedCourtCase.registeredAt = new Date();
 
                     await updatedCourtCase.save();
                     return res.status(201).send(updatedCourtCase);
@@ -101,6 +102,7 @@ class CourtCaseController {
                         courtCaseToUpdate.phoneNumber = req.user.phoneNumber;
                         courtCaseToUpdate.court = req.user.court;
                         courtCaseToUpdate.userId = req.user.id;
+                        courtCaseToUpdate.registeredAt = new Date();
 
                         await courtCaseToUpdate.save();
                         return res.status(201).send(courtCaseToUpdate);
@@ -187,6 +189,7 @@ class CourtCaseController {
             courtCase.lastName = null;
             courtCase.phoneNumber = null;
             courtCase.email = null;
+            courtCase.registeredAt = null;
             await courtCase.save();
 
             return res.status(200).send(courtCase);

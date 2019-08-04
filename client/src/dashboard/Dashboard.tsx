@@ -126,7 +126,7 @@ const Table = (props: { courtCases: ICourtCaseWithCalendar[] }) => {
                         <th>{index + 1}</th>
                         {o.calendar && <th>{o.calendar.date} {o.time}</th>}
                         <td>{o.fileNo}</td>
-                        <td>{DateTime.fromISO(o.createdAt).toLocaleString()}</td>
+                        <td>{DateTime.fromISO(o.registeredAt).toLocaleString()}</td>
                     </tr>
                 ))}
                 </tbody>

@@ -28,6 +28,7 @@ export interface ICourtCase {
     time: string;  // e.g. 9:00
     createdAt: string;
     updatedAt: string;
+    registeredAt?: string;
 }
 
 export interface ICalendar {
