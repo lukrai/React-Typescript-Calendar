@@ -13,10 +13,23 @@ class CourtCaseController {
         console.log("Initialize CourtCase controller");
     }
 
-    public getAllCourtCases = async (req: express.Request, res: express.Response, next: NextFunction) => {
+    public getAllCourtCases = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {
         try {
-            const courtCases: ICourtCase[] = await db.CourtCase.findAll();
-            res.status(200).json({courtCases});
+            if (!req.user.court) {
+                return next(new HttpException(400, "Vartotojas neturi priskirto teismo."));
+            }
+            const courtCases: ICourtCase[] = await db.CourtCase.findAll({
+                where: {
+                    court: req.user.court,
+                },
+                limit: 500,
+                order: [["registeredAt", "DESC"]],
+                include: [{
+                    model: db.Calendar,
+                    as: "calendar",
+                }],
+            });
+            return res.status(200).json(courtCases);
         } catch (err) {
             next(new HttpException(500, "Could not get all court cases."));
         }

@@ -37,8 +37,8 @@ class UserController {
                 include: [{
                     as: "courtCases",
                     model: db.CourtCase,
-                    limit: 50,
-                    order: [["updatedAt", "DESC"]],
+                    limit: 500,
+                    order: [["registeredAt", "DESC"]],
                     include: [{
                         model: db.Calendar,
                         as: "calendar",
