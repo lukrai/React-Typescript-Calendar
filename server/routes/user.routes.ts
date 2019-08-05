@@ -1,8 +1,8 @@
-import { Router} from "express";
+import { Router } from "express";
 import AuthenticationController from "../controllers/authentication.controller";
 import UserController from "../controllers/user.controller";
 import passport from "../helpers/passport";
-import {authMiddleware, authMiddlewareAdmin} from "../middlewares/auth.middleware";
+import { authMiddleware, authMiddlewareAdmin } from "../middlewares/auth.middleware";
 
 class UserRouter {
     public router: Router;

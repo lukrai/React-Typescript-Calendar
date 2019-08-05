@@ -1,6 +1,6 @@
-import { Router} from "express";
+import { Router } from "express";
 import CourtCaseController from "../controllers/courtCase.controller";
-import {authMiddleware} from "../middlewares/auth.middleware";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 class CourtCaseRoutesRouter {
     public router: Router;

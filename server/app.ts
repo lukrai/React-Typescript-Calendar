@@ -22,7 +22,7 @@ class App {
 
     constructor() {
         this.app = express();
-        this.port = (process.env.PORT as unknown as number) || 5000;
+        this.port = ((process.env.PORT as unknown) as number) || 5000;
         this.init();
     }
 
@@ -60,16 +60,17 @@ class App {
             db: this.db.sequelize,
             table: "Session",
         });
-        this.app.use(session({
-            secret: process.env.COOKIE_SECRET,
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                maxAge: 60 * 60 * 1000,
-            },
-            store: dbStore,
-        },
-        ));
+        this.app.use(
+            session({
+                secret: process.env.COOKIE_SECRET,
+                resave: false,
+                saveUninitialized: false,
+                cookie: {
+                    maxAge: 60 * 60 * 1000,
+                },
+                store: dbStore,
+            }),
+        );
         this.app.use(passport.initialize());
         this.app.use(passport.session());
 
@@ -97,7 +98,11 @@ class App {
             console.log(`${request.method} ${request.path} ${request.user && request.user.email}`);
             response.on("finish", () => {
                 // tslint:disable-next-line:max-line-length
-                console.info(`${new Date()} ${request.method} ${request.path} ${request.user && request.user.email} ${response.statusCode} ${response.statusMessage} ${response.get("Content-Length") || 0}b sent`);
+                console.info(
+                    `${new Date()} ${request.method} ${request.path} ${request.user && request.user.email} ${
+                        response.statusCode
+                    } ${response.statusMessage} ${response.get("Content-Length") || 0}b sent`,
+                );
             });
         }
         next();
@@ -105,10 +110,11 @@ class App {
 
     private async setDefaultDayOfTheWeek(AppSettings: AppSettingsModel) {
         try {
-            return AppSettings.findOrCreate({ where: { id: 1 }, defaults: { weekDay: 3 } })
-                .spread((setting, created) => {
+            return AppSettings.findOrCreate({ where: { id: 1 }, defaults: { weekDay: 3 } }).spread(
+                (setting, created) => {
                     return setting.get({ plain: true }).weekDay;
-                });
+                },
+            );
         } catch (err) {
             console.log(err);
         }
@@ -116,19 +122,18 @@ class App {
 
     private async setDefaultAdminUser(User: UserModel) {
         try {
-            await User.findOrCreate(
-                {
-                    where: { email: "admin@admin.local" },
-                    defaults: {
-                        email: process.env.ADMIN_EMAIL,
-                        firstName: process.env.ADMIN_FIRST_NAME,
-                        lastName: process.env.ADMIN_LAST_NAME,
-                        court: "Kauno apygardos teismas",
-                        phoneNumber: process.env.ADMIN_PHONE_NUMBER,
-                        password: await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
-                        isAdmin: true,
-                    },
-                });
+            await User.findOrCreate({
+                where: { email: "admin@admin.local" },
+                defaults: {
+                    email: process.env.ADMIN_EMAIL,
+                    firstName: process.env.ADMIN_FIRST_NAME,
+                    lastName: process.env.ADMIN_LAST_NAME,
+                    court: "Kauno apygardos teismas",
+                    phoneNumber: process.env.ADMIN_PHONE_NUMBER,
+                    password: await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
+                    isAdmin: true,
+                },
+            });
         } catch (err) {
             console.log(err);
         }

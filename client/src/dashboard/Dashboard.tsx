@@ -23,7 +23,10 @@ interface IProps {
 }
 
 const schema = yup.object({
-    fileNo: yup.string().required("Privalomas laukas").max(19, "Bylos nr. negali būti ilgesnė už 19 simbolių."),
+    fileNo: yup
+        .string()
+        .required("Privalomas laukas")
+        .max(19, "Bylos nr. negali būti ilgesnė už 19 simbolių."),
 });
 
 export default function Dashboard(props: IProps) {
@@ -47,13 +50,16 @@ export default function Dashboard(props: IProps) {
         };
 
         fetchData();
-    }, []);
+    }, [props, user.id]);
 
     const getUserCourtData = async (tabKey: string) => {
         try {
             setLoading(true);
             setKey(tabKey);
-            const result = tabKey === TAB_KEYS.court ? await axios.get(`/api/court-case`) : await axios.get(`/api/user/${user.id}`);
+            const result =
+                tabKey === TAB_KEYS.court
+                    ? await axios.get(`/api/court-case`)
+                    : await axios.get(`/api/user/${user.id}`);
             setCourtCaseData(tabKey === TAB_KEYS.court ? result.data : result.data.courtCases);
             setLoading(false);
         } catch (err) {
@@ -68,9 +74,12 @@ export default function Dashboard(props: IProps) {
                     <Card.Header>Mano duomenys</Card.Header>
                     <Card.Body>
                         <Card.Text>
-                            {user.court}<br />
-                            {user.firstName} {user.lastName}<br />
-                            {user.email}<br />
+                            {user.court}
+                            <br />
+                            {user.firstName} {user.lastName}
+                            <br />
+                            {user.email}
+                            <br />
                             {user.phoneNumber}
                         </Card.Text>
                     </Card.Body>
@@ -93,37 +102,28 @@ export default function Dashboard(props: IProps) {
                         }
                     }}
                 >
-                    {({
-                        handleSubmit,
-                        handleChange,
-                        handleBlur,
-                        values,
-                        touched,
-                        isValid,
-                        errors,
-                        isSubmitting,
-                    }) => (
-                            <Form noValidate onSubmit={handleSubmit} className={styles.form} >
-                                <Form.Group>
-                                    <Form.Label>Bylos nr.</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Bylos Nr."
-                                        name="fileNo"
-                                        value={values.fileNo}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.fileNo && !!touched.fileNo}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {touched.fileNo && errors.fileNo}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                                <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
-                                    Registruoti
+                    {({ handleSubmit, handleChange, handleBlur, values, touched, errors, isSubmitting }) => (
+                        <Form noValidate onSubmit={handleSubmit} className={styles.form}>
+                            <Form.Group>
+                                <Form.Label>Bylos nr.</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Bylos Nr."
+                                    name="fileNo"
+                                    value={values.fileNo}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={!!errors.fileNo && !!touched.fileNo}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {touched.fileNo && errors.fileNo}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
+                                Registruoti
                             </button>
-                            </Form>
-                        )}
+                        </Form>
+                    )}
                 </Formik>
             </div>
 
@@ -143,7 +143,7 @@ export default function Dashboard(props: IProps) {
     );
 }
 
-const CourtCasesTable = (props: { courtCases: ICourtCaseWithCalendar[], loading: boolean }) => {
+const CourtCasesTable = (props: { courtCases: ICourtCaseWithCalendar[]; loading: boolean }) => {
     const { loading, courtCases = [] } = props;
     return (
         <ReactTable

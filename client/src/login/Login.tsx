@@ -15,7 +15,7 @@ interface IProps extends RouteComponentProps {
 
 const schema = yup.object({
     email: yup.string().email().required("Privalomas laukas"),
-    password: yup.string().required("Privalomas laukas"),
+    password: yup.string().required("Privalomas laukas"), 
 });
 
 const Login = (props: IProps) => (
