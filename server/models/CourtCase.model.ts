@@ -1,6 +1,6 @@
-import {BuildOptions, DataTypes, Model, Sequelize} from "sequelize";
-import {IDatabase} from "../typings/DbInterface";
-import {SequelizeAttributes} from "../typings/SequelizeAttributes";
+import { BuildOptions, DataTypes, Model, Sequelize } from "sequelize";
+import { IDatabase } from "../typings/DbInterface";
+import { SequelizeAttributes } from "../typings/SequelizeAttributes";
 
 export interface ICourtCase {
     id?: number;
@@ -12,7 +12,7 @@ export interface ICourtCase {
     email: string;
     phoneNumber: string;
     isDisabled?: boolean;
-    time: string;  // e.g. 9:00
+    time: string; // e.g. 9:00
     userId: number;
     registeredAt?: Date;
     createdAt?: Date;
@@ -21,8 +21,8 @@ export interface ICourtCase {
 
 export type CourtCaseModel = typeof Model &
     (new (values?: object, options?: BuildOptions) => ICourtCase) & {
-    associate: (model: IDatabase) => any;
-};
+        associate: (model: IDatabase) => any;
+    };
 
 export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
     const attributes: Partial<SequelizeAttributes<ICourtCase>> = {
@@ -43,7 +43,6 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         },
         fileNo: {
             type: DataTypes.STRING,
-            unique: true,
         },
         isDisabled: {
             type: DataTypes.BOOLEAN,
@@ -65,7 +64,8 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
             {
                 name: "courtCase_fileNo_index",
                 fields: ["fileNo"],
-            },            {
+            },
+            {
                 name: "courtCase_userId_index",
                 fields: ["userId"],
             },
@@ -89,7 +89,6 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
                 name: "userId",
             },
         });
-
     };
 
     return courtCase;
