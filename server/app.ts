@@ -85,10 +85,10 @@ class App {
         this.app.use("/api", UserRouter);
         this.app.use("/api/court-case", CourtCaseRouter);
         if (process.env.NODE_ENV === "production") {
-            this.app.use(express.static(path.join(__dirname, "..", "client/build")));
+            this.app.use(express.static(path.join(__dirname, "..", "..", "client/build")));
 
             this.app.get("/*", (req, res) => {
-                res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+                res.sendFile(path.join(__dirname, "..", "..", "client/build", "index.html"));
             });
         }
     }
