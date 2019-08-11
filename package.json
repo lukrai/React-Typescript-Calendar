@@ -5,11 +5,14 @@
   "main": "index.js",
   "scripts": {
     "client-dev": "npm start --prefix client",
-    "client-prod": "SET GENERATE_SOURCEMAP=false&& npm run build --prefix client",
+    "client-prod": "GENERATE_SOURCEMAP=false npm run build --prefix client",
+    "client-prod-w": "SET GENERATE_SOURCEMAP=false&& npm run build --prefix client",
     "start-dev": "concurrently \"npm run dev-nodemon --prefix server\" \"npm run client-dev\"",
     "start-prod": "SET NODE_ENV=production&& npm run client-prod && npm run build --prefix server && npm start --prefix server",
     "build": "cd client && npm install && cd ../server && npm install && cd .. && npm run client-prod && npm run build --prefix server",
-    "start": "SET NODE_ENV=production&& node server/build/index.js"
+    "build-w": "cd client && npm install && cd ../server && npm install && cd .. && npm run client-prod-w && npm run build --prefix server",
+    "start": "NODE_ENV=production node server/build/index.js",
+    "start-w": "SET NODE_ENV=production&& node server/build/index.js"
   },
   "repository": {
     "type": "git",
