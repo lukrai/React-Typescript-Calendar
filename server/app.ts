@@ -1,6 +1,8 @@
 import * as bcrypt from "bcryptjs";
 import * as bodyParser from "body-parser";
 import * as cors from "cors";
+import * as https from "https";
+import * as fs from "fs";
 import * as express from "express";
 import * as session from "express-session";
 import * as path from "path";
@@ -27,8 +29,25 @@ class App {
     }
 
     public listen() {
-        this.app.listen(this.port, () => {
-            console.log(`App listening on the port ${this.port}`);
+        const keyPath =
+            process.env.NODE_ENV === "production"
+                ? path.join(__dirname, "..", "..", "server/certificate.key")
+                : "./certificate.key";
+        const certPath =
+            process.env.NODE_ENV === "production"
+                ? path.join(__dirname, "..", "..", "server/certificate.cert")
+                : "./certificate.cert";
+        var options = {
+            key: fs.readFileSync(keyPath),
+            cert: fs.readFileSync(certPath),
+            requestCert: false,
+            rejectUnauthorized: false,
+        };
+
+        const server = https.createServer(options, this.app);
+
+        server.listen(this.port, function() {
+            console.log(`App listening on the port ${JSON.stringify(server.address())}`);
         });
     }
 
