@@ -29,25 +29,30 @@ class App {
     }
 
     public listen() {
-        const keyPath =
-            process.env.NODE_ENV === "production"
-                ? path.join(__dirname, "..", "..", "server/certificate.key")
-                : "./certificate.key";
-        const certPath =
-            process.env.NODE_ENV === "production"
-                ? path.join(__dirname, "..", "..", "server/certificate.cert")
-                : "./certificate.cert";
-        var options = {
-            key: fs.readFileSync(keyPath),
-            cert: fs.readFileSync(certPath),
-            requestCert: false,
-            rejectUnauthorized: false,
-        };
+        // Uncomment if you have valid certificate for https
+        // const keyPath =
+        //     process.env.NODE_ENV === "production"
+        //         ? path.join(__dirname, "..", "..", "server/certificate.key")
+        //         : "./certificate.key";
+        // const certPath =
+        //     process.env.NODE_ENV === "production"
+        //         ? path.join(__dirname, "..", "..", "server/certificate.cert")
+        //         : "./certificate.cert";
+        // var options = {
+        //     key: fs.readFileSync(keyPath),
+        //     cert: fs.readFileSync(certPath),
+        //     requestCert: false,
+        //     rejectUnauthorized: false,
+        // };
 
-        const server = https.createServer(options, this.app);
+        // const server = https.createServer(options, this.app);
 
-        server.listen(this.port, function() {
-            console.log(`App listening on the port ${JSON.stringify(server.address())}`);
+        // server.listen(this.port, function() {
+        //     console.log(`App listening on the port ${JSON.stringify(server.address())}`);
+        // });
+
+        this.app.listen(this.port, () => {
+            console.log(`App listening on the port ${this.port}`);
         });
     }
 
