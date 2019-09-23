@@ -146,10 +146,11 @@ class App {
 
     private async setDefaultAdminUser(User: UserModel) {
         try {
+            const defaultEmail = process.env.ADMIN_EMAIL || "admin@admin.local";
             await User.findOrCreate({
-                where: { email: "admin@admin.local" },
+                where: { email: defaultEmail },
                 defaults: {
-                    email: process.env.ADMIN_EMAIL,
+                    email: defaultEmail,
                     firstName: process.env.ADMIN_FIRST_NAME,
                     lastName: process.env.ADMIN_LAST_NAME,
                     court: "Kauno apygardos teismas",
