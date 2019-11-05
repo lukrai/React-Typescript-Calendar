@@ -244,7 +244,7 @@ export function CalendarItem(props: IPropsGridItem) {
             {email}
           </Card.Text>
           <Card.Text>{phoneNumber}</Card.Text>
-          <Card.Text>{DateTime.fromISO(registeredAt).toISODate()}</Card.Text>
+          <Card.Text>{registeredAt && DateTime.fromISO(registeredAt).toISODate()}</Card.Text>
           <div
             className={styles.gridItemHover}
             style={{
