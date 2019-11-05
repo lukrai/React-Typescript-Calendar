@@ -17,6 +17,7 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-member-accessibility": "off",
     "@typescript-eslint/interface-name-prefix": "always",
+    "@typescript-eslint/indent": "2",
   },
   settings: {
     react: {
