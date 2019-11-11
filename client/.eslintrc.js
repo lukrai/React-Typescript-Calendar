@@ -3,6 +3,7 @@ module.exports = {
   extends: [
     "plugin:react/recommended", // Uses the recommended rules from @eslint-plugin-react
     "plugin:@typescript-eslint/recommended", // Uses the recommended rules from @typescript-eslint/eslint-plugin,
+    "prettier/@typescript-eslint",
     "plugin:prettier/recommended" 
   ],
   parserOptions: {
@@ -16,8 +17,7 @@ module.exports = {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-member-accessibility": "off",
-    "@typescript-eslint/interface-name-prefix": "always",
-    "@typescript-eslint/indent": "2",
+    "@typescript-eslint/interface-name-prefix": 0,
   },
   settings: {
     react: {

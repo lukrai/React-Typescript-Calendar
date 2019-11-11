@@ -1,8 +1,8 @@
 import Octicon, { CircleSlash, Trashcan } from "@primer/octicons-react";
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
-import Button from "react-bootstrap/es/Button";
-import Card from "react-bootstrap/es/Card";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { ICalendarWithCourtCases, ICourtCase } from "../typings";
 import { deleteCourtCase, disableCourtCase, disableEnableCourtCases, getCalendarData } from "./calendar.actions";

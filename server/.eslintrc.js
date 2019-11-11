@@ -1,7 +1,6 @@
 module.exports = {
   parser: "@typescript-eslint/parser", // Specifies the ESLint parser
   extends: [
-    // "plugin:react/recommended", // Uses the recommended rules from @eslint-plugin-react
     "plugin:@typescript-eslint/recommended", // Uses the recommended rules from @typescript-eslint/eslint-plugin,
     "plugin:prettier/recommended" 
   ],
@@ -16,11 +15,6 @@ module.exports = {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-member-accessibility": "off",
-    "@typescript-eslint/interface-name-prefix": "always",
+    "@typescript-eslint/interface-name-prefix": 0,
   }
-  // settings: {
-  //   react: {
-  //     version: "detect"
-  //   }
-  // }
 };

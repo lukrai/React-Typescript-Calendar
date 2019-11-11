@@ -1,6 +1,6 @@
 import {Formik} from "formik";
 import React from "react";
-import Form from "react-bootstrap/es/Form";
+import Form from "react-bootstrap/Form";
 import { connect } from "react-redux";
 import {RouteComponentProps} from "react-router";
 import * as yup from "yup";

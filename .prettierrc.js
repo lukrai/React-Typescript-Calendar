@@ -4,9 +4,9 @@ module.exports = {
     printWidth: 120,
     overrides: [
       {
-        files: ["*.js", "*.ts"],
+        files: ["*.js", "*.ts", "*.tsx"],
         options: {
-          tabWidth: 4,
+          tabWidth: 2,
         }
       },
     ]

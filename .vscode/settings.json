@@ -13,6 +13,9 @@
             "autoFix": true
         },
     ],
+    "eslint.workingDirectories": [
+        "./client", "./server"
+    ],
     "editor.formatOnSave": true,
     "[javascript]": {
         "editor.formatOnSave": false
@@ -25,5 +28,7 @@
     },
     "[typescriptreact]": {
         "editor.formatOnSave": false
-    }
+    },
+    "prettier.configPath": ".prettierrc.js",
+    "editor.tabSize": 2
 }

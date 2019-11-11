@@ -2,10 +2,10 @@ import axios from "axios";
 import { Formik } from "formik";
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
-import Card from "react-bootstrap/es/Card";
-import Form from "react-bootstrap/es/Form";
-import Tabs from "react-bootstrap/es/Tabs";
-import Tab from "react-bootstrap/es/Tab";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
+import Tabs from "react-bootstrap/Tabs";
+import Tab from "react-bootstrap/Tab";
 import ReactTable from "react-table";
 import * as yup from "yup";
 import { ICourtCaseWithCalendar, IUser } from "../typings";
@@ -93,9 +93,9 @@ export default function Dashboard(props: IProps) {
                             const result = await addCourtCase(values.fileNo);
                             setCourtCaseData([result, ...courtCaseData]);
                             setSubmitting(false);
-                            resetForm({
+                            resetForm({values: {
                                 fileNo: "",
-                            });
+                            }});
                         } catch (err) {
                             setSubmitting(false);
                             props.triggerErrorToast(err);
