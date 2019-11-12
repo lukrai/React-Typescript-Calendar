@@ -1,37 +1,40 @@
 import * as bcrypt from "bcryptjs";
-import * as  passport from "passport";
+import * as passport from "passport";
 import * as LocalStrategy from "passport-local";
 import WrongCredentialsException from "../exceptions/WrongCredentialsException";
-import {db} from "../models";
+import { db } from "../models";
 
-passport.use(new LocalStrategy(
+passport.use(
+  new LocalStrategy(
     {
-        usernameField: "email",
-        failWithError: true,
+      usernameField: "email",
+      failWithError: true,
     },
     (email, password, done) => {
-        db.User.findOne({
-            where: {
-                email,
-            },
-        }).then(async (dbUser) => {
-            const isPasswordMatching = await bcrypt.compare(password, dbUser.password);
-            if (!dbUser) {
-                return done(new WrongCredentialsException());
-            } else if (!isPasswordMatching) {
-                return done(new WrongCredentialsException());
-            }
-            return done(null, dbUser);
-        });
+      db.User.findOne({
+        where: {
+          email,
+        },
+      }).then(async dbUser => {
+        if (!dbUser) {
+          return done(new WrongCredentialsException());
+        }
+        const isPasswordMatching = await bcrypt.compare(password, dbUser.password);
+        if (!isPasswordMatching) {
+          return done(new WrongCredentialsException());
+        }
+        return done(null, dbUser);
+      });
     },
-));
+  ),
+);
 
 passport.serializeUser((user, cb) => {
-    cb(null, user);
+  cb(null, user);
 });
 
 passport.deserializeUser(async (obj, cb) => {
-    cb(null, obj);
+  cb(null, obj);
 });
 
 export default passport;

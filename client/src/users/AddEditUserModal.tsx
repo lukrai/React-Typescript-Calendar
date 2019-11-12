@@ -5,6 +5,23 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import * as yup from "yup";
 
+const courtOptions = [
+  "Kauno apygardos teismas",
+  "Alytaus apylinkės teismas Alyatus rūmai",
+  "Alytaus apylinkės teismas Druskininkų rūmai",
+  "Alytaus apylinkės teismas Lazdijų rūmai",
+  "Alytaus apylinkės teismas Prienų rūmai",
+  "Alytaus apylinkės teismas Varėnos rūmai",
+  "Kauno apylinkės teismas Kauno rūmai",
+  "Kauno apylinkės teismas Kaišiadorių rūmai",
+  "Kauno apylinkės teismas Kėdainių rūmai",
+  "Kauno apylinkės teismas Jonavos rūmai",
+  "Marijampolės apylinkės teismas Marijampolės rūmai",
+  "Marijampolės apylinkės teismas Jurbarko rūmai",
+  "Marijampolės apylinkės teismas Šakių rūmai",
+  "Marijampolės apylinkės teismas Vilkaviškio rūmai",
+];
+
 export default class AddEditUserModal extends React.Component<any, any> {
   private schema = yup.object({
     firstName: yup.string().required("Required"),
@@ -228,20 +245,3 @@ export default class AddEditUserModal extends React.Component<any, any> {
     this.setState({ show: true });
   }
 }
-
-const courtOptions = [
-  "Kauno apygardos teismas",
-  "Alytaus apylinkės teismas Alyatus rūmai",
-  "Alytaus apylinkės teismas Druskininkų rūmai",
-  "Alytaus apylinkės teismas Lazdijų rūmai",
-  "Alytaus apylinkės teismas Prienų rūmai",
-  "Alytaus apylinkės teismas Varėnos rūmai",
-  "Kauno apylinkės teismas Kauno rūmai",
-  "Kauno apylinkės teismas Kaišiadorių rūmai",
-  "Kauno apylinkės teismas Kėdainių rūmai",
-  "Kauno apylinkės teismas Jonavos rūmai",
-  "Marijampolės apylinkės teismas Marijampolės rūmai",
-  "Marijampolės apylinkės teismas Jurbarko rūmai",
-  "Marijampolės apylinkės teismas Šakių rūmai",
-  "Marijampolės apylinkės teismas Vilkaviškio rūmai",
-];
