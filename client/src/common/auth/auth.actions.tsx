@@ -22,7 +22,7 @@ export async function logout(): Promise<null> {
 export async function getCurrentUser(): Promise<IUser | null> {
   try {
     const response = await axios.get("/api/auth/status");
-    if (response?.data) {
+    if (response.data) {
       return response.data;
     } else {
       return null;

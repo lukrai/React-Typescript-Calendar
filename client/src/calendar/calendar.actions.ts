@@ -3,7 +3,7 @@ import axios from "axios";
 export async function getCalendarData(date: string) {
   try {
     const response = await axios.get(`/api/calendar/${date}`);
-    if (response?.data) {
+    if (response.data) {
       return response.data;
     } else {
       return {};
@@ -16,7 +16,7 @@ export async function getCalendarData(date: string) {
 export async function disableCourtCase(id: number, disable: boolean) {
   try {
     const response = await axios.put(`/api/court-case/${id}`, { isDisabled: disable });
-    if (response?.data) {
+    if (response.data) {
       return response.data;
     } else {
       return {};
@@ -29,7 +29,7 @@ export async function disableCourtCase(id: number, disable: boolean) {
 export async function disableEnableCourtCases(courtCases: any) {
   try {
     const response = await axios.put(`/api/court-case`, { courtCases });
-    if (response?.data) {
+    if (response.data) {
       return response.data;
     } else {
       return {};
