@@ -30,5 +30,6 @@
         "editor.formatOnSave": false
     },
     "prettier.configPath": ".prettierrc.js",
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "typescript.tsdk": "./client/node_modules/typescript/lib"
 }
