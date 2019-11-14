@@ -18,18 +18,26 @@
     ],
     "editor.formatOnSave": true,
     "[javascript]": {
-        "editor.formatOnSave": false
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2
     },
     "[javascriptreact]": {
-        "editor.formatOnSave": false
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2
     },
     "[typescript]": {
-        "editor.formatOnSave": false
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2
     },
     "[typescriptreact]": {
-        "editor.formatOnSave": false
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2
     },
     "prettier.configPath": ".prettierrc.js",
     "editor.tabSize": 2,
+    "[sass]": {
+        "editor.tabSize": 2
+    },
+    "editor.detectIndentation": false,
     "typescript.tsdk": "./client/node_modules/typescript/lib"
 }

@@ -1,16 +1,16 @@
-import {Request} from "express";
-import {IUser } from "../../models/User.model";
+import { Request } from "express";
+import { IUser } from "../../models/User.model";
 
 export interface ITokenData {
-    token: string;
-    expiresIn: number;
+  token: string;
+  expiresIn: number;
 }
 
 export interface IDataStoredInToken {
-    id: number;
-    email: string;
+  id: number;
+  email: string;
 }
 
 export interface IRequestWithUser extends Request {
-    user: IUser;
+  user: IUser;
 }
