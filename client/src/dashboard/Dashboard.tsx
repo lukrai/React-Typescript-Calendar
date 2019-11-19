@@ -69,8 +69,8 @@ export default function Dashboard(props: IProps) {
     <div>
       <div className={styles.headerContainer}>
         <Card className={styles.info}>
-          <Card.Header>Mano duomenys</Card.Header>
           <Card.Body>
+            <Card.Title>Mano duomenys</Card.Title>
             <Card.Text>
               {user.court}
               <br />
@@ -125,8 +125,6 @@ export default function Dashboard(props: IProps) {
         </Formik>
       </div>
 
-      {/* <h2 className={styles.contentContainer}>Mano užregistruotos bylos</h2> */}
-      {/* <Table courtCases={userData.courtCases}/> */}
       <div className={`table-responsive ${styles.contentContainer}`}>
         <Tabs activeKey={key} id="caseTables" onSelect={k => getUserCourtData(k)}>
           <Tab eventKey={TAB_KEYS.default} title="Mano užregistruotos bylos">

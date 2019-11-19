@@ -67,7 +67,7 @@ class App {
     try {
       this.db = createModels();
       await this.db.sequelize.authenticate();
-      console.log("Database connected...");
+      console.log("Database connected.");
       await this.db.sequelize.sync();
       this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek(this.db.AppSettings);
       await this.setDefaultAdminUser(this.db.User);

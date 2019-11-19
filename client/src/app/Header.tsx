@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import { IUser } from "../typings";
+import Button from "react-bootstrap/Button";
 
 interface IProps extends RouteComponentProps {
   user: IUser;
@@ -58,9 +59,9 @@ class Header extends Component<IProps> {
 
             {user != null ? (
               <li className="nav-item">
-                <a href="/login" className="nav-link" onClick={this.signOut}>
+                <Button variant="outline-light" onClick={this.signOut}>
                   Atsijungti
-                </a>
+                </Button>
               </li>
             ) : null}
           </ul>
