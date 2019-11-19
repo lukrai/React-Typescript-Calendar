@@ -2,7 +2,7 @@ import * as express from "express";
 import { IRequestWithUser } from "../typings/Authentication";
 
 class AuthenticationController {
-  public logIn = async (request: IRequestWithUser, response: express.Response, next: express.NextFunction) => {
+  public logIn = async (request: IRequestWithUser, response: express.Response) => {
     request.user.password = undefined;
     return response.send(request.user);
   };

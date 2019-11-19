@@ -121,7 +121,6 @@ class App {
     if (request.path !== "/favicon.ico" && !request.path.includes("static") && !request.path.includes("manifest")) {
       console.log(`${request.method} ${request.path} ${request.user && request.user.email}`);
       response.on("finish", () => {
-        // tslint:disable-next-line:max-line-length
         console.info(
           `${new Date()} ${request.method} ${request.path} ${request.user && request.user.email} ${
             response.statusCode

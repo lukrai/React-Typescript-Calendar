@@ -109,7 +109,7 @@ class CalendarController {
           message: "Calendar Not Found",
         });
       }
-      const r = await calendar.destroy();
+      await calendar.destroy();
       return res.status(204).send();
     } catch (err) {
       return res.status(400).send(err);
