@@ -113,7 +113,7 @@ export default function Users(props: IProps) {
           {
             Header: "Actions",
             // eslint-disable-next-line react/display-name
-            Cell: ({ row }) => (
+            Cell: ({ row }: { row: any }) => (
               <div className={styles.actionsContainer}>
                 <AddEditUserModal
                   user={row._original}
