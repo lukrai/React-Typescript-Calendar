@@ -216,8 +216,9 @@ export default class AddEditUserModal extends React.Component<any, any> {
                       name="isAdmin"
                       label=""
                       onChange={handleChange}
-                      type={"checkbox"}
+                      type="checkbox"
                       checked={values.isAdmin}
+                      value={values.isAdmin}
                     />
                   </Form.Group>
                 </Modal.Body>

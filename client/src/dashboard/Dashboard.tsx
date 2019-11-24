@@ -6,6 +6,9 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import ReactTable from "react-table";
 import * as yup from "yup";
 import { ICourtCaseWithCalendar, IUser } from "../typings";
@@ -67,63 +70,68 @@ export default function Dashboard(props: IProps) {
 
   return (
     <div>
-      <div className={styles.headerContainer}>
-        <Card className={styles.info}>
-          <Card.Body>
-            <Card.Title>Mano duomenys</Card.Title>
-            <Card.Text>
-              {user.court}
-              <br />
-              {user.firstName} {user.lastName}
-              <br />
-              {user.email}
-              <br />
-              {user.phoneNumber}
-            </Card.Text>
-          </Card.Body>
-        </Card>
-
-        <Formik
-          initialValues={{ fileNo: "" }}
-          validationSchema={schema}
-          onSubmit={async (values, { setSubmitting, resetForm }) => {
-            try {
-              const result = await addCourtCase(values.fileNo);
-              setCourtCaseData([result, ...courtCaseData]);
-              setSubmitting(false);
-              resetForm({
-                values: {
-                  fileNo: "",
-                },
-              });
-            } catch (err) {
-              setSubmitting(false);
-              props.triggerErrorToast(err);
-            }
-          }}
-        >
-          {({ handleSubmit, handleChange, handleBlur, values, touched, errors, isSubmitting }) => (
-            <Form noValidate onSubmit={handleSubmit} className={styles.form}>
-              <Form.Group>
-                <Form.Label>Bylos nr.</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Bylos Nr."
-                  name="fileNo"
-                  value={values.fileNo}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  isInvalid={!!errors.fileNo && !!touched.fileNo}
-                />
-                <Form.Control.Feedback type="invalid">{touched.fileNo && errors.fileNo}</Form.Control.Feedback>
-              </Form.Group>
-              <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
-                Registruoti
-              </button>
-            </Form>
-          )}
-        </Formik>
-      </div>
+      <Container className={styles.headerContainer}>
+        <Row className="justify-content-md-center">
+          <Col xs md="5">
+            <Card className={styles.info}>
+              <Card.Body>
+                <Card.Title>Mano duomenys</Card.Title>
+                <Card.Text>
+                  {user.court}
+                  <br />
+                  {user.firstName} {user.lastName}
+                  <br />
+                  {user.email}
+                  <br />
+                  {user.phoneNumber}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="auto">
+            <Formik
+              initialValues={{ fileNo: "" }}
+              validationSchema={schema}
+              onSubmit={async (values, { setSubmitting, resetForm }) => {
+                try {
+                  const result = await addCourtCase(values.fileNo);
+                  setCourtCaseData([result, ...courtCaseData]);
+                  setSubmitting(false);
+                  resetForm({
+                    values: {
+                      fileNo: "",
+                    },
+                  });
+                } catch (err) {
+                  setSubmitting(false);
+                  props.triggerErrorToast(err);
+                }
+              }}
+            >
+              {({ handleSubmit, handleChange, handleBlur, values, touched, errors, isSubmitting }) => (
+                <Form noValidate onSubmit={handleSubmit} className={styles.form}>
+                  <Form.Group>
+                    <Form.Label>Bylos nr.</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Bylos Nr."
+                      name="fileNo"
+                      value={values.fileNo}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      isInvalid={!!errors.fileNo && !!touched.fileNo}
+                    />
+                    <Form.Control.Feedback type="invalid">{touched.fileNo && errors.fileNo}</Form.Control.Feedback>
+                  </Form.Group>
+                  <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={isSubmitting}>
+                    Registruoti
+                  </button>
+                </Form>
+              )}
+            </Formik>
+          </Col>
+        </Row>
+      </Container>
 
       <div className={`table-responsive ${styles.contentContainer}`}>
         <Tabs activeKey={key} id="caseTables" onSelect={k => getUserCourtData(k)}>

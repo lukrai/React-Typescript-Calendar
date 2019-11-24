@@ -1,32 +1,19 @@
 .contentContainer {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 8px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px;
 }
 
 .headerContainer {
-    max-width: 1200px;
-    min-width: 630px;
-    align-items: center;
-    display: grid;
-    grid-template-columns: 1fr minmax(300px, 500px);
-    grid-template-rows: auto;
-    grid-template-areas:
-            "submitForm userInfo";
-    grid-gap: 24px;
-    padding: 24px;
-    margin: 0 auto;
+  padding-bottom: 24px;
 }
 
 .form {
-    grid-area: submitForm;
-    justify-self: center;
-    min-width: 250px;
-    max-width: 330px;
+  min-width: 250px;
+  max-width: 330px;
 }
 
 .info {
-    justify-self: center;
-    grid-area: userInfo;
+  padding-bottom: 12px;
 }
