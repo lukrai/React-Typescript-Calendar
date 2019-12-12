@@ -1,72 +1,80 @@
 .cardBody {
-    padding: 8px;
+  padding: 8px;
 }
 
 
-.cardBody > p {
-    margin-bottom: 5px;
+.cardBody>p {
+  margin-bottom: 5px;
 }
 
 .cardEmail {
-    width: 128px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  width: 128px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media only screen and (min-width: 1900px) {
-    .cardEmail {
-        width: 200px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+  .cardEmail {
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .gridItemHover {
-    height: 100%;
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-radius: 4px;
-    width: 40px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 4px;
+  width: 40px;
 }
 
-.gridItemHover > button {
-    width: 100%;
+.gridItemHover>button {
+  width: 100%;
 }
 
 .calendarItemContainer {
-    padding-left: 2px;
-    padding-right: 2px;
-    padding-bottom: 4px;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 4px;
 }
 
 .calendarItemCard {
-    min-height: 192px;
-    height: 100%;
+  min-height: 192px;
+  height: 100%;
 }
 
 .calendarItemCardDisabled {
-    min-height: 100%;
-    min-width: 148px;
-    text-align: center;
+  min-height: 100%;
+  min-width: 148px;
+  text-align: center;
 }
 
 .calendarHeaderContainer {
-    flex-wrap: nowrap;
-    margin-top: 12px;
-    margin-bottom: 12px;
+  flex-wrap: nowrap;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
 .calendarHeaderTimeColumn {
-    min-width: 38px;
+  min-width: 38px;
 }
 
 .calendarHeaderItem {
-    padding-left: 2px;
-    padding-right: 2px;
-    padding-bottom: 4px;
-    min-width: 148px;
-    text-align: center;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 4px;
+  min-width: 148px;
+  text-align: center;
+}
+
+.registeredAt {
+  font-size: 12px;
+}
+
+.courtName {
+  font-weight: bold;
 }

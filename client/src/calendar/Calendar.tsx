@@ -236,7 +236,7 @@ export function CalendarItem(props: IPropsGridItem) {
       <Card className={styles.calendarItemCard}>
         <Card.Body className={styles.cardBody} id="cardBody">
           <Card.Title>{fileNo}</Card.Title>
-          <Card.Text>{court}</Card.Text>
+          <Card.Text className={styles.courtName}>{court}</Card.Text>
           <Card.Text>
             {firstName} {lastName}
           </Card.Text>
@@ -244,7 +244,9 @@ export function CalendarItem(props: IPropsGridItem) {
             {email}
           </Card.Text>
           <Card.Text>{phoneNumber}</Card.Text>
-          <Card.Text>{registeredAt && `Reg.: ${DateTime.fromISO(registeredAt).toISODate()}`}</Card.Text>
+          <Card.Text className={styles.registeredAt}>
+            {registeredAt && `Reg.: ${DateTime.fromISO(registeredAt).toISODate()}`}
+          </Card.Text>
           <div
             className={styles.gridItemHover}
             style={{
