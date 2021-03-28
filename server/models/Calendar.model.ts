@@ -34,7 +34,7 @@ export const CalendarFactory = (sequelize: Sequelize): CalendarModel => {
   }) as CalendarModel;
 
   calendar.associate = models => {
-    calendar.hasMany(models.CourtCase, {
+    calendar.hasMany(models.CourtCase as any, {
       as: "courtCases",
       foreignKey: {
         name: "calendarId",

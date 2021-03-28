@@ -16,6 +16,6 @@ export const AppSettingsFactory = (sequelize: Sequelize): AppSettingsModel => {
       type: DataTypes.INTEGER,
     },
   };
-
+  console.log("---Define AppSettings---");
   return sequelize.define("AppSettings", attributes) as AppSettingsModel;
 };

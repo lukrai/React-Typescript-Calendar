@@ -16,7 +16,7 @@ class CalendarController {
         include: [
           {
             as: "courtCases",
-            model: db.CourtCase,
+            model: db.CourtCase as any,
           },
         ],
       });
@@ -43,7 +43,7 @@ class CalendarController {
             as: "courtCases",
             limit: 200,
             order: [["id", "ASC"]],
-            model: db.CourtCase,
+            model: db.CourtCase as any,
           },
         ],
       });
@@ -59,7 +59,7 @@ class CalendarController {
           }
         });
 
-        const createdCourtCases = await db.CourtCase.bulkCreate(initialCourtCases, { returning: true });
+        const createdCourtCases = await (db.CourtCase as any).bulkCreate(initialCourtCases, { returning: true });
         jsonCalendar = calendar.toJSON();
         jsonCalendar.courtCases = [...createdCourtCases];
       } else {
@@ -92,7 +92,7 @@ class CalendarController {
           message: "Calendar Not Found",
         });
       }
-      await calendar.updateAttributes({
+      await calendar.update({
         date: req.body.date || calendar.date,
       });
       return res.status(200).send({ calendar });

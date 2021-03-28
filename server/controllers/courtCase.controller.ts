@@ -18,7 +18,7 @@ class CourtCaseController {
       if (!req.user.court) {
         return next(new HttpException(400, "Vartotojas neturi priskirto teismo."));
       }
-      const courtCases: ICourtCase[] = await db.CourtCase.findAll({
+      const courtCases: ICourtCase[] = await (db.CourtCase as any).findAll({
         where: {
           court: req.user.court,
         },
@@ -39,7 +39,7 @@ class CourtCaseController {
 
   public getCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
     try {
-      const courtCase = await db.CourtCase.findByPk(req.params.id);
+      const courtCase = await (db.CourtCase as any).findByPk(req.params.id);
       if (!courtCase) {
         return next(new HttpException(404, "Court case not found."));
       }
@@ -59,7 +59,7 @@ class CourtCaseController {
             as: "courtCases",
             limit: 200,
             order: [["id", "ASC"]],
-            model: db.CourtCase,
+            model: db.CourtCase as any,
             include: [
               {
                 model: db.Calendar,
@@ -83,9 +83,11 @@ class CourtCaseController {
               initialCourtCases.push({ time, calendarId: calendar.id });
             }
           });
-
-          const createdCourtCases: ICourtCase[] = await db.CourtCase.bulkCreate(initialCourtCases, { returning: true });
-          const updatedCourtCase = await db.CourtCase.findOne({
+          //TODO: fix any
+          const createdCourtCases: ICourtCase[] = await (db.CourtCase as any).bulkCreate(initialCourtCases, {
+            returning: true,
+          });
+          const updatedCourtCase = await (db.CourtCase as any).findOne({
             where: { id: createdCourtCases[0].id },
             include: [
               {
@@ -132,7 +134,7 @@ class CourtCaseController {
             include: [
               {
                 as: "courtCases",
-                model: db.CourtCase,
+                model: db.CourtCase as any,
                 limit: 200,
                 order: [["id", "ASC"]],
                 include: [
@@ -159,7 +161,8 @@ class CourtCaseController {
 
   public updateCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
     try {
-      const courtCase = await db.CourtCase.findByPk(req.params.id);
+      // TODO: fix any
+      const courtCase = await (db.CourtCase as any).findByPk(req.params.id);
       if (!courtCase) {
         return next(new HttpException(404, "Can't find court case."));
       }
@@ -183,7 +186,8 @@ class CourtCaseController {
       }
       const ids = req.body.courtCases.map(o => o.id);
 
-      const courtCases = await db.CourtCase.findAll({ where: { id: ids } });
+      // TODO: fix any
+      const courtCases = await (db.CourtCase as any).findAll({ where: { id: ids } });
       const isDisabled = !courtCases.some(o => o.isDisabled === true);
       const promises = courtCases.map(o => {
         o.isDisabled = isDisabled;
@@ -199,7 +203,8 @@ class CourtCaseController {
 
   public deleteCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
     try {
-      const courtCase = await db.CourtCase.findByPk(req.params.id);
+      // TODO fix any
+      const courtCase: any = await (db.CourtCase as any).findByPk(req.params.id);
       if (!courtCase) {
         return next(new HttpException(400, "Can't find court case."));
       }

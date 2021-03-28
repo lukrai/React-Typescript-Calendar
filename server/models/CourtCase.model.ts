@@ -74,7 +74,9 @@ export const CourtCaseFactory = (sequelize: Sequelize): CourtCaseModel => {
         fields: ["calendarId"],
       },
     ],
-  }) as CourtCaseModel;
+    // TODO: fix
+    // }) as CourtCaseModel;
+  }) as any;
 
   courtCase.associate = models => {
     courtCase.belongsTo(models.Calendar, {

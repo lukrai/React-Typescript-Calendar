@@ -39,5 +39,8 @@
         "editor.tabSize": 2
     },
     "editor.detectIndentation": false,
-    "typescript.tsdk": "./client/node_modules/typescript/lib"
+    "typescript.tsdk": "./client/node_modules/typescript/lib",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
 }

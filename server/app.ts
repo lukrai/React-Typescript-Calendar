@@ -15,11 +15,13 @@ import { UserModel } from "./models/User.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
+import { IDatabase } from "typings/DbInterface";
 
 class App {
   public app: express.Application;
   public port: number;
-  public db;
+  public db: IDatabase;
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   private SequelizeStore = require("connect-session-sequelize")(session.Store);
 
   constructor() {
@@ -57,21 +59,36 @@ class App {
   }
 
   private async init() {
+    console.log(`App Init`);
     await this.initializeDatabaseConnection();
     this.initializeMiddlewares();
+    console.log(`App initializeMiddlewares`);
     this.initializeRoutes();
-    this.app.use(errorMiddleware);
+    // console.log(`App initializeRoutes`);
+    // this.app.use(errorMiddleware);
   }
 
   private async initializeDatabaseConnection() {
+    console.log("initializeDatabaseConnection 1");
     try {
       this.db = createModels();
       await this.db.sequelize.authenticate();
+      //   sequelize
+      // .authenticate()
+      // .then(() => {
+      //   console.log("Connection has been established successfully.");
+      // })
+      // .catch(err => {
+      //   console.error("Unable to connect to the database:", err);
+      // });
+      console.log("createModels");
+      console.log("initializeDatabaseConnection 2");
       console.log("Database connected.");
       await this.db.sequelize.sync();
       this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek(this.db.AppSettings);
       await this.setDefaultAdminUser(this.db.User);
     } catch (err) {
+      console.log("Connection to database failed.");
       console.log(err);
     }
   }
@@ -105,6 +122,7 @@ class App {
     const router = express.Router();
     router.get("/favicon.ico", (req, res) => res.status(204));
     this.app.use("/", router);
+    this.app.get("/check", (req, res) => res.send("Works"));
     this.app.use("/api/calendar", CalendarRouter);
     this.app.use("/api", UserRouter);
     this.app.use("/api/court-case", CourtCaseRouter);
@@ -115,6 +133,7 @@ class App {
         res.sendFile(path.join(__dirname, "..", "..", "client/build", "index.html"));
       });
     }
+    console.log("Initialized Routes");
   }
 
   private loggerMiddleware(request: IRequestWithUser, response: express.Response, next) {
@@ -133,9 +152,8 @@ class App {
 
   private async setDefaultDayOfTheWeek(AppSettings: AppSettingsModel) {
     try {
-      return AppSettings.findOrCreate({ where: { id: 1 }, defaults: { weekDay: 3 } }).spread((setting, created) => {
-        return setting.get({ plain: true }).weekDay;
-      });
+      const [setting] = await AppSettings.findOrCreate({ where: { id: 1 }, defaults: { weekDay: 3 } });
+      return setting.weekDay;
     } catch (err) {
       console.log(err);
     }

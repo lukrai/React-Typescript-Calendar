@@ -37,7 +37,7 @@ class UserController {
         include: [
           {
             as: "courtCases",
-            model: db.CourtCase,
+            model: db.CourtCase as any,
             limit: 500,
             order: [["registeredAt", "DESC"]],
             include: [

@@ -9,7 +9,7 @@ import { UserFactory } from "./User.model";
 export let db: IDatabase;
 
 export const createModels = (): IDatabase => {
-  let sequelize;
+  let sequelize: Sequelize;
   if (process.env.DATABASE_URL) {
     sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false });
   } else {

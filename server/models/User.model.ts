@@ -64,7 +64,8 @@ export const UserFactory = (sequelize: Sequelize): UserModel => {
   }) as UserModel;
 
   user.associate = models => {
-    user.hasMany(models.CourtCase, {
+    // TODO: fix any
+    user.hasMany(models.CourtCase as any, {
       as: "courtCases",
       foreignKey: {
         name: "userId",
