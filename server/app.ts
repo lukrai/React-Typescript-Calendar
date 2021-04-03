@@ -66,7 +66,7 @@ class App {
     await this.initializeDatabaseConnection();
     this.initializeMiddlewares();
     console.log(`App initializeMiddlewares`);
-    // this.initializeRoutes();
+    this.initializeRoutes();
     // console.log(`App initializeRoutes`);
     // this.app.use(errorMiddleware);
   }
@@ -78,7 +78,7 @@ class App {
       console.log("=================== Database connected. ==========================");
       await this.db.sequelize.sync();
       this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek();
-      // await this.setDefaultAdminUser(this.db.User);
+      await this.setDefaultAdminUser();
     } catch (err) {
       console.log("=================== Connection to database failed. =======================");
       console.log(err);
@@ -116,8 +116,8 @@ class App {
     this.app.use("/", router);
     this.app.get("/check", (req, res) => res.send("Works"));
     this.app.use("/api/calendar", CalendarRouter);
-    this.app.use("/api", UserRouter);
-    this.app.use("/api/court-case", CourtCaseRouter);
+    // this.app.use("/api", UserRouter);
+    // this.app.use("/api/court-case", CourtCaseRouter);
     if (process.env.NODE_ENV === "production") {
       this.app.use(express.static(path.join(__dirname, "..", "..", "client/build")));
 
@@ -125,7 +125,7 @@ class App {
         res.sendFile(path.join(__dirname, "..", "..", "client/build", "index.html"));
       });
     }
-    console.log("Initialized Routes");
+    console.log("======================= Initialized Routes ============================");
   }
 
   private loggerMiddleware(request: IRequestWithUser, response: express.Response, next) {
@@ -151,7 +151,7 @@ class App {
     }
   }
 
-  private async setDefaultAdminUser(User: UserModel) {
+  private async setDefaultAdminUser() {
     try {
       const defaultEmail = process.env.ADMIN_EMAIL || "admin@admin.local";
       await User.findOrCreate({
@@ -166,6 +166,7 @@ class App {
           isAdmin: true,
         },
       });
+      console.log("=============== FindOrCreate default Admin user ===================");
     } catch (err) {
       console.log(err);
     }

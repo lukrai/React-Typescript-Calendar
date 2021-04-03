@@ -1,5 +1,5 @@
 import { Router } from "express";
-import CalendarController from "../controllers/calendar.controller";
+import CalendarController from "../controllers/calendar2.controller";
 import { authMiddlewareAdmin } from "../middlewares/auth.middleware";
 
 class CalendarRouter {
