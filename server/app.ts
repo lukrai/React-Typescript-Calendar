@@ -17,6 +17,7 @@ import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
 import { IDatabase } from "typings/DbInterface";
+import { AppSettings } from "./models/AppSettings2.model";
 
 class App {
   public app: express.Application;
@@ -74,12 +75,12 @@ class App {
     try {
       this.db = createModels();
       await this.db.sequelize.authenticate();
-      console.log("Database connected.");
+      console.log("=================== Database connected. ==========================");
       await this.db.sequelize.sync();
-      // this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek(this.db.AppSettings);
+      this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek();
       // await this.setDefaultAdminUser(this.db.User);
     } catch (err) {
-      console.log("Connection to database failed.");
+      console.log("=================== Connection to database failed. =======================");
       console.log(err);
     }
   }
@@ -141,7 +142,7 @@ class App {
     next();
   }
 
-  private async setDefaultDayOfTheWeek(AppSettings: AppSettingsModel) {
+  private async setDefaultDayOfTheWeek(): Promise<number> {
     try {
       const [setting] = await AppSettings.findOrCreate({ where: { id: 1 }, defaults: { weekDay: 3 } });
       return setting.weekDay;

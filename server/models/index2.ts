@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import { IDatabase } from "../typings/DbInterface";
+import { AppSettingsFactory, AppSettings } from "./AppSettings2.model";
 // import { AppSettingsFactory } from "./AppSettings.model";
 import { CalendarFactory, Calendar } from "./Calendar2.model";
 import { CourtCaseFactory, CourtCase } from "./CourtCase2.model";
@@ -19,6 +20,7 @@ import { UserFactory, User } from "./User2.model";
 
 export type DB = {
   defaultWeekDay?: number;
+  AppSettings: typeof AppSettings;
   Calendar: typeof Calendar;
   CourtCase: typeof CourtCase;
   User: typeof User;
@@ -70,6 +72,7 @@ export const createModels = (): DB => {
       port: Number(process.env.DATABASE_PORT),
     });
   }
+  AppSettingsFactory(sequelize);
   CalendarFactory(sequelize);
   CourtCaseFactory(sequelize);
   UserFactory(sequelize);
@@ -78,19 +81,13 @@ export const createModels = (): DB => {
   console.log("createModels 5");
 
   db = {
-    // AppSettings: AppSettingsFactory(sequelize),
+    AppSettings,
     Calendar,
     CourtCase,
     User,
     Session,
     sequelize,
   };
-
-  // Object.keys(db).forEach(modelName => {
-  //   if (db[modelName].associate) {
-  //     db[modelName].associate(db);
-  //   }
-  // });
 
   return db;
 };
