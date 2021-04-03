@@ -9,9 +9,10 @@ import * as path from "path";
 import { IRequestWithUser } from "typings/Authentication";
 import passport from "./helpers/passport";
 import errorMiddleware from "./middlewares/error.middleware";
-import { createModels } from "./models";
+import { createModels, DB } from "./models/index2";
 import { AppSettingsModel } from "./models/AppSettings.model";
 import { UserModel } from "./models/User.model";
+import { User } from "./models/User2.model";
 import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
@@ -20,7 +21,8 @@ import { IDatabase } from "typings/DbInterface";
 class App {
   public app: express.Application;
   public port: number;
-  public db: IDatabase;
+  // public db: IDatabase;
+  public db: DB;
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   private SequelizeStore = require("connect-session-sequelize")(session.Store);
 
@@ -63,30 +65,19 @@ class App {
     await this.initializeDatabaseConnection();
     this.initializeMiddlewares();
     console.log(`App initializeMiddlewares`);
-    this.initializeRoutes();
+    // this.initializeRoutes();
     // console.log(`App initializeRoutes`);
     // this.app.use(errorMiddleware);
   }
 
   private async initializeDatabaseConnection() {
-    console.log("initializeDatabaseConnection 1");
     try {
       this.db = createModels();
       await this.db.sequelize.authenticate();
-      //   sequelize
-      // .authenticate()
-      // .then(() => {
-      //   console.log("Connection has been established successfully.");
-      // })
-      // .catch(err => {
-      //   console.error("Unable to connect to the database:", err);
-      // });
-      console.log("createModels");
-      console.log("initializeDatabaseConnection 2");
       console.log("Database connected.");
       await this.db.sequelize.sync();
-      this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek(this.db.AppSettings);
-      await this.setDefaultAdminUser(this.db.User);
+      // this.db.defaultWeekDay = await this.setDefaultDayOfTheWeek(this.db.AppSettings);
+      // await this.setDefaultAdminUser(this.db.User);
     } catch (err) {
       console.log("Connection to database failed.");
       console.log(err);
