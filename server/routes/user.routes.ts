@@ -1,6 +1,6 @@
 import { Router } from "express";
 import AuthenticationController from "../controllers/authentication.controller";
-import UserController from "../controllers/user.controller";
+import UserController from "../controllers/user2.controller";
 import passport from "../helpers/passport";
 import { authMiddleware, authMiddlewareAdmin } from "../middlewares/auth.middleware";
 

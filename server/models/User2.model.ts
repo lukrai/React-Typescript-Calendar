@@ -17,7 +17,7 @@ import {
   Optional,
 } from "sequelize";
 
-interface UserAttributes {
+export interface UserAttributes {
   id?: number;
   firstName: string;
   lastName: string;

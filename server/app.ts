@@ -62,10 +62,8 @@ class App {
   }
 
   private async init() {
-    console.log(`App Init`);
     await this.initializeDatabaseConnection();
     this.initializeMiddlewares();
-    console.log(`App initializeMiddlewares`);
     this.initializeRoutes();
     // console.log(`App initializeRoutes`);
     // this.app.use(errorMiddleware);
@@ -116,8 +114,8 @@ class App {
     this.app.use("/", router);
     this.app.get("/check", (req, res) => res.send("Works"));
     this.app.use("/api/calendar", CalendarRouter);
-    // this.app.use("/api", UserRouter);
-    // this.app.use("/api/court-case", CourtCaseRouter);
+    this.app.use("/api", UserRouter);
+    this.app.use("/api/court-case", CourtCaseRouter);
     if (process.env.NODE_ENV === "production") {
       this.app.use(express.static(path.join(__dirname, "..", "..", "client/build")));
 
