@@ -3,10 +3,10 @@ import * as express from "express";
 import { NextFunction } from "express";
 import HttpException from "../exceptions/HttpException";
 import NotAuthorizedException from "../exceptions/NotAuthorizedException";
-import { CourtCase } from "models/CourtCase2.model";
+import { CourtCase } from "../models/CourtCase2.model";
 import { User, UserAttributes } from "../models/User2.model";
 import { IRequestWithUser } from "../typings/Authentication";
-import { Calendar } from "models/Calendar2.model";
+import { Calendar } from "../models/Calendar2.model";
 
 class UserController {
   constructor() {

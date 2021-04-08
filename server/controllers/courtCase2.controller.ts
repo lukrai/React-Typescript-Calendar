@@ -10,7 +10,7 @@ import { IRequestWithUser } from "../typings/Authentication";
 
 class CourtCaseController {
   constructor() {
-    console.log("Initialize CourtCase controller");
+    console.log("============== Initialize CourtCase controller ========================");
   }
 
   public getAllCourtCases = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {

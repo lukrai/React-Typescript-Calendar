@@ -1,5 +1,4 @@
 import * as bcrypt from "bcryptjs";
-import * as bodyParser from "body-parser";
 import * as cors from "cors";
 import * as https from "https";
 import * as fs from "fs";
@@ -65,8 +64,7 @@ class App {
     await this.initializeDatabaseConnection();
     this.initializeMiddlewares();
     this.initializeRoutes();
-    // console.log(`App initializeRoutes`);
-    // this.app.use(errorMiddleware);
+    this.app.use(errorMiddleware);
   }
 
   private async initializeDatabaseConnection() {
@@ -84,8 +82,8 @@ class App {
   }
 
   private initializeMiddlewares() {
-    this.app.use(bodyParser.urlencoded({ extended: true }));
-    this.app.use(bodyParser.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json());
     // this.app.use(cors({ origin: "http://localhost:3000", credentials: true }));
     const dbStore = new this.SequelizeStore({
       db: this.db.sequelize,
