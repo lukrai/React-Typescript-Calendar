@@ -4,4 +4,6 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest",
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+  setupFiles: ["<rootDir>/setEnvVars.ts"],
+  testEnvironment: "node",
 };

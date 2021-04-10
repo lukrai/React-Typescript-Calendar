@@ -1,22 +1,9 @@
 import { Sequelize } from "sequelize";
-import { IDatabase } from "../typings/DbInterface";
 import { AppSettingsFactory, AppSettings } from "./AppSettings2.model";
-// import { AppSettingsFactory } from "./AppSettings.model";
 import { CalendarFactory, Calendar } from "./Calendar2.model";
 import { CourtCaseFactory, CourtCase } from "./CourtCase2.model";
 import { SessionFactory, Session } from "./Session2.model";
-// import { SessionFactory } from "./Session.model";
 import { UserFactory, User } from "./User2.model";
-
-// export interface IDatabase {
-//   defaultWeekDay?: number;
-//   sequelize: Sequelize;
-//   AppSettings: AppSettingsModel;
-//   Calendar: CalendarModel;
-//   CourtCase: CourtCaseModel;
-//   User: UserModel;
-//   Session: SessionModel;
-// }
 
 export type DB = {
   defaultWeekDay?: number;
@@ -78,7 +65,6 @@ export const createModels = (): DB => {
   UserFactory(sequelize);
   SessionFactory(sequelize);
   buildDbRelations();
-  console.log("createModels 5");
 
   db = {
     AppSettings,

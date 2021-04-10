@@ -1,6 +1,6 @@
-import * as bcrypt from "bcryptjs";
-import * as passport from "passport";
-import * as LocalStrategy from "passport-local";
+import bcrypt from "bcryptjs";
+import passport from "passport";
+import LocalStrategy from "passport-local";
 import WrongCredentialsException from "../exceptions/WrongCredentialsException";
 import { db } from "../models";
 
