@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
+import { User } from "../models/User2.model";
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import WrongCredentialsException from "../exceptions/WrongCredentialsException";
-import { db } from "../models";
+// import { db } from "../models";
 
 passport.use(
   new LocalStrategy(
@@ -11,11 +12,11 @@ passport.use(
       failWithError: true,
     },
     (email, password, done) => {
-      db.User.findOne({
+      User.findOne({
         where: {
           email,
         },
-      }).then(async dbUser => {
+      }).then(async (dbUser) => {
         if (!dbUser) {
           return done(new WrongCredentialsException());
         }
