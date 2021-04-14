@@ -13,7 +13,11 @@ class UserController {
     console.log("============== Initialize user controller ====================");
   }
 
-  public getAllUsers = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  public getAllUsers = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<express.Response<any, Record<string, any>>> => {
     try {
       const users = await User.findAll({
         attributes: {
@@ -62,13 +66,18 @@ class UserController {
     }
   };
 
-  public createUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  public createUser = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const userData: UserAttributes = req.body;
+      console.log(userData);
       if (!userData.email || !userData.password || !userData.passwordConfirmation) {
         return next(new HttpException(400, "Email or password is missing."));
       }
-      if (userData.password.length < 8 && userData.password !== userData.passwordConfirmation) {
+      if (userData.password.length < 8 || userData.password !== userData.passwordConfirmation) {
         return next(new HttpException(400, "Invalid password provided."));
       }
       const hashedPassword = await bcrypt.hash(userData.password, 10);
