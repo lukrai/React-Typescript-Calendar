@@ -30,7 +30,11 @@ class UserController {
     }
   };
 
-  public getUser = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {
+  public getUser = async (
+    req: IRequestWithUser,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       if (req.user.id !== Number(req.params.id) && !req.user.isAdmin) {
         return next(new NotAuthorizedException());

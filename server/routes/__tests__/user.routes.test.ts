@@ -142,11 +142,61 @@ describe("User router ednpoints", () => {
       done();
     });
   });
+
+  describe("/api/user/:id GET", () => {
+    const id = 2;
+    it("/api/user/:id GET should return a user", async (done) => {
+      const response = await request.get(`/api/user/${id}`).set("Cookie", cookies);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          id: 2,
+          court: "Kauno apygardos teismas",
+          email: "test@admin.local",
+          firstName: "test",
+          isAdmin: false,
+          lastName: "local",
+          phoneNumber: "+37000000000",
+          courtCases: [],
+        }),
+      );
+      expect(response.body.password).toEqual(undefined);
+      done();
+    });
+
+    it("/api/user/:id GET should return a 'User Not Found' when user is not found", async (done) => {
+      const response = await request.get(`/api/user/9999`).set("Cookie", cookies);
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ message: "User Not Found" });
+      done();
+    });
+
+    it("/api/user/:id GET should return a 'Could not get user' when user fetch failed (wrong id format)", async (done) => {
+      const response = await request.get(`/api/user/aaaa`).set("Cookie", cookies);
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({ message: "Could not get user.", status: 500 });
+      done();
+    });
+
+    it("/api/user/:id GET should return a permission error if user does is not an admin and fetches other user", async (done) => {
+      const loginResponse = await request.post("/api/auth/login").send({
+        email: "test@admin.local",
+        password: "Password12",
+      });
+
+      const nonAdminCookies = loginResponse.headers["set-cookie"];
+
+      const response = await request.get(`/api/user/1`).set("Cookie", nonAdminCookies);
+      expect(response.status).toBe(403);
+      expect(response.body).toEqual({ message: "Not authorized", status: 403 });
+      done();
+    });
+  });
 });
 
 // + this.router.get("/user", authMiddlewareAdmin, this.userController.getAllUsers);
 // + this.router.post("/user", authMiddlewareAdmin, this.userController.createUser);
-// this.router.get("/user/:id", authMiddleware, this.userController.getUser);
+// + this.router.get("/user/:id", authMiddleware, this.userController.getUser);
 // this.router.put("/user/:id", authMiddlewareAdmin, this.userController.updateUser);
 // this.router.delete("/user/:id", authMiddlewareAdmin, this.userController.deleteUser);
 
