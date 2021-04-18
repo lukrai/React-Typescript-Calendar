@@ -77,7 +77,6 @@ class UserController {
   ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const userData: UserAttributes = req.body;
-      console.log(userData);
       if (!userData.email || !userData.password || !userData.passwordConfirmation) {
         return next(new HttpException(400, "Email or password is missing."));
       }
@@ -92,23 +91,27 @@ class UserController {
       user.password = undefined;
       return res.status(201).send(user);
     } catch (err) {
+      console.log(err);
       return next(new HttpException(400, "Email already in use."));
     }
   };
 
-  public updateUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  public updateUser = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const userData: UserAttributes = req.body;
       if (!userData.email) {
-        return next(new HttpException(400, "Email or password is missing."));
+        return next(new HttpException(400, "Email is missing."));
       }
-      if (userData.password && userData.password.length < 8 && userData.password !== userData.passwordConfirmation) {
+      if ((userData.password && userData.password.length < 8) || userData.password !== userData.passwordConfirmation) {
         return next(new HttpException(400, "Invalid password provided."));
       }
-
       const user = await User.findByPk(req.params.id);
       if (!user) {
-        next(new HttpException(404, "User Not Found"));
+        return next(new HttpException(404, "User Not Found"));
       }
 
       user.firstName = userData.firstName || user.firstName;
@@ -123,11 +126,15 @@ class UserController {
       user.password = undefined;
       return res.status(201).send(user);
     } catch (err) {
-      return next(new HttpException(500, "Can't create user."));
+      return next(new HttpException(500, "Can't update user."));
     }
   };
 
-  public deleteUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  public deleteUser = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const user = await User.findByPk(req.params.id, {
         attributes: {
