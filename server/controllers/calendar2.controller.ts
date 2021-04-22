@@ -2,7 +2,7 @@ import * as express from "express";
 import { DateTime } from "luxon";
 import HttpException from "../exceptions/HttpException";
 import { availableCalendarTimes, numberOfColumns } from "../helpers/date.helper";
-import { db } from "../models";
+import { db } from "../models/index2";
 import { Calendar } from "../models/Calendar2.model";
 import { CourtCase } from "../models/CourtCase2.model";
 
@@ -11,15 +11,21 @@ class CalendarController {
     console.log("============== Initialize calendar controller =============");
   }
 
-  public getAllCalendarData = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  public getAllCalendarData = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): Promise<void> => {
     try {
       const calendars = await Calendar.findAll({
         include: [
           {
             as: "courtCases",
+            order: [["id", "ASC"]],
             model: CourtCase,
           },
         ],
+        order: [["id", "ASC"]],
       });
       res.status(200).json(calendars);
     } catch (err) {
@@ -27,7 +33,11 @@ class CalendarController {
     }
   };
 
-  public getCalendar = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  public getCalendar = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const dateFromParam = DateTime.fromISO(req.params.date);
       if (!dateFromParam.isValid) {
@@ -54,7 +64,7 @@ class CalendarController {
           date: req.params.date,
         });
         const initialCourtCases = [];
-        availableCalendarTimes.map(time => {
+        availableCalendarTimes.map((time) => {
           for (let i = 0; i < numberOfColumns; i += 1) {
             initialCourtCases.push({ time, calendarId: calendar.id });
           }
@@ -74,46 +84,54 @@ class CalendarController {
     }
   };
 
-  public createCalendar = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  public createCalendar = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const calendar = await Calendar.create({
         date: req.body.date,
       });
       return res.status(201).send(calendar);
     } catch (err) {
-      return next(new HttpException(404, "Can't add calendar."));
+      return next(new HttpException(404, "Can't add calendar. Date might already exist."));
     }
   };
 
-  public updateCalendar = async (req: express.Request, res: express.Response) => {
+  public updateCalendar = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const calendar = await Calendar.findByPk(req.params.id);
       if (!calendar) {
-        return res.status(404).send({
-          message: "Calendar Not Found",
-        });
+        return next(new HttpException(404, "Calendar Not Found"));
       }
       await calendar.update({
         date: req.body.date || calendar.date,
       });
-      return res.status(200).send({ calendar });
+      return res.status(200).send(calendar);
     } catch (err) {
-      return res.status(400).send(err);
+      return next(new HttpException(400, "Calendar update failed, id or body is in incorrect format."));
     }
   };
 
-  public deleteCalendar = async (req: express.Request, res: express.Response) => {
+  public deleteCalendar = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const calendar = await Calendar.findByPk(req.params.id);
       if (!calendar) {
-        return res.status(404).send({
-          message: "Calendar Not Found",
-        });
+        return next(new HttpException(404, "Calendar Not Found"));
       }
       await calendar.destroy();
       return res.status(204).send();
     } catch (err) {
-      return res.status(400).send(err);
+      return next(new HttpException(400, "Calendar delete failed, id or body is in incorrect format."));
     }
   };
 }
