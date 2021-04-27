@@ -3,7 +3,7 @@ import { NextFunction } from "express";
 import { DateTime } from "luxon";
 import HttpException from "../exceptions/HttpException";
 import { availableCalendarTimes, getNextMonthsDate, getNextWeekDate, numberOfColumns } from "../helpers/date.helper";
-import { db } from "../models";
+import { db } from "../models/index2";
 import { Calendar } from "../models/Calendar2.model";
 import { CourtCase } from "../models/CourtCase2.model";
 import { IRequestWithUser } from "../typings/Authentication";
@@ -13,7 +13,11 @@ class CourtCaseController {
     console.log("============== Initialize CourtCase controller ========================");
   }
 
-  public getAllCourtCases = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {
+  public getAllCourtCases = async (
+    req: IRequestWithUser,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       if (!req.user.court) {
         return next(new HttpException(400, "Vartotojas neturi priskirto teismo."));
@@ -37,7 +41,12 @@ class CourtCaseController {
     }
   };
 
-  public getCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  // Not used
+  public getCourtCase = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const courtCase = await CourtCase.findByPk(req.params.id);
       if (!courtCase) {
@@ -49,7 +58,11 @@ class CourtCaseController {
     }
   };
 
-  public createCourtCase = async (req: IRequestWithUser, res: express.Response, next: NextFunction) => {
+  public createCourtCase = async (
+    req: IRequestWithUser,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const nextMonthsDate = getNextMonthsDate(DateTime.local(), db.defaultWeekDay);
       let calendar = await Calendar.findOne({
@@ -78,12 +91,11 @@ class CourtCaseController {
             date: tempDate,
           });
           const initialCourtCases = [];
-          availableCalendarTimes.map(time => {
+          availableCalendarTimes.map((time) => {
             for (let i = 0; i < numberOfColumns; i += 1) {
               initialCourtCases.push({ time, calendarId: calendar.id });
             }
           });
-          //TODO: fix any
           const createdCourtCases = await CourtCase.bulkCreate(initialCourtCases, {
             returning: true,
           });
@@ -114,7 +126,7 @@ class CourtCaseController {
         }
 
         if (calendar.courtCases.length > 0) {
-          const courtCaseToUpdate = calendar.courtCases.find(o => o.isDisabled !== true && o.fileNo == null);
+          const courtCaseToUpdate = calendar.courtCases.find((o) => o.isDisabled !== true && o.fileNo == null);
           if (courtCaseToUpdate != null) {
             courtCaseToUpdate.fileNo = req.body.fileNo;
             courtCaseToUpdate.firstName = req.user.firstName;
@@ -159,7 +171,11 @@ class CourtCaseController {
     }
   };
 
-  public updateCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  public updateCourtCase = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const courtCase = await CourtCase.findByPk(req.params.id);
       if (!courtCase) {
@@ -174,21 +190,25 @@ class CourtCaseController {
 
       return res.status(200).send(courtCase);
     } catch (err) {
-      return next(new HttpException(400, "Can't update court case."));
+      console.log(err);
+      return next(new HttpException(500, "Can't update court case."));
     }
   };
 
-  public disableEnableCourtCases = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  public disableEnableCourtCases = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       if (!req.body.courtCases || req.body.courtCases.length < 1) {
         return next(new HttpException(400, "CourtCases are missing in request body"));
       }
-      const ids = req.body.courtCases.map(o => o.id);
+      const ids = req.body.courtCases.map((o) => o.id);
 
-      // TODO: fix any
       const courtCases = await CourtCase.findAll({ where: { id: ids } });
-      const isDisabled = !courtCases.some(o => o.isDisabled === true);
-      const promises = courtCases.map(o => {
+      const isDisabled = !courtCases.some((o) => o.isDisabled === true);
+      const promises = courtCases.map((o) => {
         o.isDisabled = isDisabled;
         return o.save();
       });
@@ -200,11 +220,15 @@ class CourtCaseController {
     }
   };
 
-  public deleteCourtCase = async (req: express.Request, res: express.Response, next: NextFunction) => {
+  public deleteCourtCase = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction,
+  ): Promise<void | express.Response<any, Record<string, any>>> => {
     try {
       const courtCase = await CourtCase.findByPk(req.params.id);
       if (!courtCase) {
-        return next(new HttpException(400, "Can't find court case."));
+        return next(new HttpException(404, "Can't find court case."));
       }
 
       courtCase.court = null;
@@ -220,7 +244,7 @@ class CourtCaseController {
 
       return res.status(200).send(courtCase);
     } catch (err) {
-      return next(new HttpException(400, "Can't update court case."));
+      return next(new HttpException(400, "Can't delete court case data."));
     }
   };
 }
