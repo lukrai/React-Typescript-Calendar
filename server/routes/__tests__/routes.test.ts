@@ -3,7 +3,7 @@ import { userRoutesTests } from "../testFiles/user.routes.t";
 import { courtCasesTests } from "../testFiles/courtCase.routes.t";
 
 /**
- * Execute oreder is important for integrationt tests, that's why test files
+ * Execute order is important for integrationt tests, that's why test files
  * are in different folder and imported in this file.
  *
  * Should pass with empty(initial) database.
@@ -11,7 +11,6 @@ import { courtCasesTests } from "../testFiles/courtCase.routes.t";
 import App from "../../app";
 import supertest from "supertest";
 
-// export const calendarRoutesTests = (): void => {
 const app = new App();
 const request = supertest(app.listen());
 
