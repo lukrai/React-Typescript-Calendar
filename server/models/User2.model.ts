@@ -1,12 +1,9 @@
 // import { BuildOptions, DataTypes, Model, Sequelize } from "sequelize";
-import { IDatabase } from "../typings/DbInterface";
-import { SequelizeAttributes } from "../typings/SequelizeAttributes/index";
 import { CourtCase } from "./CourtCase2.model";
 
 import {
   Sequelize,
   Model,
-  ModelDefined,
   DataTypes,
   HasManyGetAssociationsMixin,
   HasManyAddAssociationMixin,
