@@ -15,6 +15,7 @@ import CalendarRouter from "./routes/calendar.routes";
 import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
 import { AppSettings } from "./models/AppSettings2.model";
+import JudgeGroupRouter from "./routes/judgeGroup.routes";
 
 class App {
   public app: express.Application;
@@ -114,6 +115,7 @@ class App {
     this.app.use("/api/calendar", CalendarRouter);
     this.app.use("/api", UserRouter);
     this.app.use("/api/court-case", CourtCaseRouter);
+    this.app.use("/api/judge-group", JudgeGroupRouter);
     if (process.env.NODE_ENV === "production") {
       this.app.use(express.static(path.join(__dirname, "..", "..", "client/build")));
 

@@ -3,6 +3,7 @@ import { AppSettingsFactory, AppSettings } from "./AppSettings2.model";
 import { CalendarFactory, Calendar } from "./Calendar2.model";
 import { CourtCaseFactory, CourtCase } from "./CourtCase2.model";
 import { SessionFactory, Session } from "./Session2.model";
+import { JudgeGroupFactory, JudgeGroup } from "./JudgeGroup.model";
 import { UserFactory, User } from "./User2.model";
 
 export type DB = {
@@ -12,6 +13,7 @@ export type DB = {
   CourtCase: typeof CourtCase;
   User: typeof User;
   Session: typeof Session;
+  JudgeGroup: typeof JudgeGroup;
   sequelize: Sequelize;
 };
 
@@ -64,6 +66,7 @@ export const createModels = (): DB => {
   CourtCaseFactory(sequelize);
   UserFactory(sequelize);
   SessionFactory(sequelize);
+  JudgeGroupFactory(sequelize);
   buildDbRelations();
 
   db = {
@@ -72,6 +75,7 @@ export const createModels = (): DB => {
     CourtCase,
     User,
     Session,
+    JudgeGroup,
     sequelize,
   };
 

@@ -1,5 +1,4 @@
 import { Association, BuildOptions, DataTypes, Model, Sequelize } from "sequelize";
-import { IDatabase } from "../typings/DbInterface";
 import { SequelizeAttributes } from "../typings/SequelizeAttributes";
 import { Calendar } from "./Calendar2.model";
 import { User } from "./User2.model";
