@@ -5,12 +5,14 @@
     "declaration": true,
     "esModuleInterop": true,
     "outDir": "build",
+    "allowJs": true,
     "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "Node"
   },
   "include": [
-    "./**/*.ts"
+    "./**/*.ts",
+    "./**/*.js",
   ],
   "exclude": [
     "node_modules",
