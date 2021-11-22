@@ -15,7 +15,7 @@ class JudgeGroupRouter {
     this.router.get("/", authMiddlewareAdmin, this.judgeGroupController.getAllJudgeGroups);
     // this.router.post("/", authMiddlewareAdmin, this.calendarController.createCalendar);
     // this.router.get("/:date", authMiddlewareAdmin, this.calendarController.getCalendar);
-    // this.router.put("/:id", authMiddlewareAdmin, this.calendarController.updateCalendar);
+    this.router.put("/:id", authMiddlewareAdmin, this.judgeGroupController.updateJudgeGroup);
     // this.router.delete("/:id", authMiddlewareAdmin, this.calendarController.deleteCalendar);
   }
 }

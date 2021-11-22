@@ -1,10 +1,5 @@
 import * as express from "express";
-import { DateTime } from "luxon";
 import HttpException from "../exceptions/HttpException";
-import { availableCalendarTimes, numberOfColumns } from "../helpers/date.helper";
-import { db } from "../models/index2";
-import { Calendar } from "../models/Calendar2.model";
-import { CourtCase } from "../models/CourtCase2.model";
 import { JudgeGroup } from "../models/JudgeGroup.model";
 
 class JudgeGroupController {
@@ -93,24 +88,25 @@ class JudgeGroupController {
   //   }
   // };
 
-  // public updateCalendar = async (
-  //   req: express.Request,
-  //   res: express.Response,
-  //   next: express.NextFunction,
-  // ): Promise<void | express.Response<any, Record<string, any>>> => {
-  //   try {
-  //     const calendar = await Calendar.findByPk(req.params.id);
-  //     if (!calendar) {
-  //       return next(new HttpException(404, "Calendar Not Found"));
-  //     }
-  //     await calendar.update({
-  //       date: req.body.date || calendar.date,
-  //     });
-  //     return res.status(200).send(calendar);
-  //   } catch (err) {
-  //     return next(new HttpException(400, "Calendar update failed, id or body is in incorrect format."));
-  //   }
-  // };
+  public updateJudgeGroup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const judgeGroup = await JudgeGroup.findByPk(req.params.id);
+      if (!judgeGroup) {
+        return next(new HttpException(404, "Not Found"));
+      }
+
+      const { timeCardCount, startingHour, startingMinute, sessionTimeInMinutes } = req.body;
+      await judgeGroup.update({
+        timeCardCount,
+        startingHour,
+        startingMinute,
+        sessionTimeInMinutes,
+      });
+      return res.status(200).send(judgeGroup);
+    } catch (err) {
+      return next(new HttpException(400, "Update failed, id or body is in incorrect format."));
+    }
+  };
 
   // public deleteCalendar = async (
   //   req: express.Request,
