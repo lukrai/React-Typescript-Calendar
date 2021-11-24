@@ -3,9 +3,10 @@ import { SequelizeAttributes } from "../typings/SequelizeAttributes";
 import { Calendar } from "./Calendar2.model";
 import { User } from "./User2.model";
 
-interface CourtCaseAttributes {
-  id?: number;
-  calendarId: number;
+export interface CourtCaseAttributes {
+  id?: number | string;
+  // calendarId: number;
+  judgeGroupId: number;
   fileNo: string;
   court: string;
   firstName: string;
@@ -14,6 +15,7 @@ interface CourtCaseAttributes {
   phoneNumber: string;
   isDisabled?: boolean;
   time: string; // e.g. 9:00
+  sessionTimeInMinutes: number;
   userId: number;
   registeredAt?: Date;
   createdAt?: Date;
@@ -22,7 +24,8 @@ interface CourtCaseAttributes {
 
 // You can write `extends Model<AddressAttributes, AddressAttributes>` instead,
 // but that will do the exact same thing as below
-export class CourtCase extends Model<CourtCaseAttributes> implements CourtCaseAttributes {
+// export class CourtCase extends Model<CourtCaseAttributes> implements CourtCaseAttributes {
+export class CourtCase extends Model<any> {
   public id!: number;
   public calendarId!: number;
   public fileNo!: string;
@@ -102,10 +105,10 @@ export const CourtCaseFactory = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         // field: 'user_id'
       },
-      calendarId: {
-        type: DataTypes.INTEGER,
-        // field: 'user_id'
-      },
+      // calendarId: {
+      //   type: DataTypes.INTEGER,
+      //   // field: 'user_id'
+      // },
     },
     {
       tableName: "CourtCases",

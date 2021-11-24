@@ -4,6 +4,7 @@ import { CourtCase } from "./CourtCase2.model";
 export interface CalendarAttributes {
   id?: number;
   date: string;
+  tracks: any;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -11,6 +12,7 @@ export interface CalendarAttributes {
 export class Calendar extends Model<CalendarAttributes> implements CalendarAttributes {
   public id!: number;
   public date!: string;
+  public tracks!: any;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -28,6 +30,9 @@ export const CalendarFactory = (sequelize: Sequelize) => {
       date: {
         type: DataTypes.STRING,
         unique: true,
+      },
+      tracks: {
+        type: DataTypes.JSON,
       },
     },
     {

@@ -6,6 +6,7 @@ import { availableCalendarTimes, getNextMonthsDate, getNextWeekDate, numberOfCol
 import { db } from "../models/index2";
 import { Calendar } from "../models/Calendar2.model";
 import { CourtCase } from "../models/CourtCase2.model";
+import { JudgeGroup } from "../models/JudgeGroup.model";
 import { IRequestWithUser } from "../typings/Authentication";
 
 class CourtCaseController {
@@ -85,84 +86,84 @@ class CourtCaseController {
 
       let nextCalendar = true;
       let tempDate = nextMonthsDate;
-      while (nextCalendar) {
-        if (!calendar) {
-          calendar = await Calendar.create({
-            date: tempDate,
-          });
-          const initialCourtCases = [];
-          availableCalendarTimes.map((time) => {
-            for (let i = 0; i < numberOfColumns; i += 1) {
-              initialCourtCases.push({ time, calendarId: calendar.id });
-            }
-          });
-          const createdCourtCases = await CourtCase.bulkCreate(initialCourtCases, {
-            returning: true,
-          });
-          const updatedCourtCase = await CourtCase.findOne({
-            where: { id: createdCourtCases[0].id },
-            include: [
-              {
-                model: Calendar,
-                as: "calendar",
-              },
-            ],
-          });
-          if (!updatedCourtCase) {
-            return next(new HttpException(400, "Can't create court case."));
-          }
+      // while (nextCalendar) {
+      //   if (!calendar) {
+      //     calendar = await Calendar.create({
+      //       date: tempDate,
+      //     });
+      //     const initialCourtCases = [];
+      //     availableCalendarTimes.map((time) => {
+      //       for (let i = 0; i < numberOfColumns; i += 1) {
+      //         initialCourtCases.push({ time, calendarId: calendar.id });
+      //       }
+      //     });
+      //     const createdCourtCases = await CourtCase.bulkCreate(initialCourtCases, {
+      //       returning: true,
+      //     });
+      //     const updatedCourtCase = await CourtCase.findOne({
+      //       where: { id: createdCourtCases[0].id },
+      //       include: [
+      //         {
+      //           model: Calendar,
+      //           as: "calendar",
+      //         },
+      //       ],
+      //     });
+      //     if (!updatedCourtCase) {
+      //       return next(new HttpException(400, "Can't create court case."));
+      //     }
 
-          updatedCourtCase.fileNo = req.body.fileNo;
-          updatedCourtCase.firstName = req.user.firstName;
-          updatedCourtCase.lastName = req.user.lastName;
-          updatedCourtCase.email = req.user.email;
-          updatedCourtCase.phoneNumber = req.user.phoneNumber;
-          updatedCourtCase.court = req.user.court;
-          updatedCourtCase.userId = req.user.id;
-          updatedCourtCase.registeredAt = new Date();
+      //     updatedCourtCase.fileNo = req.body.fileNo;
+      //     updatedCourtCase.firstName = req.user.firstName;
+      //     updatedCourtCase.lastName = req.user.lastName;
+      //     updatedCourtCase.email = req.user.email;
+      //     updatedCourtCase.phoneNumber = req.user.phoneNumber;
+      //     updatedCourtCase.court = req.user.court;
+      //     updatedCourtCase.userId = req.user.id;
+      //     updatedCourtCase.registeredAt = new Date();
 
-          await updatedCourtCase.save();
-          return res.status(201).send(updatedCourtCase);
-        }
+      //     await updatedCourtCase.save();
+      //     return res.status(201).send(updatedCourtCase);
+      //   }
 
-        if (calendar.courtCases.length > 0) {
-          const courtCaseToUpdate = calendar.courtCases.find((o) => o.isDisabled !== true && o.fileNo == null);
-          if (courtCaseToUpdate != null) {
-            courtCaseToUpdate.fileNo = req.body.fileNo;
-            courtCaseToUpdate.firstName = req.user.firstName;
-            courtCaseToUpdate.lastName = req.user.lastName;
-            courtCaseToUpdate.email = req.user.email;
-            courtCaseToUpdate.phoneNumber = req.user.phoneNumber;
-            courtCaseToUpdate.court = req.user.court;
-            courtCaseToUpdate.userId = req.user.id;
-            courtCaseToUpdate.registeredAt = new Date();
+      //   if (calendar.courtCases.length > 0) {
+      //     const courtCaseToUpdate = calendar.courtCases.find((o) => o.isDisabled !== true && o.fileNo == null);
+      //     if (courtCaseToUpdate != null) {
+      //       courtCaseToUpdate.fileNo = req.body.fileNo;
+      //       courtCaseToUpdate.firstName = req.user.firstName;
+      //       courtCaseToUpdate.lastName = req.user.lastName;
+      //       courtCaseToUpdate.email = req.user.email;
+      //       courtCaseToUpdate.phoneNumber = req.user.phoneNumber;
+      //       courtCaseToUpdate.court = req.user.court;
+      //       courtCaseToUpdate.userId = req.user.id;
+      //       courtCaseToUpdate.registeredAt = new Date();
 
-            await courtCaseToUpdate.save();
-            return res.status(201).send(courtCaseToUpdate);
-          }
-          tempDate = getNextWeekDate(tempDate);
-          calendar = await Calendar.findOne({
-            where: { date: tempDate },
-            include: [
-              {
-                as: "courtCases",
-                model: CourtCase,
-                limit: 200,
-                order: [["id", "ASC"]],
-                include: [
-                  {
-                    model: Calendar,
-                    as: "calendar",
-                  },
-                ],
-              },
-            ],
-          });
-          nextCalendar = true;
-        } else {
-          nextCalendar = true;
-        }
-      }
+      //       await courtCaseToUpdate.save();
+      //       return res.status(201).send(courtCaseToUpdate);
+      //     }
+      //     tempDate = getNextWeekDate(tempDate);
+      //     calendar = await Calendar.findOne({
+      //       where: { date: tempDate },
+      //       include: [
+      //         {
+      //           as: "courtCases",
+      //           model: CourtCase,
+      //           limit: 200,
+      //           order: [["id", "ASC"]],
+      //           include: [
+      //             {
+      //               model: Calendar,
+      //               as: "calendar",
+      //             },
+      //           ],
+      //         },
+      //       ],
+      //     });
+      //     nextCalendar = true;
+      //   } else {
+      //     nextCalendar = true;
+      //   }
+      // }
     } catch (err) {
       if (err.errors && err.errors[0] && err.errors[0].path === "fileNo") {
         return next(new HttpException(400, `Byla su numeriu: ${err.errors[0].value} jau egzistuoja.`));
