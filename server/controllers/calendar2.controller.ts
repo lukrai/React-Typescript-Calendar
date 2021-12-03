@@ -134,21 +134,6 @@ class CalendarController {
     return `${formattedHour}:${formattedMinute}`;
   };
 
-  public createCalendar = async (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ): Promise<void | express.Response<any, Record<string, any>>> => {
-    try {
-      // const calendar = await Calendar.create({
-      //   date: req.body.date,
-      // });
-      // return res.status(201).send(calendar);
-    } catch (err) {
-      return next(new HttpException(404, "Can't add calendar. Date might already exist."));
-    }
-  };
-
   public updateCalendar = async (
     req: express.Request,
     res: express.Response,
@@ -166,6 +151,37 @@ class CalendarController {
     } catch (err) {
       return next(new HttpException(400, "Calendar update failed, id or body is in incorrect format."));
     }
+  };
+
+  public updateCalendarCourtCase = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const calendar = await Calendar.findByPk(req.params.id);
+    if (!calendar) {
+      return next(new HttpException(404, "Calendar Not Found"));
+    }
+
+    const isFound = calendar.tracks.some((track) => track.some((courtCase) => courtCase.id === req.params.caseId));
+    if (!isFound) {
+      return next(new HttpException(404, "CourtCase Not Found"));
+    }
+
+    const updatedTracks = calendar.tracks.map((track) =>
+      track.map((courtCase) => {
+        if (courtCase.id === req.params.caseId) {
+          return {
+            ...courtCase,
+            ...req.body,
+            updatedAt: new Date(),
+          };
+        }
+        return courtCase;
+      }),
+    );
+
+    await calendar.update({
+      tracks: updatedTracks,
+    });
+
+    return res.status(200).send(calendar);
   };
 
   public deleteCalendar = async (

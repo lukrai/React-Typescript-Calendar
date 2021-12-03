@@ -1,10 +1,28 @@
 import { Association, DataTypes, Model, Sequelize } from "sequelize";
 import { CourtCase } from "./CourtCase2.model";
 
+interface TrackCourtCase {
+  id: string;
+  judgeGroupId: number;
+  fileNo: string;
+  court: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  isDisabled?: boolean;
+  time: string; // e.g. 9:00
+  sessionTimeInMinutes: number;
+  userId: number;
+  registeredAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface CalendarAttributes {
   id?: number;
   date: string;
-  tracks: any;
+  tracks: TrackCourtCase[][];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -12,7 +30,7 @@ export interface CalendarAttributes {
 export class Calendar extends Model<CalendarAttributes> implements CalendarAttributes {
   public id!: number;
   public date!: string;
-  public tracks!: any;
+  public tracks!: TrackCourtCase[][];
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
