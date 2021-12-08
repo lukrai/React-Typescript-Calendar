@@ -1,0 +1,338 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  description: A sample API
+  termsOfService: 'http://swagger.io/terms/'
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  /ping:
+    get:
+      description: |
+        ping then pong!
+      operationId: ping
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /pets:
+    get:
+      description: |
+        Returns all pets
+      operationId: findPets
+      parameters:
+        - name: type
+          in: query
+          description: maximum number of results to return
+          required: true
+          schema:
+            type: string
+            enum:
+              - dog
+              - cat
+        - name: tags
+          in: query
+          description: tags to filter by
+          required: false
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          description: maximum number of results to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 20
+      responses:
+        '200':
+          description: pet response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      description: Creates a new pet in the store.
+      operationId: addPet
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        description: Pet to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        '200':
+          description: pet response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/pets/{id}':
+    get:
+      description: 'Returns a user based on a single ID, if the user does not have access to the pet'
+      operationId: find pet by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: pet response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: deletes a single pet based on the ID supplied
+      operationId: deletePet
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: pet deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/pets/{id}/photos':
+    post:
+      description: upload a photo of the pet
+      operationId: uploadPetPhoto
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  description: The photo
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  '/api/judge-group/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    put:
+      summary: Update Judge Group
+      operationId: put-api-judge-group-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: number
+                  timeCardCount:
+                    type: number
+                  startingHour:
+                    type: number
+                  startingMinute:
+                    type: number
+                  sessionTimeInMinutes:
+                    type: number
+                  createdAt:
+                    type: string
+                    minLength: 1
+                  updatedAt:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - timeCardCount
+                  - startingHour
+                  - startingMinute
+                  - sessionTimeInMinutes
+                  - createdAt
+                  - updatedAt
+                x-examples:
+                  example-1:
+                    id: 9
+                    timeCardCount: 4
+                    startingHour: 9
+                    startingMinute: 1
+                    sessionTimeInMinutes: 45
+                    createdAt: '2021-11-21T18:37:19.468Z'
+                    updatedAt: '2021-12-08T14:52:43.029Z'
+              examples:
+                example-2:
+                  value:
+                    id: 9
+                    timeCardCount: 4
+                    startingHour: 9
+                    startingMinute: 1
+                    sessionTimeInMinutes: 45
+                    createdAt: '2021-11-21T18:37:19.468Z'
+                    updatedAt: '2021-12-08T14:52:43.029Z'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                    minLength: 1
+                required:
+                  - status
+                  - message
+                x-examples:
+                  example-1:
+                    status: 404
+                    message: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  timeCardCount: 4
+                  startingHour: 9
+                  startingMinute: 1
+                  sessionTimeInMinutes: 45
+              properties:
+                timeCardCount:
+                  type: number
+                startingHour:
+                  type: number
+                startingMinute:
+                  type: number
+                sessionTimeInMinutes:
+                  type: number
+            examples:
+              example-1:
+                value:
+                  timeCardCount: 4
+                  startingHour: 9
+                  startingMinute: 1
+                  sessionTimeInMinutes: 45
+        description: |-
+          {
+              "timeCardCount": 4,
+              "startingHour": 9,
+              "startingMinute": 1,
+              "sessionTimeInMinutes": 45
+          }
+components:
+  schemas:
+    Pet:
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          readOnly: true
+          type: number
+        name:
+          type: string
+        tag:
+          type: string
+        type:
+          $ref: '#/components/schemas/PetType'
+    PetType:
+      type: string
+      enum:
+        - dog
+        - cat
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key

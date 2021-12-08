@@ -16,6 +16,7 @@ import CourtCaseRouter from "./routes/courtCase.routes";
 import UserRouter from "./routes/user.routes";
 import { AppSettings } from "./models/AppSettings2.model";
 import JudgeGroupRouter from "./routes/judgeGroup.routes";
+import * as OpenApiValidator from "express-openapi-validator";
 
 class App {
   public app: express.Application;
@@ -83,9 +84,20 @@ class App {
   }
 
   private initializeMiddlewares() {
-    this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
+    this.app.use(express.text());
+    this.app.use(express.urlencoded({ extended: true }));
+
     // this.app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+
+    this.app.use(
+      OpenApiValidator.middleware({
+        apiSpec: `./api.yaml`,
+        // validateResponses: tr/ue, // <-- to validate responses
+        validateRequests: true,
+      }),
+    );
+
     const dbStore = new this.SequelizeStore({
       db: this.db.sequelize,
       table: "Session",
